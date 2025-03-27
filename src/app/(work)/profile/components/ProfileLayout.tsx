@@ -5,11 +5,13 @@ import React from 'react'
 import ProfileOverview from './profile-overview'
 import ProfileSidebar from './profile-sidebar'
 import ProfileUserSidebar from './profile-user-sidebar'
+import { usePathname } from 'next/navigation'
 
 const ProfileMoreLayout: React.FC<{
   children: React.ReactNode
   user?: any
 }> = async ({ children, user }) => {
+
   return (
     <>
       <PageHeader

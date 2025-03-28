@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { DeleteOutlined } from '@ant-design/icons'
 import {
@@ -160,4 +159,4 @@ const JobCommentCollapse: React.FC<{
   )
 }
 
-export default withApp(JobCommentCollapse)
+export default JobCommentCollapse

@@ -5,7 +5,6 @@ import {
   checkOutAction,
   logoutAction,
 } from '@/components/action'
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   BellFilled,
@@ -234,4 +233,4 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   )
 }
 
-export default withApp(SubSide)
+export default SubSide

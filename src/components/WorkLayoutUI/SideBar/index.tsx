@@ -1,20 +1,9 @@
 import { getAttendances, getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { getTodos } from '@/libs/todos'
-import { Navigation } from '@/ui'
+import { Navigation, NavigationMenuType } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
-import {
-  CalendarFilled,
-  ContainerFilled,
-  FileFilled,
-  FolderOpenFilled,
-  HddFilled,
-  ProfileFilled,
-  ProjectFilled,
-  ShoppingFilled,
-  SignalFilled,
-} from '@ant-design/icons'
-import { Tooltip } from 'antd'
+import { CalendarFilled, FolderOpenFilled } from '@ant-design/icons'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -45,7 +34,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
 
   const hasCheckedIn = !!attendances && attendances?.length > 0
 
-  const navigationItems = [
+  const navigationItems: NavigationMenuType[] = [
     {
       label: 'Quản lý công việc',
       icon: <FolderOpenFilled className="text-[14px]" />,
@@ -55,29 +44,32 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Quản lý quy trình</span>
             </div>
           ),
+          shouldRound: false,
           href: '/workflows',
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Công việc của tôi</span>
             </div>
           ),
           taskCount: 10,
+          shouldRound: false,
           href: '/department',
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Thống kê</span>
             </div>
           ),
+          shouldRound: false,
         },
       ],
     },
@@ -90,51 +82,55 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Danh sách tài khoản</span>
             </div>
           ),
-
+          shouldRound: false,
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Danh sách nhân sự</span>
             </div>
           ),
+          shouldRound: false,
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Phòng ban</span>
             </div>
           ),
+          shouldRound: false,
         },
       ],
     },
     {
       label: 'Quản lý chấm công',
-      icon: <FolderOpenFilled className="text-[14px]" />,
+      icon: <CalendarFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
       children: [
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Chấm công</span>
             </div>
           ),
+          shouldRound: false,
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[14px] w-[14px]" />
               <span>Yêu cầu</span>
             </div>
           ),
+          shouldRound: false,
         },
       ],
     },
@@ -203,7 +199,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
       ],
     },
-
   ]
 
   return (
@@ -221,7 +216,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       {...props}
     >
       <div className="flex-1 pr-[4px]">
-        <div className='flex flex-col justify-center px-[13px] w-[207px]'>
+        <div className="flex w-[207px] flex-col justify-center px-[13px]">
           <User user={user} />
           <Search />
         </div>
@@ -229,7 +224,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           className="no-scroll mt-[24px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={navigationItems}
         />
-        {/* <Menu mode="inline" items={navigationItems} /> */}
       </div>
     </Layout.Side>
   )

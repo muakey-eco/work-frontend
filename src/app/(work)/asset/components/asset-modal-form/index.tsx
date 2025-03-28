@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { getAccountsAsAttendance } from '@/libs/data'
 import { useAsyncEffect } from '@/libs/hook'
 import { App, DatePicker, Form, Input, Modal, Select } from 'antd'
@@ -267,4 +266,4 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
     </>
   )
 }
-export default withApp(AssetModalForm)
+export default AssetModalForm

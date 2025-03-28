@@ -4,7 +4,6 @@ import { MarkTaskModalForm } from '@/components'
 import MemberList from '@/components/MemberList'
 import TaskModalForm from '@/components/TaskModalForm'
 import { assignTaskWithoutWorkAction } from '@/components/action'
-import { withApp } from '@/hoc'
 import {
   DoubleRightOutlined,
   MenuOutlined,
@@ -347,4 +346,4 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   )
 }
 
-export default withApp(PageHeaderAction)
+export default PageHeaderAction

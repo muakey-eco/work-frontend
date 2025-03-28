@@ -1,35 +1,53 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { Switch } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-export type EmployeeSwitchFormItemProps = {
+type ClassNamesType = {
+  header?: string
+  body?: string
+}
+
+export type SwitchFormItemProps = {
   className?: string
   title?: React.ReactNode
   children?: React.ReactNode
   extra?: React.ReactNode
+  classNames?: ClassNamesType
+  checked?: boolean
 }
 
-const EmployeeSwitchFormItem: React.FC<EmployeeSwitchFormItemProps> = ({
+const SwitchFormItem: React.FC<SwitchFormItemProps> = ({
   className,
   title,
   children,
   extra,
+  classNames,
+  checked: externalChecked,
 }) => {
   const [checked, setChecked] = useState(false)
 
+  useEffect(() => {
+    setChecked(!!externalChecked)
+  }, [externalChecked])
+
   return (
     <div className={className}>
-      <div className="flex items-center justify-between">
+      <div
+        className={cn('flex items-center justify-between', classNames?.header)}
+      >
         <div className="flex items-center gap-[16px]">
           <Switch checked={checked} onChange={setChecked} />
-          <span className="text-[16px] font-[600] leading-[24px]">{title}</span>
+          <span className="text-[16px] leading-[24px] font-[600]">{title}</span>
         </div>
         {checked && extra}
       </div>
-      {checked && <div className="mt-[16px]">{children}</div>}
+      {checked && (
+        <div className={cn('mt-[16px]', classNames?.body)}>{children}</div>
+      )}
     </div>
   )
 }
 
-export default EmployeeSwitchFormItem
+export default SwitchFormItem

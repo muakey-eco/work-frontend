@@ -1,7 +1,6 @@
 'use client'
 
 import { ResourceCategoryModalForm, ResourceModalForm } from '@/components'
-import { withApp } from '@/hoc'
 import { EllipsisOutlined } from '@ant-design/icons'
 import { App, Button, Dropdown, MenuProps, message } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -96,4 +95,4 @@ const ResourcesExtra: React.FC<ResourcesExtraProps> = ({
   )
 }
 
-export default withApp(ResourcesExtra)
+export default ResourcesExtra

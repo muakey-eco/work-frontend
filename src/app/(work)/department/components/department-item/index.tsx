@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { App, Avatar, Dropdown, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -102,4 +101,4 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
   )
 }
 
-export default withApp(DepartmentItem)
+export default DepartmentItem

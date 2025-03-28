@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, DatePicker, Form, Input, Modal, ModalProps, Radio } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
@@ -191,4 +190,4 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
   )
 }
 
-export default withApp(CheckInScheduleModalForm)
+export default CheckInScheduleModalForm

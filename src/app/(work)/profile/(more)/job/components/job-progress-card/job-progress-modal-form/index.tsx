@@ -107,7 +107,10 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
         )}
         {...props}
       >
-        <JobProgressInfomationFormCard title="Thông tin chung" />
+        <JobProgressInfomationFormCard
+          title="Thông tin chung"
+          shouldCall={open}
+        />
 
         <JobProgressNewInfomationFormCard title="Thành phần lương mới" />
 

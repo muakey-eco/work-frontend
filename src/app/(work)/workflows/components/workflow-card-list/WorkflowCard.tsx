@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { Card, Progress } from '@/ui'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -110,7 +109,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
           </div>
         </Card>
       </Link>
-      <div className="absolute right-[20px] top-[20px]">
+      <div className="absolute top-[20px] right-[20px]">
         <Dropdown
           rootClassName="z-50!"
           trigger={['click']}
@@ -148,4 +147,4 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
   )
 }
 
-export default withApp(WorkflowCard)
+export default WorkflowCard

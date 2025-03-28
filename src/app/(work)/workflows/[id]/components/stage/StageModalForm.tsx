@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import { useParams } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
@@ -215,4 +214,4 @@ const StageModalForm: React.FC<StageModalFormProps> = ({
   )
 }
 
-export default withApp(StageModalForm)
+export default StageModalForm

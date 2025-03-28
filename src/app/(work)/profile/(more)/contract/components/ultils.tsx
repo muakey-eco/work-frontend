@@ -12,7 +12,3 @@ export const genStatus = (status: string) => {
       return 'Không xác định'
   }
 }
-
-export const mapAsFile = (files: any[]) => {
-  return files.map((file) => file.originFileObj || file)
-}

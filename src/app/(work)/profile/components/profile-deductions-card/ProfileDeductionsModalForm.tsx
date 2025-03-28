@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import {
   App,
   Form,
@@ -154,4 +153,4 @@ const ProfileDeductionsModalForm: React.FC<ProfileDeductionsModalFormProps> = ({
   )
 }
 
-export default withApp(ProfileDeductionsModalForm)
+export default ProfileDeductionsModalForm

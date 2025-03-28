@@ -6,8 +6,10 @@ export const disableAccount = async (id: number) => {
   })
 }
 
-export const getAccountById = async (id: number) => {
-  return await requestWithAuthorized(`accounts/${id}`)
+export const getAccountById = async (id: number, query?: any) => {
+  return await requestWithAuthorized(
+    `accounts/${id}?` + new URLSearchParams(query),
+  )
     .then((data) => data)
     .catch(() => null)
 }
@@ -19,6 +21,14 @@ export const updateAccount = async (
 ) => {
   return await requestWithAuthorized(`accounts/${id}`, {
     method: 'PUT',
+    data,
+    body: formData,
+  })
+}
+
+export const addStaff = async (data: any, formData?: FormData) => {
+  return await requestWithAuthorized(`staffs`, {
+    method: 'POST',
     data,
     body: formData,
   })

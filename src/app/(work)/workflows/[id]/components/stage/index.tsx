@@ -1,7 +1,6 @@
 'use client'
 
 import { getTaskHistoriesAction } from '@/components/action'
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { toast } from '@/ui'
 import {
@@ -466,4 +465,4 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   )
 }
 
-export default memo(withApp(StageList))
+export default memo(StageList)

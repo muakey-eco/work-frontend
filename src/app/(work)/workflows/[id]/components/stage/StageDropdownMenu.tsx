@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { arrayMove } from '@/libs/utils'
 import { CaretDownFilled } from '@ant-design/icons'
 import { App, Dropdown, DropdownProps, MenuProps, Popconfirm } from 'antd'
@@ -193,4 +192,4 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
   )
 }
 
-export default withApp(StageDropdownMenu)
+export default StageDropdownMenu

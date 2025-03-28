@@ -1,7 +1,6 @@
 'use client'
 
 import { RequestConfirmModalForm } from '@/components'
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import {
   CheckOutlined,
@@ -182,4 +181,4 @@ const RequestTable: React.FC<RequestTableProps> = memo(
 
 RequestTable.displayName = 'RequestTable'
 
-export default withApp(RequestTable)
+export default RequestTable

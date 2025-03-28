@@ -1,5 +1,5 @@
+import { cn } from '@/lib/utils'
 import { Divider, Tabs, TabsProps } from 'antd'
-import clsx from 'clsx'
 import React from 'react'
 
 type Tab = {
@@ -18,7 +18,7 @@ export type PageHeaderProps = {
 const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
   return (
     <div
-      className={clsx(
+      className={cn(
         'border-b bg-[#fff] px-[24px] pt-[12px]',
         tab?.items ? 'pb-0' : 'pb-[12px]',
       )}

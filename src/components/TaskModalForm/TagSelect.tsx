@@ -1,7 +1,6 @@
 'use client'
 
 import { StageContext } from '@/app/(work)/workflows/[id]/components/WorkflowPageLayout'
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { PlusOutlined } from '@ant-design/icons'
 import {
@@ -283,4 +282,4 @@ const TagSelect: React.FC<TagSelectProps> = ({
   )
 }
 
-export default memo(withApp(TagSelect))
+export default memo(TagSelect)

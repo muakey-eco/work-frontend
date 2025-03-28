@@ -1,7 +1,6 @@
 'use client'
 
 import { uploadImageAction } from '@/app/(work)/task/actions'
-import { withApp } from '@/hoc'
 import { EDITOR_ICON_KEYS } from '@/libs/constant'
 import {
   BlockTypeSelect,
@@ -98,4 +97,4 @@ const InitializedMDXEditor: React.FC<InitializedMDXEditorProps> = ({
   )
 }
 
-export default withApp(InitializedMDXEditor)
+export default InitializedMDXEditor

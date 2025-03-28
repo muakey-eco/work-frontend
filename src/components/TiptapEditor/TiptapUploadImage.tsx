@@ -1,4 +1,3 @@
-import { withApp } from '@/hoc'
 import { PictureOutlined } from '@ant-design/icons'
 import { Editor } from '@tiptap/react'
 import { App, Upload, UploadProps } from 'antd'
@@ -43,4 +42,4 @@ const TiptapUploadImage: React.FC<TiptapUploadImageProps> = ({
   )
 }
 
-export default withApp(TiptapUploadImage)
+export default TiptapUploadImage

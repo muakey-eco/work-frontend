@@ -1,4 +1,3 @@
-import { withApp } from '@/hoc'
 import { PlusOutlined } from '@ant-design/icons'
 import { App, Button, Form, Input, List, Modal, ModalProps } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -158,4 +157,4 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
   )
 }
 
-export default withApp(RequestSelectModal)
+export default RequestSelectModal

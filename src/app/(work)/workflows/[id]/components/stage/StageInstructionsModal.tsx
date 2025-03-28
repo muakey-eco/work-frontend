@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { App, Breadcrumb, Button, Empty, Form, Modal, ModalProps } from 'antd'
 import React, { useState } from 'react'
 import { Converter } from 'showdown'
@@ -73,7 +72,7 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
       >
         <div className="flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[12px] rounded-[16px] border bg-[#f6f6f6] px-[16px] py-[12px]">
-            <div className="text-[20px] font-[600] leading-[22px]">Góp ý</div>
+            <div className="text-[20px] leading-[22px] font-[600]">Góp ý</div>
             <Breadcrumb
               items={[
                 {
@@ -87,7 +86,7 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
           </div>
 
           <div className="flex items-center justify-between gap-[12px]">
-            <span className="text-[16px] font-[600] leading-[24px]">
+            <span className="text-[16px] leading-[24px] font-[600]">
               Hướng dẫn
             </span>
             <span
@@ -135,4 +134,4 @@ const StageInstructionsModal: React.FC<StageInstructionsModalProps> = ({
   )
 }
 
-export default withApp(StageInstructionsModal)
+export default StageInstructionsModal

@@ -22,7 +22,7 @@ export const filterAssets = async (query: string) => {
     .catch(() => [])
 }
 export const getAssetsByPagnition = async (query: string) => {
-  return await requestWithAuthorized(`assets?page=${query}`)
+  return await requestWithAuthorized(`assets?${query}`)
     .then((data) => data)
     .catch(() => [])
 }
@@ -56,4 +56,10 @@ export const addAsset = async (data: any) => {
     method: 'POST',
     data,
   })
+}
+
+export const getAssetCount = async () => {
+  return await requestWithAuthorized('assets?count=status')
+    .then((data) => data)
+    .catch(() => [])
 }

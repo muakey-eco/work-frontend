@@ -2,8 +2,6 @@
 
 import { Asset } from '@/interfaces'
 import { formatCurrency } from '@/lib/utils'
-import { useFilterStore } from '@/stores/filterStore'
-import { useSearchStore } from '@/stores/searchStore'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -11,14 +9,14 @@ import dayjs from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { filterAssetsAction } from '../asset-drawer/action'
-import { getAssetsByPagnitionAction } from './action'
 
+import { getAssetCountAction } from './action'
 export type AssetTableProps = TableProps & {
   onStatusChange?: (status: string) => void
   defaultActiveKey?: string
   dataSource?: Asset[]
-  total?: number
   per_page?: number
+  total?: number
 }
 
 const genStatus = (
@@ -38,60 +36,75 @@ const genStatus = (
   }
 }
 
-const tabs: TabsProps['items'] = [
-  {
-    label: 'Tất cả',
-    key: 'all',
-  },
-  {
-    label: 'Đang sử dụng',
-    key: 'using',
-  },
-  {
-    label: 'Chưa sử dụng',
-    key: 'unused',
-  },
-  {
-    label: 'Đang bảo hành',
-    key: 'warranty',
-  },
-  {
-    label: 'Hỏng',
-    key: 'broken',
-  },
-  {
-    label: 'Đã thanh lý',
-    key: 'liquidated',
-  },
-]
-
 const AssetTable: React.FC<AssetTableProps> = ({
   onStatusChange,
   defaultActiveKey = 'all',
   dataSource,
-  total,
+  total = dataSource?.length,
   per_page,
   ...props
 }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { filterResults } = useFilterStore()
-  const { searchResults } = useSearchStore()
 
   const [tab, setTab] = useState(defaultActiveKey)
   const [assets, setAssets] = useState<Asset[]>(dataSource || [])
+  const [statusCount, setStatusCount] = useState<any>({})
 
   useEffect(() => {
-    if (filterResults?.length) {
-      setAssets(filterResults)
-    } else if (searchResults?.length) {
-      setAssets(searchResults)
-    } else {
-      setAssets(dataSource || [])
+    const fetchCount = async () => {
+      const res = await getAssetCountAction()
+      setStatusCount(res)
     }
-  }, [filterResults, searchResults, dataSource])
+    fetchCount()
+  }, [])
+  console.log('statusCount', statusCount)
+  const tabs: TabsProps['items'] = [
+    {
+      label: `Tất cả (${statusCount[5].total || 0})`,
+      key: 'all',
+    },
+    {
+      label: `Đang sử dụng (${statusCount[0]?.count || 0})`,
+      key: 'using',
+    },
+    {
+      label: `Chưa sử dụng (${statusCount[1]?.count || 0})`,
+      key: 'unused',
+    },
+    {
+      label: `Đang bảo hành (${statusCount[3]?.count || 0})`,
+      key: 'warranty',
+    },
+    {
+      label: `Hỏng (${statusCount[4]?.count || 0})`,
+      key: 'broken',
+    },
+    {
+      label: `Đã thanh lý (${statusCount[2]?.count || 0})`,
+      key: 'liquidated',
+    },
+  ]
+
+  useEffect(() => {
+    const status = searchParams.get('status')
+    if (status) {
+      setTab(status)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await filterAssetsAction(searchParams.toString())
+      setAssets(res.data)
+    }
+    fetchData()
+  }, [searchParams])
 
   const handleChangeTab = async (key: string) => {
+    const currentParams = new URLSearchParams(window.location.search) // Giữ nguyên tham số hiện tại
+    currentParams.delete('page') // Reset phân trang
+
     if (key === 'all') {
       router.push('/asset')
       setTab(key)
@@ -100,10 +113,8 @@ const AssetTable: React.FC<AssetTableProps> = ({
       return
     }
 
-    const currentParams = new URLSearchParams(searchParams.toString())
     currentParams.set('status', key)
     router.push(`/asset?${currentParams.toString()}`)
-
     setTab(key)
     onStatusChange?.(key)
 
@@ -119,6 +130,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
   const handleRowClick = (record: any) => {
     router.push(`/asset/${record.id}`)
+  }
+
+  const handleChangePage = async (page: number) => {
+    const currentParams = new URLSearchParams()
+
+    router.push(`/asset?${currentParams.toString()}`, { scroll: false })
   }
 
   const columns: ColumnsType<any> = [
@@ -166,7 +183,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   )
 
   return (
-    <div className="rounded-[8px] bg-[#fff] px-[16px]">
+    <div className="rounded-[8px] bg-[#fff] px-[16px]" suppressHydrationWarning>
       <Tabs
         items={tabs}
         tabBarExtraContent={tabActions}
@@ -185,26 +202,13 @@ const AssetTable: React.FC<AssetTableProps> = ({
         className="cursor-pointer"
         pagination={{
           current: Number(searchParams.get('page')) || 1,
-          pageSize: per_page || 10,
-          total: total || 100,
+          pageSize: per_page || 1,
+          total: assets?.length < 8 ? assets.length : (total ?? assets?.length),
           showSizeChanger: true,
           showQuickJumper: true,
           pageSizeOptions: ['5', '10', '15', '20', '50', '100'],
           showTotal: (total) => `Total ${total} items`,
-          onChange: async (page) => {
-            const newParams = new URLSearchParams(searchParams.toString())
-            newParams.set('page', page.toString())
-            router.push(`/asset?${newParams.toString()}`)
-
-            try {
-              const res = await getAssetsByPagnitionAction(newParams.toString())
-              if (res.success && Array.isArray(res.data)) {
-                setAssets(res.data)
-              }
-            } catch (error) {
-              console.error('Error fetching assets:', error)
-            }
-          },
+          onChange: handleChangePage,
         }}
       />
     </div>

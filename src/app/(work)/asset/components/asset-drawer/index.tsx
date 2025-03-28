@@ -1,6 +1,8 @@
 'use client'
 
-import { useFilterStore } from '@/stores/filterStore'
+import BrandFormItems from '@/components/BrandFormItem'
+import CategoryFormItems from '@/components/CategoryFormItem'
+import AssetUserFormItem from '@/components/UserFormItem'
 import { CloseOutlined } from '@ant-design/icons'
 import {
   Button,
@@ -14,7 +16,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useAssetForm } from '../../hooks/useAssetForm'
-import { filterAssetsAction } from './action'
+
 export type AssetDrawerProps = ModalProps & {
   children: React.ReactNode
   formProps?: FormProps<any>
@@ -28,9 +30,8 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { statusOptions, categoryOptions, userOptions, brandOptions } =
-    useAssetForm()
-  const { setFilterResults } = useFilterStore()
+  const { statusOptions } = useAssetForm()
+
   const router = useRouter()
   const handleCancel = () => {
     form.resetFields()
@@ -38,10 +39,10 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
   }
 
   const handleFilter = async () => {
-    try {
-      const values = await form.validateFields()
-      setLoading(true)
+    const values = await form.validateFields()
+    setLoading(true)
 
+    try {
       // Bỏ giá trị null, undefined, chuỗi rỗng
       const filteredValues = Object.fromEntries(
         Object.entries(values).filter(
@@ -49,23 +50,22 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
         ),
       )
 
-      const queryString = new URLSearchParams(
-        Object.entries(filteredValues).flatMap(([key, value]) =>
-          Array.isArray(value)
-            ? value.map((v) => [key, v])
-            : [[key, value?.toString()]],
-        ),
-      ).toString()
-      router.push(`/asset?${queryString}`)
+      const currentParams = new URLSearchParams()
 
-      const response = await filterAssetsAction(queryString)
-      console.log('response', response)
-      setFilterResults(response.data)
+      // Add filtered values to params
+      Object.entries(filteredValues).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((v) => currentParams.append(key, v?.toString() || ''))
+        } else {
+          currentParams.set(key, value?.toString() || '')
+        }
+      })
+
+      router.push(`/asset?${currentParams.toString()}`)
       setLoading(false)
       setOpen(false)
     } catch (error) {
-      console.error('Error filtering assets:', error)
-    } finally {
+      console.error('Error filtering:', error)
       setLoading(false)
     }
   }
@@ -82,40 +82,33 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
         </div>
         <Form form={form} layout="vertical" {...formProps}>
           <div className="flex flex-col items-center gap-[16px]">
-            <Form.Item
-              key="account_id"
+            <AssetUserFormItem
               className="mb-[0px]! w-full"
               name="account_id"
               label="Người sử dụng"
-            >
-              <Select placeholder="Chọn người sử dụng" options={userOptions} />
-            </Form.Item>
-            <Form.Item
-              key="category_id"
+            />
+            <CategoryFormItems
               className="mb-[0px]! w-full"
               name="category_id"
               label="Loại tài sản"
-            >
-              <Select
-                placeholder="Chọn loại tài sản"
-                options={categoryOptions}
-              />
-            </Form.Item>
-            <Form.Item
-              key="brand_id"
+            />
+            <BrandFormItems
               className="mb-[0px]! w-full"
               name="brand_id"
               label="Nhà cung cấp"
-            >
-              <Select placeholder="Chọn nhà cung cấp" options={brandOptions} />
-            </Form.Item>
+            />
+
             <Form.Item
               key="status"
               className="mb-[0px]! w-full"
               name="status"
               label="Trạng thái"
             >
-              <Select options={statusOptions} placeholder="Chọn trạng thái" />
+              <Select
+                options={statusOptions}
+                placeholder="Chọn trạng thái"
+                allowClear
+              />
             </Form.Item>
             <div className="flex w-full gap-[8px]">
               <Form.Item
@@ -144,6 +137,7 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
                 className="flex-1"
                 onClick={() => {
                   form.resetFields()
+                  router.push(`/asset`)
                 }}
               >
                 Reset

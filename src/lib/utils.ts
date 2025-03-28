@@ -22,3 +22,36 @@ export const getThumbnailFromYoutubeUrl = (url: string, size?: string) => {
 export const formatCurrency = (value: number) => {
   return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
+
+export const updateQueryParam = (
+  searchParams: URLSearchParams,
+  key: string,
+  value: string | null,
+) => {
+  const params = new URLSearchParams(searchParams.toString())
+
+  if (value) {
+    params.set(key, value) // Thêm hoặc cập nhật param
+  } else {
+    params.delete(key) // Nếu giá trị null hoặc rỗng, xóa param đó
+  }
+
+  return `?${params.toString()}`
+}
+
+export const updateQueryParams = (
+  searchParams: URLSearchParams,
+  updates: Record<string, string | null>,
+) => {
+  const params = new URLSearchParams(searchParams.toString())
+
+  Object.entries(updates).forEach(([key, value]) => {
+    if (value) {
+      params.set(key, value)
+    } else {
+      params.delete(key)
+    }
+  })
+
+  return `?${params.toString()}`
+}

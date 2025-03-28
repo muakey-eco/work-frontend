@@ -1,21 +1,40 @@
 import { PageHeader } from '@/components'
-import { getAssets, getAssetsByPagnition } from '@/libs/asset'
+import { getAssetsByPagnition } from '@/libs/asset'
 import PageContent from './components/PageContent'
-import AssetFilter from './components/asset-filter'
+import AssetFilter from './components/asset-search'
 import AssetTable from './components/asset-table'
 
-const AssetPage: React.FC<any> = async ({ searchParams }: { searchParams: { page: string } }) => {
-  const page = searchParams.page || 1
-  const assets = await getAssetsByPagnition(page.toString())
-  console.log('assets', assets)
+const AssetPage: React.FC<any> = async ({
+  searchParams,
+}: {
+  searchParams: { page: string; status: string; search: string }
+}) => {
+  const params = await searchParams
+  const page = params?.page || '1'
+  const status = params?.status || 'all'
+  const search = params?.search || ''
 
-  await new Promise((res) => setTimeout(res, 1000))
+  const query = new URLSearchParams()
+  query.set('page', page)
+  if (status !== 'all') {
+    query.set('status', status)
+  }
+  if (search) {
+    query.set('search', search)
+  }
+
+  const assets = await getAssetsByPagnition(query.toString())
   return (
     <>
       <PageHeader title="Quản lý tài sản" />
       <PageContent className="flex flex-col gap-[16px]">
         <AssetFilter />
-        <AssetTable dataSource={assets.data} total={assets.total} per_page={assets.per_page} />
+        <AssetTable
+          dataSource={assets.data}
+          total={assets.total}
+          per_page={assets.per_page}
+          defaultActiveKey={status}
+        />
       </PageContent>
     </>
   )

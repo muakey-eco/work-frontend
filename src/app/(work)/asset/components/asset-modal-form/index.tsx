@@ -1,8 +1,10 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
-import { useUpdateStore } from '@/stores/updateStore'
+import BrandFormItems from '@/components/BrandFormItem'
+import CategoryFormItems from '@/components/CategoryFormItem'
+import AssetUserFormItem from '@/components/UserFormItem'
+
 import {
   App,
   DatePicker,
@@ -14,9 +16,10 @@ import {
   Select,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
+import { useWatch } from 'antd/es/form/Form'
 import dayjs from 'dayjs'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAssetForm } from '../../hooks/useAssetForm'
 import { addAssetAction, updateAssetAction } from './action'
 
@@ -43,11 +46,23 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { message } = App.useApp()
-  const { updateResult, setUpdateResult } = useUpdateStore()
   const { id } = useParams()
 
-  const { statusOptions, categoryOptions, userOptions, brandOptions } =
-    useAssetForm()
+  const { statusOptions } = useAssetForm()
+
+  const [status, setStatus] = useState<'liquidated' | 'using' | undefined>(
+    initialValues?.status || 'unused',
+  )
+
+  // Theo dõi giá trị status trong form
+  const watchedStatus = useWatch('status', form)
+
+  // Cập nhật state khi giá trị status thay đổi
+  useEffect(() => {
+    if (watchedStatus !== undefined) {
+      setStatus(watchedStatus)
+    }
+  }, [watchedStatus])
 
   // Xử lý các giá trị ngày trong initialValues
   const processedInitialValues = {
@@ -93,7 +108,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
       // Chuẩn hóa ngày tháng
       const formatDate = (date: any) => date?.format('YYYY-MM-DD') || null
-      console.log('value', value)
       const formData = {
         ...value,
         buy_date: formatDate(value.buy_date),
@@ -114,7 +128,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
       // Gọi API
       const res = await actionFn
-      setUpdateResult(res.data)
 
       if (!res.success) throw new Error(res.error || 'Có lỗi xảy ra')
 
@@ -164,6 +177,11 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             onFinish={handleSubmit}
             {...formProps}
             initialValues={processedInitialValues}
+            onValuesChange={(changedValues) => {
+              if ('status' in changedValues) {
+                setStatus(changedValues.status)
+              }
+            }}
           >
             {dom}
           </Form>
@@ -207,15 +225,13 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <Select options={statusOptions} placeholder="Chọn trạng thái" />
           </Form.Item>
-          <Form.Item
+          <CategoryFormItems
             key="asset_category_id"
             className="mb-[16px]! flex-1"
             name="asset_category_id"
             label="Loại tài sản"
             rules={[{ required: true, message: 'Loại tài sản là bắt buộc' }]}
-          >
-            <Select options={categoryOptions} placeholder="Chọn loại tài sản" />
-          </Form.Item>
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -227,14 +243,14 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <Input placeholder="Nhập số Serial" />
           </Form.Item>
-          <Form.Item
+          <AssetUserFormItem
             key="account_id"
             className="mb-[16px]! flex-1"
             name="account_id"
             label="Người sử dụng"
-          >
-            <Select placeholder="Chọn người sử dụng" options={userOptions} />
-          </Form.Item>
+            placeholder="Chọn người sử dụng "
+            isDisabled={false}
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -257,14 +273,12 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
         </div>
 
         <div className="flex items-center gap-[16px]">
-          <Form.Item
+          <BrandFormItems
             key="brand_id"
             className="mb-[16px]! flex-1"
             name="brand_id"
             label="Tên nhà cung cấp"
-          >
-            <Select options={brandOptions} placeholder="Chọn nhà cung cấp" />
-          </Form.Item>
+          />
           <Form.Item
             key="brand_link"
             className="mb-[16px]! flex-1"
@@ -305,15 +319,15 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <DatePicker className="w-full" locale={locale} />
           </Form.Item>
-          <Form.Item
+          <AssetUserFormItem
             key="buyer_id"
             className="mb-[16px]! flex-1"
             name="buyer_id"
             label="Người mua"
             rules={[{ required: true, message: 'Người mua là bắt buộc' }]}
-          >
-            <Select placeholder="Chọn người mua" options={userOptions} />
-          </Form.Item>
+            placeholder="Chọn người mua"
+            isDisabled={false}
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -323,7 +337,11 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             name="sell_date"
             label="Ngày thanh lý"
           >
-            <DatePicker className="w-full" locale={locale} disabled />
+            <DatePicker
+              className="w-full"
+              locale={locale}
+              disabled={status !== 'liquidated'}
+            />
           </Form.Item>
           <Form.Item
             key="sell_price"
@@ -331,22 +349,22 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             name="sell_price"
             label="Giá thanh lý"
           >
-            <Input placeholder="Nhập giá thanh lý" disabled />
+            <Input
+              placeholder="Nhập giá thanh lý"
+              disabled={status !== 'liquidated'}
+            />
           </Form.Item>
         </div>
 
-        <Form.Item
+        <AssetUserFormItem
           key="seller_id"
           className="mb-[16px]! flex-1"
           name="seller_id"
           label="Người thanh lý"
-        >
-          <Select
-            placeholder="Chọn người thanh lý"
-            options={userOptions}
-            disabled
-          />
-        </Form.Item>
+          placeholder="Chọn người thanh lý"
+          status={status}
+          isDisabled={true}
+        />
 
         <Form.Item
           key="description"
@@ -361,4 +379,4 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   )
 }
 
-export default withApp(AssetModalForm)
+export default AssetModalForm

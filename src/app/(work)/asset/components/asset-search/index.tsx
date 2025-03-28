@@ -1,20 +1,17 @@
 'use client'
 
-import { useSearchStore } from '@/stores/searchStore'
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Input } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
-import { searchAssetAction } from './action'
 export type AssetFilterProps = {
   onAdd?: () => void
 }
 
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { setSearchResults } = useSearchStore()
   const router = useRouter()
 
   const handleAdd = () => {
@@ -30,11 +27,14 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
     onAdd?.()
   }
   const handleSearch = async (value: string) => {
-    try {
-      const result = await searchAssetAction(value)
-      setSearchResults(result)
-    } catch (error) {
-      console.error(error)
+    if (value === '') {
+      router.push(`/asset`)
+    } else {
+      try {
+        router.push(`/asset?search=${value}`)
+      } catch (error) {
+        console.error('Error searching:', error)
+      }
     }
   }
 
@@ -45,6 +45,7 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
           className="w-[240px]!"
           placeholder="Tìm kiếm tài sản"
           onSearch={handleSearch}
+          allowClear
         />
       </div>
       <div className="flex items-center gap-[16px]">

@@ -1,7 +1,7 @@
 'use client'
 
 import { EditOutlined } from '@ant-design/icons'
-import { Avatar, Button } from 'antd'
+import { Avatar, Button, Card } from 'antd'
 import React, { useState } from 'react'
 import AssetModalForm from '../../../components/asset-modal-form'
 import StatusTag from '../status-tag'
@@ -14,13 +14,8 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
     setIsModalOpen(false)
   }
 
-  const handleModalSuccess = () => {
-    setIsModalOpen(false)
-    // onAdd?.()
-  }
-
   return (
-    <div className="col-span-3 h-fit gap-4 rounded-lg bg-[#fff] p-6">
+    <Card className="h-fit gap-4 p-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex gap-4">
           <Avatar
@@ -55,7 +50,7 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
         <AssetModalForm
           title="Chỉnh sửa tài sản"
           open={isModalOpen}
-          onSuccess={handleModalSuccess}
+          onSuccess={handleModalClose}
           onCancel={handleModalClose}
           initialValues={asset}
           action="edit"
@@ -66,7 +61,7 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
         </AssetModalForm>
       </div>
       <AssetDescription asset={asset} />
-    </div>
+    </Card>
   )
 }
 

@@ -1,8 +1,10 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
+import BrandFormItems from '@/components/BrandFormItems'
+import CategoryFormItems from '@/components/CategoryFormItems'
+import AssetUserFormItem from '@/components/UserFormItems'
 import { withApp } from '@/hoc'
-import { useUpdateStore } from '@/stores/updateStore'
 import {
   App,
   DatePicker,
@@ -43,11 +45,9 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { message } = App.useApp()
-  const { updateResult, setUpdateResult } = useUpdateStore()
   const { id } = useParams()
 
-  const { statusOptions, categoryOptions, userOptions, brandOptions } =
-    useAssetForm()
+  const { statusOptions } = useAssetForm()
 
   // Xử lý các giá trị ngày trong initialValues
   const processedInitialValues = {
@@ -93,7 +93,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
       // Chuẩn hóa ngày tháng
       const formatDate = (date: any) => date?.format('YYYY-MM-DD') || null
-      console.log('value', value)
       const formData = {
         ...value,
         buy_date: formatDate(value.buy_date),
@@ -114,7 +113,6 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
 
       // Gọi API
       const res = await actionFn
-      setUpdateResult(res.data)
 
       if (!res.success) throw new Error(res.error || 'Có lỗi xảy ra')
 
@@ -207,15 +205,13 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <Select options={statusOptions} placeholder="Chọn trạng thái" />
           </Form.Item>
-          <Form.Item
+          <CategoryFormItems
             key="asset_category_id"
             className="mb-[16px]! flex-1"
             name="asset_category_id"
             label="Loại tài sản"
             rules={[{ required: true, message: 'Loại tài sản là bắt buộc' }]}
-          >
-            <Select options={categoryOptions} placeholder="Chọn loại tài sản" />
-          </Form.Item>
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -227,14 +223,12 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <Input placeholder="Nhập số Serial" />
           </Form.Item>
-          <Form.Item
+          <AssetUserFormItem
             key="account_id"
             className="mb-[16px]! flex-1"
             name="account_id"
             label="Người sử dụng"
-          >
-            <Select placeholder="Chọn người sử dụng" options={userOptions} />
-          </Form.Item>
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -257,14 +251,12 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
         </div>
 
         <div className="flex items-center gap-[16px]">
-          <Form.Item
+          <BrandFormItems
             key="brand_id"
             className="mb-[16px]! flex-1"
             name="brand_id"
             label="Tên nhà cung cấp"
-          >
-            <Select options={brandOptions} placeholder="Chọn nhà cung cấp" />
-          </Form.Item>
+          />
           <Form.Item
             key="brand_link"
             className="mb-[16px]! flex-1"
@@ -305,15 +297,13 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           >
             <DatePicker className="w-full" locale={locale} />
           </Form.Item>
-          <Form.Item
+          <AssetUserFormItem
             key="buyer_id"
             className="mb-[16px]! flex-1"
             name="buyer_id"
             label="Người mua"
             rules={[{ required: true, message: 'Người mua là bắt buộc' }]}
-          >
-            <Select placeholder="Chọn người mua" options={userOptions} />
-          </Form.Item>
+          />
         </div>
 
         <div className="flex items-center gap-[16px]">
@@ -335,18 +325,12 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
           </Form.Item>
         </div>
 
-        <Form.Item
+        <AssetUserFormItem
           key="seller_id"
           className="mb-[16px]! flex-1"
           name="seller_id"
           label="Người thanh lý"
-        >
-          <Select
-            placeholder="Chọn người thanh lý"
-            options={userOptions}
-            disabled
-          />
-        </Form.Item>
+        />
 
         <Form.Item
           key="description"

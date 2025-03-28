@@ -19,7 +19,7 @@ const AssetLayout: React.FC<AssetLayoutProps> = ({ children }) => {
           </Link>
         </Button>
       </div>
-      <div className="grid grid-cols-4 gap-[16px] p-4">{children}</div>
+      {children}
     </div>
   )
 }

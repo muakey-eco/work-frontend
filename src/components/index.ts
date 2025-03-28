@@ -57,3 +57,6 @@ export { default as SwitchFormItem } from './SwitchFormItem'
 
 export * from './AreaChart'
 export { default as AreaChart } from './AreaChart'
+
+export * from './AppProviders'
+export { default as AppProviders } from './AppProviders'

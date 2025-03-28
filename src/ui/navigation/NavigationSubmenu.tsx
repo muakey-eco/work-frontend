@@ -37,24 +37,36 @@ const NavigationSubmenu: React.FC<{
         const active = activeNav(url, child.href || '', exact, hash, matchType)
 
         return (
-          <NavigationItem
+          <div
             key={child?.key ?? uniqueId()}
-            item={child}
-            active={active}
-            defaultOpen={
-              child.expand ||
-              urlMatch(
-                child.children || [],
-                pathName,
-                searchParams,
-                exact,
-                matchType,
-              )
-            }
-            ghost={ghost}
-            matchType={matchType}
-            className="leading-[22px]"
-          />
+            className={clsx({
+              'bg-[#FFFFFF29]': pathName === child?.href && !child?.shouldRound,
+              'hover:bg-[#FFFFFF29]': !child?.shouldRound,
+              'rounded-4xl bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
+                active && child?.shouldRound,
+              'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
+                child?.shouldRound,
+            })}
+          >
+            <NavigationItem
+              key={child?.key ?? uniqueId()}
+              item={child}
+              active={active}
+              defaultOpen={
+                child.expand ||
+                urlMatch(
+                  child.children || [],
+                  pathName,
+                  searchParams,
+                  exact,
+                  matchType,
+                )
+              }
+              ghost={ghost}
+              matchType={matchType}
+              className="leading-[22px]"
+            />
+          </div>
         )
       })}
     </ul>

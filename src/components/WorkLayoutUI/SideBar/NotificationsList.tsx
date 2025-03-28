@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { convertRelativeTime, randomColor } from '@/libs/utils'
 import { CloseOutlined } from '@ant-design/icons'
 import { App, Avatar, Empty, List, ListProps } from 'antd'
@@ -138,4 +137,4 @@ const NotificationsList: React.FC<NotificationsListProps> = (props) => {
   )
 }
 
-export default withApp(NotificationsList)
+export default NotificationsList

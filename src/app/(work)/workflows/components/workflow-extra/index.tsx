@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Modal } from 'antd'
 import React, { useRef, useState } from 'react'
 import {
@@ -117,4 +116,4 @@ const WorkflowExtra: React.FC<{
   )
 }
 
-export default withApp(WorkflowExtra)
+export default WorkflowExtra

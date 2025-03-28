@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { DownOutlined } from '@ant-design/icons'
 import { App, Avatar, Button, Dropdown } from 'antd'
@@ -52,7 +51,7 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
         >
           <DownOutlined
             className={clsx(
-              'text-[16px] text-[#000]',
+              'text-[16px]! text-[#000]!',
               !ids.includes(cate.id) && '-rotate-90',
             )}
           />
@@ -64,7 +63,7 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
           >
             {String(cate.label).charAt(0).toLocaleUpperCase()}
           </Avatar>
-          <span className="text-[18px] font-[400] leading-[42px] text-[#000]">
+          <span className="text-[18px] leading-[42px] font-[400] text-[#000]">
             {cate.label} ({cate.workflows.length})
           </span>
         </div>
@@ -118,4 +117,4 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
   )
 }
 
-export default withApp(WorkflowItem)
+export default WorkflowItem

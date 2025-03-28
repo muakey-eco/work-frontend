@@ -1,7 +1,6 @@
 'use client'
 
 import { ResourceModalForm } from '@/components'
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import {
   App,
@@ -153,4 +152,4 @@ const ResourcesDetailModal: React.FC<ResourcesDetailModalProps> = ({
   )
 }
 
-export default withApp(ResourcesDetailModal)
+export default ResourcesDetailModal

@@ -10,8 +10,7 @@ const JobProgressNewInfomationFormCard: React.FC<
   JobProgressNewInfomationFormCardProps
 > = ({ title }) => {
   const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
-    formatter: (value) =>
-      typeof value !== 'number' ? String(value) : formatCurrency(Number(value)),
+    formatter: formatCurrency,
     parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
   }
 

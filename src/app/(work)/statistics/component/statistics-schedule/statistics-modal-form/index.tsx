@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { PlusOutlined } from '@ant-design/icons'
 import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd'
 import vn from 'antd/es/date-picker/locale/vi_VN'
@@ -142,4 +141,4 @@ const StatisticsModalForm: React.FC<StatisticsModalFormProps> = ({
   )
 }
 
-export default withApp(StatisticsModalForm)
+export default StatisticsModalForm

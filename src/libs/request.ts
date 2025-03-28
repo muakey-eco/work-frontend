@@ -19,9 +19,15 @@ export const request = async (path: string, options?: RequestOptions) => {
     }
   }
 
+  const clientIp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ip`)
+    .then((res) => res.json())
+    .then(({ ip }) => ip)
+    .catch(() => '')
+
   const init: NodeJS.RequestInit = {
     headers: {
       accept: 'application/json',
+      'x-client-ip': clientIp,
       ...headers,
     },
     ...rest,

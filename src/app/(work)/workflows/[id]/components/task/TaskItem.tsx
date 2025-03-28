@@ -1,7 +1,6 @@
 'use client'
 
 import MarkTaskFailedModalForm from '@/components/MarkTaskModalForm'
-import { withApp } from '@/hoc'
 import {
   abbreviateNumber,
   convertRelativeTime,
@@ -755,4 +754,4 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
 TaskItem.displayName = 'Task item'
 
-export default withApp(TaskItem)
+export default TaskItem

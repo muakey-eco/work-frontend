@@ -1,14 +1,43 @@
 import { Card, CardProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 import ScheduleHolidayCalendar from './ScheduleHolidayCalendar'
 import ScheduleHolidayCalendarFilter from './ScheduleHolidayCalendarFilter'
 import ScheduleHolidayCalendarGuide from './ScheduleHolidayCalendarGuide'
 
-export type ScheduleHolidayCalendarCardProps = CardProps & {}
+export type ScheduleHolidayCalendarCardProps = CardProps & {
+  data?: any
+}
 
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
-> = ({ ...props }) => {
+> = ({ data, ...props }) => {
+  const { attendances, ot_and_holiday } = data
+
+  const attendancesData = attendances?.map((attend: any) => {
+    return {
+      items: [
+        {
+          key: 'planTime',
+          value: [
+            dayjs(attend?.checkin).format('HH:mm'),
+            dayjs(attend?.check_out_regulation).format('HH:mm'),
+          ],
+        },
+        {
+          key: 'realTime',
+          value: [
+            dayjs(attend?.checkin).format('HH:mm'),
+            attend?.checkout ? dayjs(attend?.checkout).format('HH:mm') : null,
+          ],
+        },
+      ],
+      checkInDay: String(dayjs(attend?.checkin).format('DD/MM/YYYY')),
+    }
+  })
+
+  console.log('DATA ->', data)
+
   return (
     <Card
       classNames={{
@@ -21,7 +50,7 @@ const ScheduleHolidayCalendarCard: React.FC<
         <ScheduleHolidayCalendarGuide />
       </div>
 
-      <ScheduleHolidayCalendar />
+      <ScheduleHolidayCalendar data={attendancesData} />
     </Card>
   )
 }

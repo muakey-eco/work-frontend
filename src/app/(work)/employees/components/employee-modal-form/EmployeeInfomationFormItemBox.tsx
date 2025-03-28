@@ -1,4 +1,3 @@
-import { useAsyncEffect } from '@/libs/hook'
 import {
   Avatar,
   DatePicker,
@@ -10,7 +9,8 @@ import {
   SelectProps,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React, { useState } from 'react'
+import React from 'react'
+import useSWR from 'swr'
 import { getBankListRequest } from '../action'
 
 export type EmployeeInfomationFormItemBoxProps = {
@@ -20,7 +20,9 @@ export type EmployeeInfomationFormItemBoxProps = {
 const EmployeeInfomationFormItemBox: React.FC<
   EmployeeInfomationFormItemBoxProps
 > = ({ className }) => {
-  const [bankList, setBankList] = useState<any[]>([])
+  const { data: result, isLoading } = useSWR('bank-list', getBankListRequest)
+
+  const { data: bankList } = result || {}
 
   const options: RadioGroupProps['options'] = [
     { label: 'Nam', value: 'male' },
@@ -38,11 +40,11 @@ const EmployeeInfomationFormItemBox: React.FC<
   ]
 
   const employeeTypeOptions: RadioGroupProps['options'] = [
-    { label: 'Full time', value: 'full_time' },
-    { label: 'Part time', value: 'part_time' },
+    { label: 'Full time', value: 'fulltime' },
+    { label: 'Part time', value: 'parttime' },
   ]
 
-  const bankOptions: SelectProps['options'] = bankList.map((bank) => ({
+  const bankOptions: SelectProps['options'] = bankList?.map((bank: any) => ({
     label: (
       <div className="flex items-center gap-[8px]">
         <Avatar
@@ -57,19 +59,9 @@ const EmployeeInfomationFormItemBox: React.FC<
     logo: bank?.logo,
   }))
 
-  useAsyncEffect(async () => {
-    if (!open) return
-
-    const res = await getBankListRequest()
-
-    const { data } = res
-
-    setBankList(data)
-  }, [open])
-
   return (
     <div className={className}>
-      <div className="mb-[16px] text-[16px] font-[600] leading-[24px]">
+      <div className="mb-[16px] text-[16px] leading-[24px] font-[600]">
         Thông tin cá nhân
       </div>
 
@@ -169,13 +161,13 @@ const EmployeeInfomationFormItemBox: React.FC<
       </div>
 
       <div className="flex items-center gap-[16px]">
-        <Form.Item
-          className="mb-[16px]! flex-1"
-          name="bank"
-          label="Ngân hàng"
-          initialValue="VietinBank"
-        >
-          <Select options={bankOptions} placeholder="Chọn ngân hàng" />
+        <Form.Item className="mb-[16px]! flex-1" name="bank" label="Ngân hàng">
+          <Select
+            options={bankOptions}
+            placeholder="Chọn ngân hàng"
+            loading={isLoading}
+            showSearch
+          />
         </Form.Item>
         <Form.Item
           className="mb-[16px]! flex-1"

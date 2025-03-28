@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import {
   App,
   DatePicker,
@@ -164,4 +163,4 @@ const ProfileEduInfomationModalForm: React.FC<
   )
 }
 
-export default withApp(ProfileEduInfomationModalForm)
+export default ProfileEduInfomationModalForm

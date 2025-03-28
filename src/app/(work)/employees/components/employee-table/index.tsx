@@ -55,10 +55,10 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   const columns = viewColumns
     ?.map((field: any) => ({
       title: field?.label,
-      dataIndex: field.value,
-      key: field.value,
+      dataIndex: field?.value,
+      key: field?.value,
       render: (text: any, record: any) => {
-        return field.value === 'full_name' ? (
+        return field?.value === 'full_name' ? (
           <div className="flex items-center gap-[8px]">
             <Avatar
               src={record?.avatar}
@@ -71,6 +71,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
             </Avatar>
             <span>{text}</span>
           </div>
+        ) : Array.isArray(text) ? (
+          ''
         ) : (
           text
         )

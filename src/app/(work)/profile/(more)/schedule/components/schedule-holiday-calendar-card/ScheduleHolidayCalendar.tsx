@@ -1,13 +1,17 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { Calendar, CalendarProps } from 'antd'
 import { createStyles } from 'antd-style'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import React from 'react'
+import ScheduleHolidayTagList from './schedule-holiday-tag-list'
 
-export type ScheduleHolidayCalendarProps = CalendarProps<any> & {}
+export type ScheduleHolidayCalendarProps = CalendarProps<any> & {
+  data?: any
+}
 
 const useStyle = createStyles(({ css, prefixCls }) => {
   return {
@@ -51,28 +55,47 @@ const useStyle = createStyles(({ css, prefixCls }) => {
   }
 })
 
-const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = (
-  props,
-) => {
+const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
+  data,
+  ...props
+}) => {
   const { styles } = useStyle()
   const today = String(dayjs(new Date()).format('DD/MM'))
 
   return (
     <Calendar
-      className={styles.customCalendar}
+      className={cn(styles.customCalendar, '!h-full w-full')}
       headerRender={() => <></>}
-      fullCellRender={(date) => {
+      fullCellRender={(d) => {
+        const date = String(d.format('DD/MM/YYYY'))
+        const day = String(d.format('DD/MM'))
+        const month = String(d.format('MM'))
+
+        const currentMonth = String(dayjs(new Date()).format('MM'))
+        const value = data?.find((item: any) => item?.checkInDay === date)
+
+        const isToday = day === today
+        const isCurrentMonth = month === currentMonth
+
         return (
           <div
             className={clsx(
-              'aspect-172/130 w-full max-w-[172px] border-t border-r px-[8px] py-[16px] text-center',
+              'h-auto min-h-[130px] w-full flex-1 border-t border-r p-[8px] text-center',
               {
-                '!border-t-[#096DD9] bg-[#E6F7FF]':
-                  String(date.format('DD/MM')) === today,
+                '!border-t-[#096DD9] bg-[#E6F7FF]': isToday,
               },
             )}
           >
-            {date.format('DD/MM')}
+            <div className="text-[14px] leading-[22px]!">
+              {d.format('DD/MM')}
+            </div>
+
+            {isCurrentMonth && !!value && (
+              <ScheduleHolidayTagList
+                dataSource={value?.items}
+                isToday={isToday}
+              />
+            )}
           </div>
         )
       }}

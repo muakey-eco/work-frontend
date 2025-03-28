@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { DeleteOutlined } from '@ant-design/icons'
 import { App, Avatar, ConfigProvider, List, ListProps } from 'antd'
@@ -97,4 +96,4 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
   )
 }
 
-export default withApp(JobCommentList)
+export default JobCommentList

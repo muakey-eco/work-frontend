@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Form, Input, Modal, ModalProps, Select } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -103,4 +102,4 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
   )
 }
 
-export default withApp(DepartmentModalForm)
+export default DepartmentModalForm

@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { calculateDayOffTotal } from '@/libs/utils'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import {
@@ -187,7 +186,7 @@ const FormFields: React.FC<{
                   </div>
                 </div>
 
-                <div className="absolute right-0 top-0 flex items-center">
+                <div className="absolute top-0 right-0 flex items-center">
                   <Button
                     type="primary"
                     className="rounded-none rounded-bl-lg bg-[#52C41A]"
@@ -372,7 +371,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
             }}
           />
 
-          <Form.Item className="mb-0! mt-[24px]">
+          <Form.Item className="mt-[24px] mb-0!">
             <Button htmlType="submit" type="primary" loading={loading}>
               Gửi yêu cầu
             </Button>
@@ -383,4 +382,4 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
   )
 }
 
-export default withApp(RegisterTimeOffForm)
+export default RegisterTimeOffForm

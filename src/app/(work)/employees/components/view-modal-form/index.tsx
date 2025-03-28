@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   CheckOutlined,
@@ -145,12 +144,12 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
             <div className="no-scroll relative h-[346px] overflow-y-auto rounded-[8px] border border-[#D9D9D9] bg-[#0000000A]">
               {viewFields.map((field: any) => (
                 <>
-                  <div className="sticky top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pl-[16px] pt-[4px]">
-                    <div className="flex items-center gap-[8px] text-[14px] font-[600] leading-[22px]">
+                  <div className="sticky top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pt-[4px] pl-[16px]">
+                    <div className="flex items-center gap-[8px] text-[14px] leading-[22px] font-[600]">
                       <RightOutlined className="text-[12px]" />
                       <span>{field.name}</span>
                     </div>
-                    <div className="border-l pl-[12px] pr-[16px]">
+                    <div className="border-l pr-[16px] pl-[12px]">
                       <DoubleRightOutlined />
                     </div>
                   </div>
@@ -225,4 +224,4 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   )
 }
 
-export default withApp(ViewModalForm)
+export default ViewModalForm

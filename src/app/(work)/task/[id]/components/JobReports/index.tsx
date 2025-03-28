@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { extractLinks } from '@/libs/utils'
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons'
 import { App, Card, List, Tooltip } from 'antd'
@@ -91,4 +90,4 @@ const JobReports: React.FC<JobReportsProps> = ({ reports }) => {
   )
 }
 
-export default withApp(JobReports)
+export default JobReports

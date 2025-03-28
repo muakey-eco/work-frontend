@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons'
 import { App, Badge, Table, TableProps } from 'antd'
 import dayjs from 'dayjs'
@@ -170,4 +169,4 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
   )
 }
 
-export default withApp(CheckInHistoryTable)
+export default CheckInHistoryTable

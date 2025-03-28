@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import {
   App,
   DatePicker,
@@ -145,12 +144,10 @@ const ProfileWorkHistoryModalForm: React.FC<
           label="Vị trí"
           name="position"
           rules={[{ required: true, message: 'Vị trí là bắt buộc' }]}
-        >
-          <Input placeholder="Nhập" />
-        </Form.Item>
+        ></Form.Item>
       </Modal>
     </>
   )
 }
 
-export default withApp(ProfileWorkHistoryModalForm)
+export default ProfileWorkHistoryModalForm

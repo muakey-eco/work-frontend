@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { App, Form, FormInstance, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -166,4 +165,4 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   )
 }
 
-export default withApp(WorkflowModalForm)
+export default WorkflowModalForm

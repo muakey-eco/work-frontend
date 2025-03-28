@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { CheckOutlined } from '@ant-design/icons'
 import { App, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -62,4 +61,4 @@ const TodoCompletedButton: React.FC<TodoCompletedButtonProps> = ({
   )
 }
 
-export default withApp(TodoCompletedButton)
+export default TodoCompletedButton

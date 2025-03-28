@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { randomColor } from '@/libs/utils'
 import { EditOutlined, UserOutlined } from '@ant-design/icons'
@@ -241,4 +240,4 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
   )
 }
 
-export default withApp(AccountModalForm)
+export default AccountModalForm

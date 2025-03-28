@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Checkbox, Form, FormProps, Input, Modal, ModalProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -156,4 +155,4 @@ const ProfileContactModalForm: React.FC<ProfileContactModalFormProps> = ({
   )
 }
 
-export default withApp(ProfileContactModalForm)
+export default ProfileContactModalForm

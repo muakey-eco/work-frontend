@@ -1,9 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export const GET = async () => {
-  const ip = await fetch('https://api64.ipify.org?format=json')
-    .then((res) => res.json())
-    .then(({ ip }) => ip)
+export const GET = async (request: NextRequest) => {
+  const ip = request.headers.get('x-real-ip')
 
   return NextResponse.json({ ip })
 }

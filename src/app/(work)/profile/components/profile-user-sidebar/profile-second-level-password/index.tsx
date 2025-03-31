@@ -1,47 +1,95 @@
-import { Button, Form, Modal } from "antd";
-import { useState } from "react";
-import IconSuccess from '@/assets/images/icon-success-second-level-password.png';
-import { LockOutlined } from "@ant-design/icons";
+import IconCancel from '@/assets/images/icon-cancel-second-level-password.png'
+import IconSuccess from '@/assets/images/icon-success-second-level-password.png'
+import { LockOutlined } from '@ant-design/icons'
+import { Button, Form, Modal } from 'antd'
+import clsx from 'clsx'
+import Image from 'next/image'
+import React, { useState } from 'react'
 
-const ProfileSecondLevelPassword = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    return (
-        <>
-            <div
-                className="flex cursor-pointer hover:text-[#1890FF] gap-[10px]"
-                onClick={() => setIsModalOpen(true)}>
-                <LockOutlined />
-                <p>Mật khẩu cấp hai</p>
-            </div>
-            <Modal
-                okText="Lưu"
-                cancelText="Hủy"
-                title="Mật khẩu cấp hai"
-                open={isModalOpen}
-                onOk={() => setIsModalOpen(false)}
-                onCancel={() => setIsModalOpen(false)}
-                width={433}
-                footer={null}
-            >
-                <Form
-                    layout="vertical"
-                    className="flex flex-col items-center gap-[16px]"
-                >
-                    <img
-                        src={IconSuccess.src}
-                        alt=""
-                        className="w-[168px] h-[112px]"
-                    />
-                    <p>Đã cấp mật khẩu cấp hai</p>
-                    <Button
-                        type="primary"
-                        onClick={() => setIsModalOpen(false)}
-                    >Yêu cầu cấp lại</Button>
-                </Form >
-            </Modal >
-        </>
-    )
+type ProfileSecondLevelPasswordModalFormProps = {
+  active?: boolean
+  label?: string
+  onChangeValue?: (text: string) => void
 }
 
-export default ProfileSecondLevelPassword;
+const ProfileSecondLevelPasswordModalForm: React.FC<
+  ProfileSecondLevelPasswordModalFormProps
+> = ({ active, onChangeValue, label }) => {
+  const [isModalSuccess, setIsModalSuccess] = useState(false)
+  const [isModalCancel, setIsModalCancel] = useState(false)
+
+  const handelCancel = () => {
+    setIsModalSuccess(false)
+    setIsModalCancel(false)
+    onChangeValue && onChangeValue('')
+  }
+
+  return (
+    <>
+      <div
+        className={clsx('flex cursor-pointer gap-[10px] hover:text-[#1890FF]', {
+          'text-[#1890FF]': active,
+        })}
+        onClick={() => {
+          setIsModalSuccess(true)
+          onChangeValue && onChangeValue(label || '')
+        }}
+      >
+        <LockOutlined />
+        {label}
+      </div>
+
+      <Modal
+        okText="Lưu"
+        cancelText="Hủy"
+        title="Mật khẩu cấp hai"
+        open={isModalSuccess}
+        onOk={handelCancel}
+        onCancel={handelCancel}
+        width={433}
+        footer={null}
+      >
+        <Form
+          layout="vertical"
+          className="flex flex-col items-center gap-[16px]"
+        >
+          <Image src={IconSuccess.src} alt="" width={168} height={112} />
+          <p>Đã cấp mật khẩu cấp hai</p>
+          <Button
+            type="primary"
+            onClick={() => {
+              setIsModalSuccess(false)
+              setIsModalCancel(true)
+            }}
+          >
+            Yêu cầu cấp lại
+          </Button>
+        </Form>
+      </Modal>
+
+      <Modal
+        okText="Lưu"
+        cancelText="Hủy"
+        title="Mật khẩu cấp hai"
+        open={isModalCancel}
+        onOk={handelCancel}
+        onCancel={handelCancel}
+        width={433}
+        footer={null}
+      >
+        <Form
+          layout="vertical"
+          className="flex flex-col items-center gap-[16px]"
+        >
+          <Image src={IconCancel.src} width={168} height={112} alt="" />
+          <p>Đã gửi yêu cầu cấp lại mật khẩu cấp hai</p>
+          <Button danger onClick={handelCancel}>
+            Huỷ yêu cầu
+          </Button>
+        </Form>
+      </Modal>
+    </>
+  )
+}
+
+export default ProfileSecondLevelPasswordModalForm

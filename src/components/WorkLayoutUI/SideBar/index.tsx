@@ -47,13 +47,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
 
   const navigationItems = [
     {
-      label: 'QUAN TRỌNG',
+      label: 'Quản lý công việc',
+      icon: <FolderOpenFilled className="text-[14px]" />,
       expand: true,
+      type: 'filled-rounded',
       children: [
         {
           label: (
-            <div className="flex items-center gap-[12px]">
-              <FolderOpenFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
               <span>Quản lý quy trình</span>
             </div>
           ),
@@ -61,115 +63,147 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[12px]">
-              <HddFilled className="text-[16px]" />
-              <span>Quản lý phòng ban</span>
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Công việc của tôi</span>
             </div>
           ),
+          taskCount: 10,
           href: '/department',
         },
         {
           label: (
-            <div className="flex items-center gap-[12px]">
-              <CalendarFilled className="text-[16px]" />
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Thống kê</span>
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      label: 'Quản lý nhân sự',
+      icon: <FolderOpenFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Danh sách tài khoản</span>
+            </div>
+          ),
+
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Danh sách nhân sự</span>
+            </div>
+          ),
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Phòng ban</span>
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      label: 'Quản lý chấm công',
+      icon: <FolderOpenFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
               <span>Chấm công</span>
             </div>
           ),
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className='h-[16px] w-[16px]' />
+              <span>Yêu cầu</span>
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      label: 'Marketing',
+      icon: <FolderOpenFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      children: [],
+    },
+    {
+      label: 'Tài nguyên',
+      icon: <FolderOpenFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      children: [],
+    },
+    {
+      label: 'Danh mục 1',
+      expand: true,
+      type: 'plain',
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
+              <span>Quy trình 1</span>
+            </div>
+          ),
+          shouldRound: true,
           href: '/check-in',
         },
         {
           label: (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-[12px]">
-                <ShoppingFilled className="text-[16px]" />
-                <span>Công việc của tôi</span>
-              </div>
-              {todosCount > 0 && (
-                <div className="rounded-[4px] bg-[#ff5555] px-[6px] pt-[2px] pb-[4px] text-[12px] font-[500]">
-                  <span className="leading-[12px]">{todosCount}</span>
-                </div>
-              )}
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
+              <span>Quy trình 2</span>
             </div>
           ),
-          href: '/todos',
+          shouldRound: true,
         },
-        {
-          label: (
-            <div className="flex items-center gap-[12px]">
-              <SignalFilled className="text-[16px]" />
-              <span>Thống kê</span>
-            </div>
-          ),
-          href: '/statistics',
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[12px]">
-              <ProfileFilled className="text-[16px]" />
-              <span>Yêu cầu</span>
-            </div>
-          ),
-          href: '/request',
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[12px]">
-              <FileFilled className="text-[16px]" />
-              <span>Tài nguyên</span>
-            </div>
-          ),
-          href: '/resources',
-        },
-        user?.role === 'Quản trị cấp cao'
-          ? {
-              label: (
-                <div className="flex items-center gap-[12px]">
-                  <ContainerFilled className="text-[16px]" />
-                  <span>Danh sách tài khoản</span>
-                </div>
-              ),
-              href: '/accounts',
-            }
-          : {},
-        // {
-        //   label: (
-        //     <div className="flex items-center gap-[12px]">
-        //       <FileFilled className="text-[16px]" />
-        //       <span>Quản lý nhân sự</span>
-        //     </div>
-        //   ),
-        //   children: [
-        //     {
-        //       label: <div className="pl-[28px]">Danh sách tài khoản</div>,
-        //       href: '/accounts',
-        //     },
-        //     {
-        //       label: <div className="pl-[28px]">Danh sách nhân sự</div>,
-        //       href: '/staffs',
-        //     },
-        //   ],
-        // },
       ],
     },
-    ...(workflowCategories && workflowCategories.length > 0
-      ? workflowCategories?.map((w: any) => ({
-          label: w?.name,
-          children: w?.workflows
-            ? w?.workflows.map((i: any) => ({
-                label: (
-                  <Tooltip title={i?.name}>
-                    <div className="flex items-center gap-[12px]">
-                      <ProjectFilled className="text-[16px]" />
-                      <span className="line-clamp-1">{i?.name}</span>
-                    </div>
-                  </Tooltip>
-                ),
-                href: `/workflows/${i?.id}`,
-              }))
-            : [],
-          expand: true,
-        }))
-      : []),
+    {
+      label: 'Danh mục 2',
+      expand: true,
+      type: 'plain',
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
+              <span>Quy trình 1</span>
+            </div>
+          ),
+          shouldRound: true,
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <FolderOpenFilled className="text-[14px]" />
+              <span>Quy trình 2</span>
+            </div>
+          ),
+          shouldRound: true,
+        },
+      ],
+    },
+
   ]
 
   return (
@@ -186,11 +220,13 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       }
       {...props}
     >
-      <div className="flex-1 px-[12px]">
-        <User user={user} />
-        <Search />
+      <div className="flex-1 pr-[4px]">
+        <div className='flex flex-col justify-center px-[13px] w-[207px]'>
+          <User user={user} />
+          <Search />
+        </div>
         <Navigation
-          className="no-scroll mt-[20px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
+          className="no-scroll mt-[24px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
           items={navigationItems}
         />
         {/* <Menu mode="inline" items={navigationItems} /> */}

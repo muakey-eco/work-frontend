@@ -53,7 +53,7 @@ const NavigationSubmenu: React.FC<{
             }
             ghost={ghost}
             matchType={matchType}
-            className="px-[16px] py-[10px] leading-[20px]"
+            className="leading-[22px]"
           />
         )
       })}

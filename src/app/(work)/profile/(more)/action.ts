@@ -8,6 +8,7 @@ import {
 } from '@/libs/contract'
 import { editAccount, getBankList, uploadFiles } from '@/libs/data'
 import { getDepartments } from '@/libs/department'
+import { getLoginHistory } from '@/libs/login-history'
 
 export const getBankListRequest = async () => {
   return await getBankList()
@@ -51,4 +52,8 @@ export const updateAccountAction = async (
 
 export const uploadFilesAction = async (data: FormData) => {
   return await uploadFiles(data)
+}
+
+export const getLoginHistoryAction = async (page: number) => {
+  return await getLoginHistory(page);
 }

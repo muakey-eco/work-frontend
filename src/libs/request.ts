@@ -1,3 +1,6 @@
+'use server'
+
+import { headers } from 'next/headers'
 import { getSession } from './session'
 
 export type RequestOptions = NodeJS.RequestInit & {
@@ -81,11 +84,14 @@ export const requestWithAuthorized = async (
     throw new Error('Unauthorized.')
   }
 
+  const xForwardedFor = (await headers()).get('x-forwarded-for')
+
   return request(path, {
     cache: 'no-store',
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
+      'x-forwarded-for': xForwardedFor || '',
       ...options?.headers,
     },
   })

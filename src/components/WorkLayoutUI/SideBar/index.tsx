@@ -4,17 +4,13 @@ import { getTodos } from '@/libs/todos'
 import { Navigation } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
-  CalendarFilled,
   ContainerFilled,
+  DatabaseOutlined,
   FileFilled,
   FolderOpenFilled,
-  HddFilled,
   ProfileFilled,
-  ProjectFilled,
-  ShoppingFilled,
   SignalFilled,
 } from '@ant-design/icons'
-import { Tooltip } from 'antd'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -55,7 +51,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Quản lý quy trình</span>
             </div>
           ),
@@ -64,7 +60,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Công việc của tôi</span>
             </div>
           ),
@@ -74,7 +70,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Thống kê</span>
             </div>
           ),
@@ -90,16 +86,15 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Danh sách tài khoản</span>
             </div>
           ),
-
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Danh sách nhân sự</span>
             </div>
           ),
@@ -107,7 +102,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Phòng ban</span>
             </div>
           ),
@@ -123,7 +118,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Chấm công</span>
             </div>
           ),
@@ -131,7 +126,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className='h-[16px] w-[16px]' />
+              <div className="h-[16px] w-[16px]" />
               <span>Yêu cầu</span>
             </div>
           ),
@@ -176,6 +171,71 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           ),
           shouldRound: true,
         },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <SignalFilled className="text-[16px]" />
+              <span>Thống kê</span>
+            </div>
+          ),
+          href: '/statistics',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <ProfileFilled className="text-[16px]" />
+              <span>Yêu cầu</span>
+            </div>
+          ),
+          href: '/request',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <FileFilled className="text-[16px]" />
+              <span>Tài nguyên</span>
+            </div>
+          ),
+          href: '/resources',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[12px]">
+              <DatabaseOutlined className="text-[16px]" />
+              <span>Tài sản công ty</span>
+            </div>
+          ),
+          href: '/asset',
+        },
+        user?.role === 'Quản trị cấp cao'
+          ? {
+              label: (
+                <div className="flex items-center gap-[12px]">
+                  <ContainerFilled className="text-[16px]" />
+                  <span>Danh sách tài khoản</span>
+                </div>
+              ),
+              href: '/accounts',
+            }
+          : {},
+        // {
+        //   label: (
+        //     <div className="flex items-center gap-[12px]">
+        //       <FileFilled className="text-[16px]" />
+        //       <span>Quản lý nhân sự</span>
+        //     </div>
+        //   ),
+        //   children: [
+        //     {
+        //       label: <div className="pl-[28px]">Danh sách tài khoản</div>,
+        //       href: '/accounts',
+        //     },
+        //     {
+        //       label: <div className="pl-[28px]">Danh sách nhân sự</div>,
+        //       href: '/staffs',
+        //     },
+        //   ],
+        // },
       ],
     },
     {
@@ -203,7 +263,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
       ],
     },
-
   ]
 
   return (
@@ -221,7 +280,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       {...props}
     >
       <div className="flex-1 pr-[4px]">
-        <div className='flex flex-col justify-center px-[13px] w-[207px]'>
+        <div className="flex w-[207px] flex-col justify-center px-[13px]">
           <User user={user} />
           <Search />
         </div>

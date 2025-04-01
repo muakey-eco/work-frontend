@@ -6,10 +6,10 @@ const User: React.FC<{
   user?: any
 }> = ({ user }) => {
   return (
-    <div className="flex w-full items-center gap-[12px] py-[16px]">
+    <div className="flex w-full items-center gap-[6px] py-[16px]">
       <Avatar
         className="rounded-full! text-[16px]!"
-        size={32}
+        size={28}
         shape="circle"
         src={user?.avatar}
         style={{
@@ -20,7 +20,7 @@ const User: React.FC<{
         {String(user?.full_name).charAt(0).toLocaleUpperCase()}
       </Avatar>{' '}
       <div>
-        <div className="text-[15px] leading-[20px] font-[400]">
+        <div className="text-[14px] leading-[20px] font-[400]">
           {user?.full_name}
         </div>
         {user?.position && (

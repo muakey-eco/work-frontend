@@ -19,7 +19,7 @@ export const getThumbnailFromYoutubeUrl = (url: string, size?: string) => {
   return `https://img.youtube.com/vi/${videoId}/0.jpg`
 }
 
-export const formatCurrency = (value: number) => {
+export const formatCurrency = (value: any) => {
   return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
@@ -54,4 +54,8 @@ export const updateQueryParams = (
   })
 
   return `?${params.toString()}`
+}
+
+export const mapAsFile = (files: any[]) => {
+  return files.map((file) => file.originFileObj || file)
 }

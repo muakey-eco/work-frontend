@@ -124,10 +124,11 @@ export const addAccount = async (data: any) =>
     data,
   }).then((data) => data)
 
-export const editAccount = async (id: number, data: any) =>
+export const editAccount = async (id: number, data: any, body?: FormData) =>
   requestWithAuthorized(`accounts/${id}`, {
     method: 'PUT',
     data,
+    body,
   }).then((data) => data)
 
 export const deleteAccount = async (id: number) =>
@@ -383,7 +384,5 @@ export const uploadFiles = async (data: FormData) => {
   return await requestWithFile('upload-files', {
     method: 'POST',
     body: data,
-  }).catch((error) => {
-    console.log(error)
-  })
+  }).catch(() => null)
 }

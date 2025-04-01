@@ -1,3 +1,6 @@
+'use server'
+
+import { headers } from 'next/headers'
 import { getSession } from './session'
 
 export type RequestOptions = NodeJS.RequestInit & {
@@ -19,9 +22,15 @@ export const request = async (path: string, options?: RequestOptions) => {
     }
   }
 
+  const clientIp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ip`)
+    .then((res) => res.json())
+    .then(({ ip }) => ip)
+    .catch(() => '')
+
   const init: NodeJS.RequestInit = {
     headers: {
       accept: 'application/json',
+      'x-client-ip': clientIp,
       ...headers,
     },
     ...rest,
@@ -75,11 +84,14 @@ export const requestWithAuthorized = async (
     throw new Error('Unauthorized.')
   }
 
+  const xForwardedFor = (await headers()).get('x-forwarded-for')
+
   return request(path, {
     cache: 'no-store',
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
+      'x-forwarded-for': xForwardedFor || '',
       ...options?.headers,
     },
   })

@@ -1,6 +1,6 @@
 'use client'
 
-import { Asset } from '@/interfaces'
+import { Asset, TotalStatus } from '@/interfaces'
 import { formatCurrency } from '@/lib/utils'
 import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
@@ -10,13 +10,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { filterAssetsAction } from '../asset-drawer/action'
 
-import { getAssetCountAction } from './action'
 export type AssetTableProps = TableProps & {
   onStatusChange?: (status: string) => void
   defaultActiveKey?: string
   dataSource?: Asset[]
   per_page?: number
   total?: number
+  total_status?: TotalStatus[]
 }
 
 const genStatus = (
@@ -42,6 +42,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   dataSource,
   total = dataSource?.length,
   per_page,
+  total_status,
   ...props
 }) => {
   const router = useRouter()
@@ -49,58 +50,67 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
   const [tab, setTab] = useState(defaultActiveKey)
   const [assets, setAssets] = useState<Asset[]>(dataSource || [])
-  const [statusCount, setStatusCount] = useState<any>({})
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      const res = await getAssetCountAction()
-      setStatusCount(res)
-    }
-    fetchCount()
-  }, [])
-  console.log('statusCount', statusCount)
+  const [totalStatus, setTotalStatus] = useState<TotalStatus[]>(
+    total_status || [],
+  )
   const tabs: TabsProps['items'] = [
     {
-      label: `Tất cả (${statusCount[5].total || 0})`,
+      label: `Tất cả (${totalStatus?.[5]?.total || 0})`,
       key: 'all',
     },
     {
-      label: `Đang sử dụng (${statusCount[0]?.count || 0})`,
+      label: `Đang sử dụng (${totalStatus?.[0]?.count || 0})`,
       key: 'using',
     },
     {
-      label: `Chưa sử dụng (${statusCount[1]?.count || 0})`,
+      label: `Chưa sử dụng (${totalStatus?.[1]?.count || 0})`,
       key: 'unused',
     },
     {
-      label: `Đang bảo hành (${statusCount[3]?.count || 0})`,
+      label: `Đang bảo hành (${totalStatus?.[3]?.count || 0})`,
       key: 'warranty',
     },
     {
-      label: `Hỏng (${statusCount[4]?.count || 0})`,
+      label: `Hỏng (${totalStatus?.[4]?.count || 0})`,
       key: 'broken',
     },
     {
-      label: `Đã thanh lý (${statusCount[2]?.count || 0})`,
+      label: `Đã thanh lý (${totalStatus?.[2]?.count || 0})`,
       key: 'liquidated',
     },
   ]
 
+  //check url nếu không có status thì set tab là all
   useEffect(() => {
     const status = searchParams.get('status')
-    if (status) {
+    // Danh sách các giá trị status hợp lệ
+    const validStatuses = [
+      'using',
+      'unused',
+      'warranty',
+      'broken',
+      'liquidated',
+    ]
+
+    if (!status || !validStatuses.includes(status)) {
+      setTab('all')
+    } else {
       setTab(status)
     }
   }, [searchParams])
 
+  //fetch data khi url thay đổi
   useEffect(() => {
     const fetchData = async () => {
       const res = await filterAssetsAction(searchParams.toString())
-      setAssets(res.data)
+      setAssets(res?.data?.data || [])
+      setTotalStatus(res?.data?.total_status || [])
+      console.log('res', res)
     }
     fetchData()
   }, [searchParams])
 
+  //Xử lý đổi tab
   const handleChangeTab = async (key: string) => {
     const currentParams = new URLSearchParams(window.location.search) // Giữ nguyên tham số hiện tại
     currentParams.delete('page') // Reset phân trang
@@ -132,8 +142,16 @@ const AssetTable: React.FC<AssetTableProps> = ({
     router.push(`/asset/${record.id}`)
   }
 
-  const handleChangePage = async (page: number) => {
-    const currentParams = new URLSearchParams()
+  const currentPage = Number(searchParams.get('page')) || 1
+  const currentPageSize = Number(searchParams.get('per_page')) || per_page || 10
+  //Xử lý đổi trang
+  const handleChangePage = async (page: number, pageSize?: number) => {
+    const currentParams = new URLSearchParams(window.location.search)
+
+    currentParams.set('page', page.toString())
+    if (pageSize) {
+      currentParams.set('per_page', pageSize.toString())
+    }
 
     router.push(`/asset?${currentParams.toString()}`, { scroll: false })
   }
@@ -201,9 +219,9 @@ const AssetTable: React.FC<AssetTableProps> = ({
         })}
         className="cursor-pointer"
         pagination={{
-          current: Number(searchParams.get('page')) || 1,
-          pageSize: per_page || 1,
-          total: assets?.length < 8 ? assets.length : (total ?? assets?.length),
+          current: currentPage,
+          pageSize: currentPageSize,
+          total: totalStatus?.[5]?.total || 0,
           showSizeChanger: true,
           showQuickJumper: true,
           pageSizeOptions: ['5', '10', '15', '20', '50', '100'],

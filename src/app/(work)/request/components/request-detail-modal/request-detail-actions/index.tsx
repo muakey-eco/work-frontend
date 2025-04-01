@@ -1,7 +1,6 @@
 'use client'
 
 import { RequestConfirmModalForm } from '@/components'
-import { withApp } from '@/hoc'
 import { App, Button } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -89,4 +88,4 @@ const RequestDetailActions: React.FC<RequestDetailActionsProps> = ({
   )
 }
 
-export default withApp(RequestDetailActions)
+export default RequestDetailActions

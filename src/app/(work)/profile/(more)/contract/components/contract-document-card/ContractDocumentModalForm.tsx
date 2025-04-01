@@ -1,12 +1,11 @@
 'use client'
 
-import { withApp } from '@/hoc'
+import { mapAsFile } from '@/lib/utils'
 import { UploadOutlined } from '@ant-design/icons'
 import { App, Button, Form, FormProps, Modal, ModalProps, Upload } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { updateAccountAction, uploadFilesAction } from '../../../action'
-import { mapAsFile } from '../ultils'
 
 type ContractDocumentModalFormProps = ModalProps & {
   children?: React.ReactNode
@@ -120,4 +119,4 @@ const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
   )
 }
 
-export default withApp(ContractDocumentModalForm)
+export default ContractDocumentModalForm

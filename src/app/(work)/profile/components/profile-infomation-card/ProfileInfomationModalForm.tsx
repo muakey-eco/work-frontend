@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   App,
@@ -264,4 +263,4 @@ const ProfileInfomationModalForm: React.FC<ProfileInfomationModalFormProps> = ({
   )
 }
 
-export default withApp(ProfileInfomationModalForm)
+export default ProfileInfomationModalForm

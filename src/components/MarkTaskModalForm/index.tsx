@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Form, FormInstance, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
@@ -156,4 +155,4 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
   )
 }
 
-export default withApp(MarkTaskModalForm)
+export default MarkTaskModalForm

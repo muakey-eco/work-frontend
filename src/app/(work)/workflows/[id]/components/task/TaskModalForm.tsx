@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { withApp } from '@/hoc'
 import {
   App,
   DatePicker,
@@ -305,4 +304,4 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   )
 }
 
-export default withApp(TaskModalForm)
+export default TaskModalForm

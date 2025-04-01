@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   App,
@@ -206,4 +205,4 @@ const JobInfomationModalForm: React.FC<JobInfomationModalFormProps> = ({
   )
 }
 
-export default withApp(JobInfomationModalForm)
+export default JobInfomationModalForm

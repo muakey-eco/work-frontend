@@ -5,11 +5,12 @@ import { getDepartmentListRequest } from '../../../../action'
 
 export type JobProgressInfomationFormCardProps = {
   title?: string
+  shouldCall?: boolean
 }
 
 const JobProgressInfomationFormCard: React.FC<
   JobProgressInfomationFormCardProps
-> = ({ title }) => {
+> = ({ title, shouldCall = true }) => {
   const [department, setDepartment] = useState([])
 
   const departmentOptions = department?.map((item: any) => ({
@@ -29,9 +30,12 @@ const JobProgressInfomationFormCard: React.FC<
   ]
 
   useAsyncEffect(async () => {
+    if (!shouldCall) return
+
     const res = await getDepartmentListRequest()
+
     setDepartment(res)
-  }, [])
+  }, [shouldCall])
 
   return (
     <Card>

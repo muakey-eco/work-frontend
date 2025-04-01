@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Button, DatePicker, DatePickerProps, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
@@ -206,4 +205,4 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   )
 }
 
-export default withApp(CheckInTimeEditForm)
+export default CheckInTimeEditForm

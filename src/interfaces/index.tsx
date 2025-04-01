@@ -53,3 +53,8 @@ export interface AssetFull extends Asset {
   total: number
 }
 
+export interface TotalStatus {
+  status?: string
+  count?: number
+  total?: number
+}

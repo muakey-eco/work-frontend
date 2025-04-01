@@ -1,7 +1,6 @@
 'use client'
 
 import { CheckInSwitchForms } from '@/components'
-import { withApp } from '@/hoc'
 import { convertToSlug } from '@/libs/utils'
 import { App, Form, FormInstance, Input, Modal, Select } from 'antd'
 import dayjs from 'dayjs'
@@ -208,4 +207,4 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
   )
 }
 
-export default withApp(RequestModalForm)
+export default RequestModalForm

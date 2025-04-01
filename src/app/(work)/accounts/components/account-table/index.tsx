@@ -1,7 +1,6 @@
 'use client'
 
 import AccountModalForm from '@/components/AccountModalForm'
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { randomColor } from '@/libs/utils'
 import { EditOutlined, LockOutlined } from '@ant-design/icons'
@@ -172,4 +171,4 @@ const AccountTable: React.FC<AccountTableProps> = ({
   )
 }
 
-export default withApp(AccountTable)
+export default AccountTable

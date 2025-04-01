@@ -12,15 +12,11 @@ const AssetPage: React.FC<any> = async ({
   const params = await searchParams
   const page = params?.page || '1'
   const status = params?.status || 'all'
-  const search = params?.search || ''
 
   const query = new URLSearchParams()
   query.set('page', page)
   if (status !== 'all') {
     query.set('status', status)
-  }
-  if (search) {
-    query.set('search', search)
   }
 
   const assets = await getAssetsByPagnition(query.toString())
@@ -33,6 +29,7 @@ const AssetPage: React.FC<any> = async ({
           dataSource={assets.data}
           total={assets.total}
           per_page={assets.per_page}
+          total_status={assets.total_status}
           defaultActiveKey={status}
         />
       </PageContent>

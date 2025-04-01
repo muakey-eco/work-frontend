@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { App, Form, FormProps, Input, Modal, ModalProps } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -89,4 +88,4 @@ const RequestConfirmModalForm: React.FC<RequestConfirmModalFormProps> = ({
   )
 }
 
-export default withApp(RequestConfirmModalForm)
+export default RequestConfirmModalForm

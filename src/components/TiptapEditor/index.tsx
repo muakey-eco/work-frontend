@@ -1,7 +1,7 @@
 'use client'
 
 import { uploadImageAction } from '@/app/admin/accounts/account-actions/action'
-import { withApp } from '@/hoc'
+import { cn } from '@/lib/utils'
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'
@@ -27,11 +27,13 @@ import TiptapToolbars from './TiptapToolbars'
 type TiptapEditorProps = Omit<EditorContentProps, 'editor' | 'ref'> & {
   content?: Content
   onChange?: (content: string) => void
+  showToolbar?: boolean
 }
 
 const TiptapEditor: React.FC<TiptapEditorProps> = ({
   content,
   onChange,
+  showToolbar = true,
   ...rest
 }) => {
   const { message } = App.useApp()
@@ -154,8 +156,12 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class:
+        class: cn(
           'min-h-[150px] p-[8px] border-x border-b rounded-b-[12px] focus:outline-hidden',
+          {
+            '!min-h-[180px] border-t rounded-t-[12px]': !showToolbar,
+          },
+        ),
       },
     },
     onPaste: async (e) => {
@@ -195,10 +201,10 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
   return (
     <div>
-      <TiptapToolbars editor={editor} />
+      {showToolbar && <TiptapToolbars editor={editor} />}
       <EditorContent editor={editor} {...rest} />
     </div>
   )
 }
 
-export default withApp(TiptapEditor)
+export default TiptapEditor

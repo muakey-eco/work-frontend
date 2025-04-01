@@ -1,7 +1,6 @@
 'use client'
 
 import { InitializedMDXEditor } from '@/components'
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
@@ -255,4 +254,4 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   )
 }
 
-export default withApp(TaskModalForm)
+export default TaskModalForm

@@ -120,7 +120,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
             >
               <div className="flex cursor-pointer items-center gap-[8px]">
                 <MenuOutlined className="text-[#00000073]" />
-                <span className="text-nowrap text-[14px] leading-[22px]">
+                <span className="text-[14px] leading-[22px] text-nowrap">
                   Tất cả views
                 </span>
               </div>
@@ -128,7 +128,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
             <ViewModalForm>
               <div className="flex cursor-pointer items-center gap-[8px]">
                 <PlusCircleOutlined className="text-[#00000073]" />
-                <span className="text-nowrap text-[14px] leading-[22px]">
+                <span className="text-[14px] leading-[22px] text-nowrap">
                   Thêm views
                 </span>
               </div>

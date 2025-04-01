@@ -1,3 +1,4 @@
+import { AppProviders } from '@/components'
 import ProgressProviders from '@/components/ProgressProviders'
 import { leagueSpartan } from '@/fonts/fonts'
 import { GoogleTagManager } from '@next/third-parties/google'
@@ -25,8 +26,10 @@ export default function RootLayout({
         />
       )}
       <body className={`${leagueSpartan.variable}`}>
-        <ProgressProviders>{children}</ProgressProviders>
-        <ToastHolder />
+        <AppProviders>
+          <ProgressProviders>{children}</ProgressProviders>
+          <ToastHolder />
+        </AppProviders>
       </body>
     </html>
   )

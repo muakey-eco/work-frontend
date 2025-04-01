@@ -13,8 +13,8 @@ import {
   ModalProps,
   Select,
 } from 'antd'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useAssetForm } from '../../hooks/useAssetForm'
 
 export type AssetDrawerProps = ModalProps & {
@@ -32,15 +32,28 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
   const [loading, setLoading] = useState(false)
   const { statusOptions } = useAssetForm()
 
+  const searchParams = useSearchParams()
+  const statusFromUrl = searchParams.get('status')
+
   const router = useRouter()
   const handleCancel = () => {
-    form.resetFields()
     setOpen(false)
   }
 
+  useEffect(() => {
+    form.setFieldsValue({ status: statusFromUrl || undefined })
+  }, [statusFromUrl]) // Cập nhật giá trị khi URL thay đổi
+
   const handleFilter = async () => {
     const values = await form.validateFields()
+
     setLoading(true)
+    if (Object.values(values).every((value) => value === undefined)) {
+      router.push(`/asset`)
+      setLoading(false)
+      setOpen(false)
+      return
+    }
 
     try {
       // Bỏ giá trị null, undefined, chuỗi rỗng
@@ -86,6 +99,7 @@ const AssetDrawer: React.FC<AssetDrawerProps> = ({
               className="mb-[0px]! w-full"
               name="account_id"
               label="Người sử dụng"
+              placeholder="Chọn người sử dụng"
             />
             <CategoryFormItems
               className="mb-[0px]! w-full"

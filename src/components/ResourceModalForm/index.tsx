@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { useAsyncEffect } from '@/libs/hook'
 import { UploadOutlined } from '@ant-design/icons'
 import {
@@ -346,4 +345,4 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
   )
 }
 
-export default withApp(ResourceModalForm)
+export default ResourceModalForm

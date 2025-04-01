@@ -18,7 +18,7 @@ export const getAssets = async () => {
 }
 export const filterAssets = async (query: string) => {
   return await requestWithAuthorized(`assets?${query}`)
-    .then(({ data }) => data)
+    .then(( data ) => data)
     .catch(() => [])
 }
 export const getAssetsByPagnition = async (query: string) => {

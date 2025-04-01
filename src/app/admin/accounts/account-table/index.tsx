@@ -1,6 +1,5 @@
 'use client'
 
-import { withApp } from '@/hoc'
 import { randomColor } from '@/libs/utils'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { App, Avatar, Table, TableProps } from 'antd'
@@ -111,7 +110,7 @@ const AccountTable: React.FC<AccountTableProps> = ({
 
   return (
     <div className="h-[calc(100vh-166px)] overflow-hidden rounded-[16px] bg-[#fff] p-[24px]">
-      <h2 className="text-[22px] font-[500] leading-[28px]">
+      <h2 className="text-[22px] leading-[28px] font-[500]">
         Danh sách tài khoản
       </h2>
 
@@ -128,4 +127,4 @@ const AccountTable: React.FC<AccountTableProps> = ({
   )
 }
 
-export default withApp(AccountTable)
+export default AccountTable

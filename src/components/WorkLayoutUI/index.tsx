@@ -11,7 +11,7 @@ const WorkLayoutUI: React.FC<WorkLayoutUIProps> = async ({ children }) => {
   return (
     <Layout className="overflow-hidden" hasSide>
       <SideBar
-        className="h-[100vh] w-[280px] bg-[#1469c9] text-[#fff]"
+        className="h-[100vh] w-[280px] bg-[#3268C7] text-[#fff]"
         user={user}
       />
       <Layout.Main className="max-h-[100vh] max-w-[calc(100vw-280px)] flex-1">

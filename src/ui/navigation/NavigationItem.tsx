@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import clsx from 'clsx'
 import { uniqueId } from 'lodash'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 import { NavigationMenuType } from '.'
 import { DownOutlined } from '../icons'
@@ -30,10 +31,18 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
 }) => {
   const [show, setShow] = useState(true)
 
+  const pathname = usePathname()
+
+  const isActive = pathname === item?.href
   const layout = clsx({
     'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
       item?.type === 'filled-rounded' && item.children?.length !== 0 && show,
     'mt-[16px]': item?.type === 'plain',
+    'rounded-4xl bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
+      isActive && item?.children?.length === 0,
+    'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
+      (item?.type === 'filled-rounded' && !show) ||
+      item?.children?.length === 0,
   })
 
   const className = cn(
@@ -67,16 +76,11 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         <div
           className={clsx(
             'w-full text-[14px]',
-            item?.type === 'plain' ? '#FFFFFF99' : 'text-white',
+            item?.type === 'plain' ? 'text-[#FFFFFF99]' : 'text-white',
           )}
         >
           {item?.label}
         </div>
-        {item?.taskCount && (
-          <p className="rounded-[4px] bg-[#ff5555] px-[6px] pt-[2px] pb-[4px] text-[12px] font-[500] text-white">
-            {item?.taskCount}
-          </p>
-        )}
       </div>
 
       {item?.children && item.children.length > 0 && (
@@ -103,7 +107,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         className={'cursor-pointer rounded-full text-[16px] leading-none'}
         onClick={handleClick}
       >
-        {item?.children ? (
+        {item?.children && item.children.length > 0 ? (
           <div className={className}>{node}</div>
         ) : (
           <Link className={className} href={item?.href ?? ''}>

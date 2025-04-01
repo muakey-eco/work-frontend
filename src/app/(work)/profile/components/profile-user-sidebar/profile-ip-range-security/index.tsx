@@ -1,23 +1,48 @@
+import { SafetyOutlined } from "@ant-design/icons";
 import { Form, Input, Modal, Select } from "antd";
-import { useState } from "react";
+import clsx from "clsx";
+import React, { useState } from "react";
 
-const ProfileIPRangeSecurity = () => {
+type ProfileChangePasswordModalFormProps = {
+    active?: boolean,
+    label?: string,
+    onChangeValue?: (text: string) => void
+}
+
+const ProfileIPRangeSecurityModalForm: React.FC<ProfileChangePasswordModalFormProps> = ({
+    active,
+    onChangeValue,
+    label
+}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handelCancel = () => {
+        setIsModalOpen(false);
+        onChangeValue && onChangeValue("")
+    }
 
     return (
         <>
             <div
-                className="cursor-pointer hover:text-[#1890FF]"
-                onClick={() => setIsModalOpen(true)}>
-                Bảo mật theo dải IP
+                className={clsx(
+                    'flex cursor-pointer hover:text-[#1890FF] gap-[10px]',
+                    { 'text-[#1890FF]': active }
+                )}
+                onClick={() => {
+                    setIsModalOpen(true);
+                    onChangeValue && onChangeValue(label || "")
+                }}
+            >
+                <SafetyOutlined />
+                {label}
             </div>
             <Modal
                 okText="Lưu"
                 cancelText="Hủy"
                 title="Thiết lập dải IP"
                 open={isModalOpen}
-                onOk={() => setIsModalOpen(false)}
-                onCancel={() => setIsModalOpen(false)}
+                onOk={handelCancel}
+                onCancel={handelCancel}
                 width={634}
             >
                 <Form
@@ -34,4 +59,4 @@ const ProfileIPRangeSecurity = () => {
     )
 }
 
-export default ProfileIPRangeSecurity;
+export default ProfileIPRangeSecurityModalForm;

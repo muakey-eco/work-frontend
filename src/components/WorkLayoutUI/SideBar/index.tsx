@@ -5,10 +5,10 @@ import { Navigation, NavigationMenuType } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
-  DashboardFilled,
   DatabaseFilled,
   FolderOpenFilled,
 } from '@ant-design/icons'
+import { Tooltip } from 'antd'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -64,7 +64,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
+              <div className="h-[14px] w-[12px]" />
               <span>Quản lý quy trình</span>
             </div>
           ),
@@ -73,61 +73,78 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
         {
           label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
-              <span>Công việc của tôi</span>
+            <div className="flex items-center gap-[12px]">
+              <div className="h-[14px] w-[12px]" />
+              <span>Quản lý phòng ban</span>
             </div>
           ),
-          taskCount: 10,
-          shouldRound: false,
           href: '/department',
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
+              <div className="h-[14px] w-[12px]" />
+              <span>Công việc của tôi</span>
+              {todosCount > 0 && (
+                <div className="rounded-[4px] bg-[#ff5555] px-[6px] pt-[2px] pb-[4px] text-[12px] font-[500]">
+                  <span className="leading-[12px]">{todosCount}</span>
+                </div>
+              )}
+            </div>
+          ),
+          shouldRound: false,
+          href: '/todos',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className="h-[14px] w-[12px]" />
               <span>Thống kê</span>
             </div>
           ),
           shouldRound: false,
+          href: '/statistics',
         },
       ],
     },
-    {
-      label: 'Quản lý nhân sự',
-      icon: <IconUserFilled />,
-      expand: true,
-      type: 'filled-rounded',
-      children: [
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
-              <span>Danh sách tài khoản</span>
-            </div>
-          ),
-          shouldRound: false,
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
-              <span>Danh sách nhân sự</span>
-            </div>
-          ),
-          shouldRound: false,
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
-              <span>Phòng ban</span>
-            </div>
-          ),
-          shouldRound: false,
-        },
-      ],
-    },
+    user?.role === 'Quản trị cấp cao'
+      ? {
+          label: 'Quản lý nhân sự',
+          icon: <IconUserFilled />,
+          expand: true,
+          type: 'filled-rounded',
+          children: [
+            {
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>Danh sách tài khoản</span>
+                </div>
+              ),
+              shouldRound: false,
+              href: '/accounts',
+            },
+            // {
+            //   label: (
+            //     <div className="flex items-center gap-[10px]">
+            //       <div className="h-[14px] w-[12px]" />
+            //       <span>Danh sách nhân sự</span>
+            //     </div>
+            //   ),
+            //   shouldRound: false,
+            // },
+            // {
+            //   label: (
+            //     <div className="flex items-center gap-[10px]">
+            //       <div className="h-[14px] w-[12px]" />
+            //       <span>Phòng ban</span>
+            //     </div>
+            //   ),
+            //   shouldRound: false,
+            // },
+          ],
+        }
+      : undefined,
     {
       label: 'Quản lý chấm công',
       icon: <CalendarFilled className="text-[14px]" />,
@@ -137,89 +154,60 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
+              <div className="h-[14px] w-[12px]" />
               <span>Chấm công</span>
             </div>
           ),
           shouldRound: false,
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[14px]" />
-              <span>Yêu cầu</span>
-            </div>
-          ),
-          shouldRound: false,
-        },
-      ],
-    },
-    {
-      label: 'Marketing',
-      icon: <DashboardFilled className="text-[14px]" />,
-      expand: true,
-      type: 'filled-rounded',
-      children: [],
-    },
-    {
-      label: 'Tài nguyên',
-      icon: <DatabaseFilled className="text-[14px]" />,
-      expand: true,
-      type: 'filled-rounded',
-      children: [],
-    },
-    {
-      label: 'Danh mục 1',
-      expand: true,
-      type: 'plain',
-      children: [
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <FolderOpenFilled className="text-[14px]" />
-              <span>Quy trình 1</span>
-            </div>
-          ),
-          shouldRound: true,
           href: '/check-in',
         },
         {
           label: (
             <div className="flex items-center gap-[10px]">
-              <FolderOpenFilled className="text-[14px]" />
-              <span>Quy trình 2</span>
+              <div className="h-[14px] w-[12px]" />
+              <span>Yêu cầu</span>
             </div>
           ),
-          shouldRound: true,
+          shouldRound: false,
+          href: '/request',
         },
       ],
     },
     {
-      label: 'Danh mục 2',
+      label: 'Tài nguyên',
+      icon: (
+        <DatabaseFilled className="text-[14px]" style={{ color: 'white' }} />
+      ),
       expand: true,
-      type: 'plain',
-      children: [
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <FolderOpenFilled className="text-[14px]" />
-              <span>Quy trình 1</span>
-            </div>
-          ),
-          shouldRound: true,
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <FolderOpenFilled className="text-[14px]" />
-              <span>Quy trình 2</span>
-            </div>
-          ),
-          shouldRound: true,
-        },
-      ],
+      type: 'filled-rounded',
+      children: [],
+      href: '/resources',
     },
-  ]
+    ...(workflowCategories && workflowCategories.length > 0
+      ? workflowCategories?.map((w: any) => ({
+          label: w?.name,
+          children: w?.workflows
+            ? w?.workflows.map((i: any) => ({
+                label: (
+                  <Tooltip title={i?.name}>
+                    <div className="flex items-center gap-[10px]">
+                      <FolderOpenFilled
+                        className="text-[14px]"
+                        style={{ color: 'white' }}
+                      />
+                      <span className="line-clamp-1">{i?.name}</span>
+                    </div>
+                  </Tooltip>
+                ),
+                shouldRound: true,
+                href: `/workflows/${i?.id}`,
+              }))
+            : [],
+          expand: true,
+          type: 'plain',
+        }))
+      : []),
+  ].filter(Boolean) as NavigationMenuType[]
 
   return (
     <Layout.Side

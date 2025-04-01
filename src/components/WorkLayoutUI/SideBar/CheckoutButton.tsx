@@ -11,7 +11,7 @@ const CheckoutButton: React.FC<{
   return (
     <>
       <CheckCircleFilled
-        className="text-[16px] !text-[#2bbf3d]"
+        className="text-[14px] !text-[#2bbf3d]"
         onClick={(e) => {
           e.preventDefault()
           setConfirm(true)

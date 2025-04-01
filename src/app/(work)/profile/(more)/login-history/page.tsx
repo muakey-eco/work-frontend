@@ -13,7 +13,7 @@ const columns: TableProps['columns'] = [
     dataIndex: 'method',
   },
   {
-    key: 'oriip_addressgin',
+    key: 'ip_address',
     title: 'Nguồn gốc',
     dataIndex: 'ip_address',
   },
@@ -40,10 +40,10 @@ const LoginHistoryPage: React.FC = () => {
     total: 0,
   })
 
-  const fetchData = async (page: number) => {
+  const fetchData = async (page: number, pageSize: number) => {
     setLoading(true)
     try {
-      const response = await getLoginHistoryAction(page)
+      const response = await getLoginHistoryAction(page, pageSize)
       const { data, current_page, per_page, total } = response
       setData(data)
       setPagination({
@@ -58,14 +58,14 @@ const LoginHistoryPage: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    fetchData(pagination.current)
-  }, [])
-
   const handleTableChange = (pagination: any) => {
-    const { current } = pagination
-    fetchData(current)
+    const { current, pageSize } = pagination
+    fetchData(current, pageSize)
   }
+
+  useEffect(() => {
+    fetchData(pagination.current, pagination.pageSize)
+  }, [])
 
   return (
     <div className="no-scroll h-screen overflow-y-scroll pb-[104px]">
@@ -99,9 +99,7 @@ const LoginHistoryPage: React.FC = () => {
         current={pagination.current}
         pageSize={pagination.pageSize}
         total={pagination.total}
-        onChange={(page: number, pageSize: number) =>
-          handleTableChange({ current: page, pageSize })
-        }
+        onChange={handleTableChange} // Truyền handleTableChange thay vì fetchData
       />
     </div>
   )

@@ -1,27 +1,17 @@
-import { PageHeader } from '@/components'
-import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Col, Row } from 'antd'
 import React from 'react'
+import ProfileHeader from './profile-header'
 import ProfileOverview from './profile-overview'
 import ProfileSidebar from './profile-sidebar'
 import ProfileUserSidebar from './profile-user-sidebar'
-import { usePathname } from 'next/navigation'
 
 const ProfileMoreLayout: React.FC<{
   children: React.ReactNode
   user?: any
 }> = async ({ children, user }) => {
-
   return (
     <>
-      <PageHeader
-        title={
-          <div className="flex items-center gap-[8px]">
-            <ArrowLeftOutlined />
-            <span>Danh sách nhân sự</span>
-          </div>
-        }
-      />
+      <ProfileHeader />
 
       <div className="h-[calc(100vh-55px)] bg-[#f6f6f6] p-[16px]">
         <Row gutter={[16, 16]}>

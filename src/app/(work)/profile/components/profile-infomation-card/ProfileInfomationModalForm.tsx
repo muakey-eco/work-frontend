@@ -209,10 +209,10 @@ const ProfileInfomationModalForm: React.FC<ProfileInfomationModalFormProps> = ({
 
         <Form.Item
           className="mb-[16px]! flex-1"
-          label="Địa chỉ liên hệ"
-          name="contact_address"
+          label="Địa chỉ tạm trú"
+          name="temporary_address"
         >
-          <Input placeholder="Nhập địa chỉ liên hệ" />
+          <Input placeholder="Nhập địa chỉ tạm trú" />
         </Form.Item>
 
         <div className="flex items-center gap-[16px]">

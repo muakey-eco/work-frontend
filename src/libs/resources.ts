@@ -1,7 +1,9 @@
 import { requestWithAuthorized } from './request'
 
-export const getResourceCategories = async () => {
-  return await requestWithAuthorized('resource-categories')
+export const getResourceCategories = async (search: string) => {
+  return await requestWithAuthorized('resource-categories', {
+    params: { search },
+  })
     .then((data) => data)
     .catch(() => [])
 }

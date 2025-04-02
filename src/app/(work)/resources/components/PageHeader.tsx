@@ -15,7 +15,7 @@ const PageHeader: React.FC = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <h1 className="text-[24px] font-[500] leading-[32px]">
+      <h1 className="text-[24px] leading-[32px] font-[500]">
         Nơi lưu trữ tài nguyên của Muakey
       </h1>
       <p className="text-[14px] leading-[22px]">

@@ -173,12 +173,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           return (
             <div className="flex flex-col gap-[4px]">
               {checkIn?.map((c: any, index: number) => (
-                <>
+                <div key={c[0]}>
                   {index > 0 && <Divider className="my-[4px]!" />}
-                  <div key={c[0]}>
+                  <div>
                     {c[0]} - {c[1] ? c[1] : '--:--'}
                   </div>
-                </>
+                </div>
               ))}
             </div>
           )

@@ -27,6 +27,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
   const { isCurrentMonth, info } = options
 
+  console.log('info', info)
+
   const dropdownRender = () => {
     return (
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_3px_6px_-4px_rgba(0,0,0,0.12),0_6px_16px_0_rgba(0,0,0,0.08),0_9px_28px_8px_rgba(0,0,0,0.05)]">
@@ -95,7 +97,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
     >
       <div
         className={clsx(
-          'flex aspect-220/160 min-h-[160px] w-full flex-col border-t px-[8px] pb-[8px] pt-[6px]',
+          'flex aspect-220/160 min-h-[160px] w-full flex-col border-t px-[8px] pt-[6px] pb-[8px]',
           day?.go_to_work !== undefined &&
             day?.go_to_work === 0 &&
             'bg-[#f5f5f5]',
@@ -153,6 +155,26 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                       ? '09:00 - 18:30'
                       : `${info?.plan_time?.[0]} - ${info?.plan_time?.[1]}`}
                   </div>
+
+                  {/* Thời gian nếu đi làm trước 9h  */}
+                  {/* {info?.dayWorking < 1 &&
+                    info?.checkInValue?.[0] &&
+                    info?.checkInValue?.[0]?.[0] === info?.plan_time?.[0] && (
+                      <div className="w-full rounded-full bg-[#F5222D] py-[3px] text-center text-[#fff]">
+                        {`${info?.checkInValue?.[0]?.[1]} - ${info?.plan_time?.[1]}`}
+                      </div>
+                    )} */}
+
+                  {/* Thời gian nếu đi làm sau 9h  */}
+                  {/* {info?.dayWorking < 1 &&
+                    info?.checkInValue?.[0] &&
+                    info?.checkInValue?.[0]?.[1] === info?.plan_time?.[1] && (
+                      <div className="w-full rounded-full bg-[#F5222D] py-[3px] text-center text-[#fff]">
+                        {`${info?.plan_time?.[1]} - ${info?.checkInValue?.[0]?.[0]}`}
+                      </div>
+                    )} */}
+
+                  {/* thời gian vào ra */}
                   {info?.checkInValue?.[0] &&
                     info?.checkInValue?.map((c: any, index: number) => (
                       <div
@@ -160,7 +182,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                           'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
                           {
                             'bg-[#237804]': !!c?.[1],
-                            'bg-[#F5222D]': !c?.[1],
+                            'bg-[#F5222D]': !c?.[1] || info?.dayWorking < 1,
                           },
                         )}
                         key={index}
@@ -169,6 +191,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                       </div>
                     ))}
 
+                  {/* thời gian ot */}
                   {info?.ot &&
                     info?.ot?.map(
                       (o: any, index: number) =>
@@ -182,6 +205,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                         ),
                     )}
 
+                  {/* thời gian nghỉ */}
                   {info?.timeOff &&
                     info?.timeOff?.map(
                       (o: any, index: number) =>

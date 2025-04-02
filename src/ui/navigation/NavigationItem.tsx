@@ -35,14 +35,14 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
 
   const isActive = pathname === item?.href
   const layout = clsx({
+    'mt-[16px]': item?.type === 'plain',
     'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
       item?.type === 'filled-rounded' && item.children?.length !== 0 && show,
-    'mt-[16px]': item?.type === 'plain',
     'rounded-4xl bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
       isActive && item?.children?.length === 0,
     'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
       (item?.type === 'filled-rounded' && !show) ||
-      item?.children?.length === 0,
+      (item?.children?.length === 0 && item.type != 'plain'),
   })
 
   const className = cn(
@@ -76,7 +76,9 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         <div
           className={clsx(
             'w-full text-[14px]',
-            item?.type === 'plain' ? 'text-[#FFFFFF99]' : 'text-white',
+            item?.type === 'plain'
+              ? 'text-[#FFFFFF99]'
+              : '!important text-[#FFFFFF]',
           )}
         >
           {item?.label}
@@ -110,7 +112,11 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         {item?.children && item.children.length > 0 ? (
           <div className={className}>{node}</div>
         ) : (
-          <Link className={className} href={item?.href ?? ''}>
+          <Link
+            className={className}
+            style={{ color: '#FFFFFF !important' }}
+            href={item?.href ?? ''}
+          >
             {node}
           </Link>
         )}

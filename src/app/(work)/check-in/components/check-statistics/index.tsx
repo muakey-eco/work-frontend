@@ -1,26 +1,32 @@
-import { Button, Divider } from 'antd'
+import { Button } from 'antd'
 import Link from 'next/link'
 import React from 'react'
 
 type CheckInDataType = {
   title?: React.ReactNode
   value?: string | number
+  role?: string
 }
 
 type CheckInStatisticsProps = {
   items?: CheckInDataType[]
+  role?: string
 }
 
-const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({ items }) => {
+const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({
+  items,
+  role,
+}) => {
   return (
     <div className="rounded-[16px] bg-[#fff] p-[16px]">
-      <div className="flex items-center justify-between">
-        <span className="text-[16px] font-[500]">Tổng hợp ngày công</span>
-        <Link href="?table=request-history">
-          <Button type="primary">Lịch sử yêu cầu</Button>
-        </Link>
-      </div>
-      <Divider className="my-[12px]!" />
+      {role !== 'admin' && (
+        <div className="flex items-center justify-between">
+          <span className="text-[16px] font-[500]">Tổng hợp ngày công</span>
+          <Link href="?table=request-history">
+            <Button type="primary">Lịch sử yêu cầu</Button>
+          </Link>
+        </div>
+      )}
 
       <div className="flex items-center justify-around gap-[12px]">
         {items &&

@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
           formRef.current?.setFields(
             Object.keys(errors).map((k: string) => ({
               name: k,
-              errors: errors[k],
+              errors: [errors[k]],
             })),
           )
         }

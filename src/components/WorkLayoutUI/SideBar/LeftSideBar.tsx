@@ -54,11 +54,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     const { ip } = await getIpAddressRequest()
 
     try {
-      const { message: msg, errors } = await checkedInAction({
+      const { message: msg, error } = await checkedInAction({
         ip_wifi: ip,
       })
 
-      if (errors) {
+      if (error) {
         message.error(msg)
         setLoading(false)
         return
@@ -161,7 +161,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         </div>
       </Dropdown>
 
-
       <Drawer
         classNames={{
           body: '!p-0',
@@ -185,7 +184,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         />
       </Drawer>
 
-      <div className='flex flex-col gap-[8px]'>
+      <div className="flex flex-col gap-[8px]">
         <div
           className="flex size-[47px] cursor-pointer items-center justify-center"
           onClick={handleSeeNotifications}
@@ -228,7 +227,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <LogoutOutlined className="text-[14px]" />
         </div>
       </div>
-
     </div>
   )
 }

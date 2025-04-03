@@ -1,12 +1,8 @@
 'use client'
 
 import { formatCurrency } from '@/lib/utils'
-import {
-  HeartFilled,
-  MailOutlined,
-  PhoneOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
+import { randomColor } from '@/libs/utils'
+import { HeartFilled, MailOutlined, PhoneOutlined } from '@ant-design/icons'
 import { Player } from '@lottiefiles/react-lottie-player'
 import { Avatar, Badge, Card, Progress } from 'antd'
 import React, { useMemo } from 'react'
@@ -24,10 +20,38 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
     return basic_salary + travel_allowance + kpi + eat_allowance
   }, [basic_salary, travel_allowance, kpi, eat_allowance])
 
+  const seniority = useMemo(() => {
+    if (!user.start_work_date) return ''
+
+    const start = new Date(user.start_work_date)
+    const today = new Date()
+
+    let years = today.getFullYear() - start.getFullYear()
+    let months = today.getMonth() - start.getMonth()
+    let days = today.getDate() - start.getDate()
+
+    if (days < 0) {
+      months -= 1
+      const prevMonthDays = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        0,
+      ).getDate()
+      days += prevMonthDays
+    }
+
+    if (months < 0) {
+      years -= 1
+      months += 12
+    }
+
+    return `${years} Năm ${months} Tháng ${days} Ngày`
+  }, [user.start_work_date])
+
   const items = [
     {
       icon: <HeartFilled className="!text-[#F5222D]" />,
-      label: '3 năm 2 tháng 10 ngày',
+      label: seniority,
     },
     {
       icon: <MailOutlined />,
@@ -57,25 +81,41 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
       }}
     >
       <div className="flex justify-center">
-        <Avatar icon={<UserOutlined />} size={98} />
+        <Avatar
+          className="rounded-full! text-[16px]!"
+          size={98}
+          shape="circle"
+          src={user?.avatar}
+          style={{
+            backgroundColor: randomColor(String(user?.full_name)),
+            fontSize: 30,
+          }}
+          alt={user?.full_name}
+        >
+          <p className="text-3xl">
+            {String(user?.full_name).charAt(0).toLocaleUpperCase()}
+          </p>
+        </Avatar>{' '}
       </div>
 
       <div className="text-center">
         <div className="text-[20px] leading-[28px] font-[500]">
-          Đỗ Minh Nguyệt
+          {user?.full_name || ''}
         </div>
         <div className="text-[14px] leading-[22px] font-[400] text-[#00000073]">
-          Chuyên viên nhân sự
+          {user?.role}
         </div>
       </div>
 
       <div className="flex items-center justify-center gap-[8px]">
-        <span className="text-[14px] leading-[22px] font-[600]">Fulltime</span>
+        <span className="text-[14px] leading-[22px] font-[600]">
+          {user.personnel_class || ''}
+        </span>
         <Badge
           status="success"
           text={
             <span className="text-[14px] leading-[22px] font-[600]">
-              {user?.status}
+              {user?.status || ''}
             </span>
           }
         />

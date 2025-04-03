@@ -17,7 +17,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
 
   const { type } = query
 
-  const filteredPropose = propose?.filter(
+  const filteredPropose = propose?.data?.filter(
     (p: any) =>
       ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
       p?.status === 'approved',

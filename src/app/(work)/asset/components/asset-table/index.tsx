@@ -105,7 +105,6 @@ const AssetTable: React.FC<AssetTableProps> = ({
       const res = await filterAssetsAction(searchParams.toString())
       setAssets(res?.data?.data || [])
       setTotalStatus(res?.data?.total_status || [])
-      console.log('res', res)
     }
     fetchData()
   }, [searchParams])

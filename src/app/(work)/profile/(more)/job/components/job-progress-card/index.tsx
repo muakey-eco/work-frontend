@@ -1,5 +1,6 @@
 'use client'
 
+import useSeniority from '@/app/(work)/profile/hooks/useSeniority'
 import { AreaChart } from '@/components'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card } from 'antd'
@@ -30,19 +31,22 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
   const guideItems = [
     {
       label: 'Lương khi tuyển',
-      value: '5,000,000 đ',
+      value: '2,000,000 đ',
     },
     {
       label: 'Mức lương hiện tại',
-      value: '100,000,000 đ',
+      value:
+        new Intl.NumberFormat('vi-VN', { style: 'decimal', useGrouping: true })
+          .format(job_position[0]?.total_salary)
+          .replace(/\./g, ',') + ' đ',
     },
     {
       label: 'Thâm niên',
-      value: '3 năm 2 tháng 10 ngày',
+      value: useSeniority(data?.start_trial_date),
     },
     {
       label: '% Tăng',
-      value: '1000%',
+      value: ((job_position[0]?.total_salary - 2000000) / 2000000) * 100 + '%',
     },
   ]
 
@@ -71,7 +75,7 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
       </div>
 
       <div className="flex items-start gap-[16px]">
-        <AreaChart />
+        <AreaChart data={job_position} />
         <JobProgressGuide items={guideItems} />
       </div>
 

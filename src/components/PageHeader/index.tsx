@@ -1,5 +1,8 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { Divider, Tabs, TabsProps } from 'antd'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 type Tab = {
@@ -16,6 +19,10 @@ export type PageHeaderProps = {
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
+  const router = useRouter()
+  const handleBack = () => {
+    router.back()
+  }
   return (
     <div
       className={cn(
@@ -24,7 +31,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
       )}
     >
       <div className="flex items-start justify-between">
-        <div>
+        <div onClick={handleBack}>
           <span className="text-[20px] font-[500]">{title}</span>
           <div className="flex items-center">
             {tab?.items && (

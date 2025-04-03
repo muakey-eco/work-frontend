@@ -10,11 +10,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 
-const chartData = [
-  { month: '2/2023', desktop: 5000000 },
-  { month: '8/2024', desktop: 8000000 },
-  { month: '3/2025', desktop: 11000000 },
-]
 const chartConfig = {
   desktop: {
     label: 'Mức lương: ',
@@ -22,9 +17,19 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export type AreaBasicChartProps = {}
+export type AreaBasicChartProps = {
+  data: any
+}
 
-const AreaBasicChart: React.FC<AreaBasicChartProps> = () => {
+const AreaBasicChart: React.FC<AreaBasicChartProps> = ({ data }) => {
+  const chartData = [
+    ...data
+      .map((item: any) => ({
+        month: item.created_at.slice(0, 7),
+        desktop: item.total_salary,
+      }))
+      .reverse(),
+  ]
   return (
     <Card className="aspect-[639/267] w-[639px] !border-none !py-0 !shadow-none">
       <CardHeader className="text-center">
@@ -38,8 +43,10 @@ const AreaBasicChart: React.FC<AreaBasicChartProps> = () => {
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 25,
+              top: 25,
+              right: 25,
+              bottom: 25,
             }}
           >
             <CartesianGrid vertical={false} />

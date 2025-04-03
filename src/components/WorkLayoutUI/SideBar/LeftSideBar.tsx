@@ -141,7 +141,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     <div className="w-[47px] text-[#fff]">
       <Dropdown
         dropdownRender={() => (
-          <div className="ml-[8px] min-w-[400px] rounded-[4px] bg-[#fff] p-[16px] shadow-[0_2px_4px_0_#0000001a]">
+          <div className="ml-[8px] min-w-[400px] cursor-pointer rounded-[4px] bg-[#fff] p-[16px] shadow-[0_2px_4px_0_#0000001a]">
             <div className="flex items-center gap-[16px]">
               <Avatar className="!text-[16px]" shape="circle" size={36}>
                 {String(user?.full_name).charAt(0).toLocaleUpperCase()}
@@ -160,7 +160,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <MenuOutlined className="text-[16px]" />
         </div>
       </Dropdown>
-
 
       <Drawer
         classNames={{
@@ -185,7 +184,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         />
       </Drawer>
 
-      <div className='flex flex-col gap-[8px]'>
+      <div className="flex flex-col gap-[8px]">
         <div
           className="flex size-[47px] cursor-pointer items-center justify-center"
           onClick={handleSeeNotifications}
@@ -228,7 +227,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <LogoutOutlined className="text-[14px]" />
         </div>
       </div>
-
     </div>
   )
 }

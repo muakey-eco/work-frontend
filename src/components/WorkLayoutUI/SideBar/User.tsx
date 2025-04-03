@@ -1,12 +1,16 @@
 import { randomColor } from '@/libs/utils'
 import { Avatar } from 'antd'
+import Link from 'next/link'
 import React from 'react'
 
 const User: React.FC<{
   user?: any
 }> = ({ user }) => {
   return (
-    <div className="flex w-full items-center gap-[6px] py-[16px]">
+    <Link
+      href="/profile"
+      className="flex w-full cursor-pointer items-center gap-[6px] py-[16px]"
+    >
       <Avatar
         className="rounded-full! text-[16px]!"
         size={28}
@@ -20,7 +24,7 @@ const User: React.FC<{
         {String(user?.full_name).charAt(0).toLocaleUpperCase()}
       </Avatar>{' '}
       <div>
-        <div className="text-[14px] leading-[20px] font-[400]">
+        <div className="text-[14px] leading-[20px] font-[400] text-[#fff]">
           {user?.full_name}
         </div>
         {user?.position && (
@@ -29,7 +33,7 @@ const User: React.FC<{
           </div>
         )}
       </div>
-    </div>
+    </Link>
   )
 }
 

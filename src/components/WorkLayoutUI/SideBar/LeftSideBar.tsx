@@ -55,11 +55,11 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     const { ip } = await getIpAddressRequest()
 
     try {
-      const { message: msg, errors } = await checkedInAction({
+      const { message: msg, error } = await checkedInAction({
         ip_wifi: ip,
       })
 
-      if (errors) {
+      if (error) {
         message.error(msg)
         setLoading(false)
         return

@@ -25,7 +25,7 @@ export const loginWidthCredentials = async (data: any) =>
 
     const session = await getSession()
 
-    const accessToken = token.split('|')[1]
+    const accessToken = token ? token.split('|')[1] : undefined
 
     session.accessToken = accessToken
     session.isLoggedIn = !!accessToken

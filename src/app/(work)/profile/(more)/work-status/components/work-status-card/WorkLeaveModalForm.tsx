@@ -20,11 +20,13 @@ import React, { useState } from 'react'
 export type WorkLeaveModalFormProps = ModalProps & {
   children?: React.ReactNode
   formProps?: FormProps
+  user?: any
 }
 
 const WorkLeaveModalForm: React.FC<WorkLeaveModalFormProps> = ({
   children,
   formProps,
+  user,
   ...props
 }) => {
   const [open, setOpen] = useState(false)
@@ -111,7 +113,7 @@ const WorkLeaveModalForm: React.FC<WorkLeaveModalFormProps> = ({
 
         <div className="flex items-center gap-[16px]">
           <Form.Item className="mb-[16px]! flex-1" label="Nhân sự" name="staff">
-            <Input placeholder="Nhập" disabled />
+            <Input placeholder={user?.full_name} disabled />
           </Form.Item>
 
           <Form.Item
@@ -119,7 +121,7 @@ const WorkLeaveModalForm: React.FC<WorkLeaveModalFormProps> = ({
             label="Chức danh"
             name="position"
           >
-            <Input placeholder="Nhập" />
+            <Input placeholder={user?.role} disabled />
           </Form.Item>
         </div>
 
@@ -143,13 +145,19 @@ const WorkLeaveModalForm: React.FC<WorkLeaveModalFormProps> = ({
           </Form.Item>
         </div>
 
-        <Form.Item
-          className="mb-[16px]! flex-1"
-          label="Ngày nghỉ việc (ngày làm việc cuối cùng)"
-          name="staff"
-        >
-          <DatePicker className="w-full" locale={locale} />
-        </Form.Item>
+        <div className="w-[calc(50%-8px)]">
+          <Form.Item
+            className="mb-[16px]! flex-1"
+            label="Ngày nghỉ việc (ngày làm việc cuối cùng)"
+            name="date"
+          >
+            <DatePicker
+              className="w-full"
+              locale={locale}
+              placeholder="Ngày cấp"
+            />
+          </Form.Item>
+        </div>
 
         <Form.Item className="mb-[16px]! flex-1" label="Ghi chú" name="note">
           <TiptapEditor />

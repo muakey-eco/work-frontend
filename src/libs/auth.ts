@@ -1,4 +1,4 @@
-import { request } from './request'
+import { request, requestWithAuthorized } from './request'
 import { getSession } from './session'
 
 export const isLoggedIn = async () => {
@@ -45,4 +45,12 @@ export const logout = async () => {
 
 export const getIp = async () => {
   return await request('test')
+}
+
+export const getLoginHistory = async (page: number, pageSize: number) => {
+  return await requestWithAuthorized(
+    `login-histories?page=${page}&per_page=${pageSize}`,
+  )
+    .then((data) => data)
+    .catch(() => null)
 }

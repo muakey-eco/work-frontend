@@ -1,8 +1,8 @@
 import { requestWithAuthorized } from './request'
 
-export const getLoginHistory = async (page: number, pageSize: number) => {
+export const getPauseHistory = async (accountId: number, type: string) => {
   return await requestWithAuthorized(
-    `login-histories?page=${page}&per_page=${pageSize}`,
+    `leave-histories?account_id=${accountId}&type=${type}`,
   )
     .then((data) => data)
     .catch(() => null)

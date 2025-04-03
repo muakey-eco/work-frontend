@@ -1,6 +1,7 @@
 'use server'
 
 import { getAccountById, updateAccount } from '@/libs/account'
+import { getLoginHistory } from '@/libs/auth'
 import {
   addContract,
   getContractCategories,
@@ -8,8 +9,7 @@ import {
 } from '@/libs/contract'
 import { editAccount, getBankList, uploadFiles } from '@/libs/data'
 import { getDepartments } from '@/libs/department'
-import { getLoginHistory } from '@/libs/login-history'
-
+import { getPauseHistory } from '@/libs/employee'
 export const getBankListRequest = async () => {
   return await getBankList()
 }
@@ -56,4 +56,11 @@ export const uploadFilesAction = async (data: FormData) => {
 
 export const getLoginHistoryAction = async (page: number, pageSize: number) => {
   return await getLoginHistory(page, pageSize)
+}
+
+export const getPauseHistoryAction = async (
+  accountId: number,
+  type: string,
+) => {
+  return await getPauseHistory(accountId, type)
 }

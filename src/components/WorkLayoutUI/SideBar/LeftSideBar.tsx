@@ -40,6 +40,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
 
+  console.log('notifications', notifications)
   const router = useRouter()
   const { message, modal } = App.useApp()
 
@@ -104,7 +105,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
       throw new Error(error)
     }
   }
-
+  // check điểm danh
   useEffect(() => {
     if (!openCheckedIn) {
       modal.confirm({
@@ -123,14 +124,16 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
     }
   }, [openCheckedIn])
 
+  // lấy thông báo
   useAsyncEffect(async () => {
-    if (!openNotice) return
+    // if (!openNotice) return
 
     const res = await getNotificationsAction()
 
     setNotifications(res)
-  }, [openNotice])
+  }, [])
 
+  // lấy thông báo chưa đọc
   useEffect(() => {
     setNotificationsWithNotRead(
       notifications?.filter((notify: any) => notify?.new === 1),
@@ -161,7 +164,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         </div>
       </Dropdown>
 
-
       <Drawer
         classNames={{
           body: '!p-0',
@@ -185,7 +187,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
         />
       </Drawer>
 
-      <div className='flex flex-col gap-[8px]'>
+      <div className="flex flex-col gap-[8px]">
         <div
           className="flex size-[47px] cursor-pointer items-center justify-center"
           onClick={handleSeeNotifications}
@@ -228,7 +230,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <LogoutOutlined className="text-[14px]" />
         </div>
       </div>
-
     </div>
   )
 }

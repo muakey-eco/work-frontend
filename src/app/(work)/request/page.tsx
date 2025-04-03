@@ -17,6 +17,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
     getMe(),
   ])
 
+  console.log('proposes', proposes)
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader

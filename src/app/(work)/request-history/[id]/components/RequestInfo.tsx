@@ -1,6 +1,8 @@
 import { Col, Row } from 'antd'
 import React from 'react'
 
+import '@/styles/globals.css'
+
 type RequestInfoProps = {
   info?: any[]
 }
@@ -12,7 +14,11 @@ const RequestInfo: React.FC<RequestInfoProps> = ({ info }) => {
         i[0]?.component ? (
           i[0]?.component
         ) : (
-          <Row key={index} gutter={[24, 24]}>
+          <Row
+            key={index}
+            gutter={[24, 24]}
+            className="custom-scrollbar !max-h-[calc(100vh-490px)] overflow-y-auto"
+          >
             {i?.map((child: any) => (
               <Col key={child?.key} span={12}>
                 <div className="text-[14px] leading-[22px] text-[#00000073]">

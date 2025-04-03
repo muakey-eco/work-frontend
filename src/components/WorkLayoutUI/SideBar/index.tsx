@@ -6,7 +6,6 @@ import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
   DatabaseFilled,
-  DatabaseOutlined,
   FolderOpenFilled,
 } from '@ant-design/icons'
 import { Tooltip } from 'antd'
@@ -187,7 +186,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
     {
       label: 'Tài sản công ty',
       icon: (
-        <DatabaseOutlined className="text-[16px]" style={{ color: 'white' }} />
+        <DatabaseFilled className="text-[14px]" style={{ color: 'white' }} />
       ),
       type: 'filled-rounded',
       expand: true,

@@ -54,6 +54,6 @@ export const uploadFilesAction = async (data: FormData) => {
   return await uploadFiles(data)
 }
 
-export const getLoginHistoryAction = async (page: number) => {
-  return await getLoginHistory(page);
+export const getLoginHistoryAction = async (page: number, pageSize: number) => {
+  return await getLoginHistory(page, pageSize)
 }

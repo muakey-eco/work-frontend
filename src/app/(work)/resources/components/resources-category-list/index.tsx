@@ -6,14 +6,20 @@ import ResourcesList from '../resources-list'
 import ResourcesCategoryListSkeleton from './ResourcesCategoryListSkeleton'
 import ResourcesExtra from './ResourcesExtra'
 
-const ResourcesCategoryList: React.FC = async () => {
-  const resourcesCategories = await getResourceCategories()
+type ResourcesCategoryListProps = {
+  search?: string
+}
+
+const ResourcesCategoryList: React.FC<ResourcesCategoryListProps> = async ({
+  search,
+}) => {
+  const resourcesCategories = await getResourceCategories(search || '')
 
   const items: CollapseProps['items'] = resourcesCategories.map(
     (item: any) => ({
       key: item.id,
       label: (
-        <span className="text-[20px] font-[700] leading-[28px]">
+        <span className="text-[20px] leading-[28px] font-[700]">
           {item.name}
         </span>
       ),

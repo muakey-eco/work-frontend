@@ -4,17 +4,21 @@ import WorkLeaveHistoryTable from './WorkLeaveHistoryTable'
 
 export type WorkLeaveHistoryCardProps = CardProps & {
   title?: string
+  user?: any
+  dataTable?: any[]
 }
 
 const WorkLeaveHistoryCard: React.FC<WorkLeaveHistoryCardProps> = ({
   title,
+  user,
+  dataTable,
   ...props
 }) => {
   return (
     <Card classNames={{ body: '!space-y-[16px]' }} {...props}>
       <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
 
-      <WorkLeaveHistoryTable />
+      <WorkLeaveHistoryTable dataTable={dataTable} />
     </Card>
   )
 }

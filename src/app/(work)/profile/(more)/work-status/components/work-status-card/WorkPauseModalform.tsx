@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons'
 import {
   Alert,
   Button,
+  DatePicker,
   Form,
   FormProps,
   Input,
@@ -13,19 +14,23 @@ import {
   Select,
   Upload,
 } from 'antd'
+import locale from 'antd/es/date-picker/locale/vi_VN'
 import React, { useState } from 'react'
 
 export type WorkPauseModalFormProps = ModalProps & {
   children?: React.ReactNode
   formProps?: FormProps
+  user?: any
 }
 
 const WorkPauseModalForm: React.FC<WorkPauseModalFormProps> = ({
   children,
   formProps,
+  user,
   ...props
 }) => {
   const [open, setOpen] = useState(false)
+  const { RangePicker } = DatePicker
 
   const reasonOptions = [
     {
@@ -81,7 +86,7 @@ const WorkPauseModalForm: React.FC<WorkPauseModalFormProps> = ({
       >
         <div className="flex items-center gap-[16px]">
           <Form.Item className="mb-[16px]! flex-1" label="Nhân sự" name="staff">
-            <Input placeholder="Nhập" disabled />
+            <Input placeholder={user?.full_name} disabled />
           </Form.Item>
 
           <Form.Item
@@ -89,7 +94,7 @@ const WorkPauseModalForm: React.FC<WorkPauseModalFormProps> = ({
             label="Chức danh"
             name="position"
           >
-            <Input placeholder="Nhập" />
+            <Input placeholder={user?.role} disabled />
           </Form.Item>
         </div>
 
@@ -105,10 +110,10 @@ const WorkPauseModalForm: React.FC<WorkPauseModalFormProps> = ({
 
           <Form.Item
             className="mb-[16px]! flex-1"
-            label="Chức danh"
-            name="position"
+            label="Thời gian (Bắt đầu - Kết thúc)"
+            name="date"
           >
-            <Input placeholder="Nhập" />
+            <RangePicker className="w-full" locale={locale} />
           </Form.Item>
         </div>
 

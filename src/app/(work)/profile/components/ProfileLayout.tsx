@@ -19,7 +19,7 @@ const ProfileMoreLayout: React.FC<{
           <Col span={6}>
             <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
               <ProfileOverview user={user} />
-              <ProfileSidebar />
+              <ProfileSidebar user={user} />
               <ProfileUserSidebar />
             </div>
           </Col>

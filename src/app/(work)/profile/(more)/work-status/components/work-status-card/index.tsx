@@ -5,9 +5,14 @@ import WorkPauseModalForm from './WorkPauseModalform'
 
 export type WorkStatusCardProps = CardProps & {
   title?: string
+  user?: any
 }
 
-const WorkStatusCard: React.FC<WorkStatusCardProps> = ({ title, ...props }) => {
+const WorkStatusCard: React.FC<WorkStatusCardProps> = ({
+  title,
+  user,
+  ...props
+}) => {
   return (
     <Card
       classNames={{
@@ -18,10 +23,10 @@ const WorkStatusCard: React.FC<WorkStatusCardProps> = ({ title, ...props }) => {
       <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
 
       <div className="flex items-center gap-[16px]">
-        <WorkPauseModalForm>
+        <WorkPauseModalForm user={user}>
           <Button block>Kích hoạt trạng thái tạm nghỉ</Button>
         </WorkPauseModalForm>
-        <WorkLeaveModalForm>
+        <WorkLeaveModalForm user={user}>
           <Button danger block>
             Thôi việc nhân sự
           </Button>

@@ -1,4 +1,6 @@
 import { getMe } from '@/libs/data'
+import { notFound } from 'next/navigation'
+import { getAccountByIdAction } from './(more)/action'
 import ProfileContactCard from './components/profile-contact-card'
 import ProfileDeductionsCard from './components/profile-deductions-card'
 import ProfileEduInfomationCard from './components/profile-edu-infomation-card'
@@ -6,10 +8,20 @@ import ProfileInfomationCard from './components/profile-infomation-card'
 import ProfileWorkHistoryCard from './components/profile-work-history-card'
 import ProfileMoreLayout from './components/ProfileLayout'
 
-const ProfilePage: React.FC = async () => {
-  const user = await getMe({
+export default async function ProfilePage({ searchParams }: any) {
+  const id = searchParams.id
+  let user = await getMe({
     include: 'profile',
   })
+
+  if (!id) {
+  } else if (id && user.role === 'Quản trị cấp cao') {
+    user = await getAccountByIdAction(id, {
+      include: 'profile',
+    })
+  } else {
+    notFound()
+  }
 
   return (
     <ProfileMoreLayout user={user}>
@@ -45,5 +57,3 @@ const ProfilePage: React.FC = async () => {
     </ProfileMoreLayout>
   )
 }
-
-export default ProfilePage

@@ -42,7 +42,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
       isActive && item?.children?.length === 0,
     'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
       (item?.type === 'filled-rounded' && !show) ||
-      item?.children?.length === 0,
+      (item?.children?.length === 0 && item.type != 'plain'),
   })
 
   const className = cn(

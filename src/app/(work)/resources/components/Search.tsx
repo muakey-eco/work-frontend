@@ -7,7 +7,7 @@ import React from 'react'
 const Search: React.FC = () => {
   const router = useRouter()
 
-  const handleSearch = async (value: string) => {
+  const handleSearch = (value: string) => {
     if (value === '') {
       router.push(`/resources`)
     } else {

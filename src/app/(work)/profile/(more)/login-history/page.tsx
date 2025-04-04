@@ -99,7 +99,7 @@ const LoginHistoryPage: React.FC = () => {
         current={pagination.current}
         pageSize={pagination.pageSize}
         total={pagination.total}
-        onChange={handleTableChange} // Truyền handleTableChange thay vì fetchData
+        onChange={handleTableChange}
       />
     </div>
   )

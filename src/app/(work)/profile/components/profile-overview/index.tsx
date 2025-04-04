@@ -3,10 +3,20 @@
 import { formatCurrency } from '@/lib/utils'
 import { randomColor } from '@/libs/utils'
 import { HeartFilled, MailOutlined, PhoneOutlined } from '@ant-design/icons'
-import { Player } from '@lottiefiles/react-lottie-player'
+
 import { Avatar, Badge, Card, Progress } from 'antd'
 import React, { useMemo } from 'react'
 import animation from './lotties/gold-coin-animation.json'
+
+import dynamic from 'next/dynamic'
+import useSeniority from '../../hooks/useSeniority'
+
+const LottiePlayer = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player),
+  {
+    ssr: false, // Vô hiệu hóa SSR chỉ cho Lottie Player
+  },
+)
 
 export type ProfileOverviewProps = {
   user?: any
@@ -20,33 +30,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
     return basic_salary + travel_allowance + kpi + eat_allowance
   }, [basic_salary, travel_allowance, kpi, eat_allowance])
 
-  const seniority = useMemo(() => {
-    if (!user.start_work_date) return ''
-
-    const start = new Date(user.start_work_date)
-    const today = new Date()
-
-    let years = today.getFullYear() - start.getFullYear()
-    let months = today.getMonth() - start.getMonth()
-    let days = today.getDate() - start.getDate()
-
-    if (days < 0) {
-      months -= 1
-      const prevMonthDays = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        0,
-      ).getDate()
-      days += prevMonthDays
-    }
-
-    if (months < 0) {
-      years -= 1
-      months += 12
-    }
-
-    return `${years} Năm ${months} Tháng ${days} Ngày`
-  }, [user.start_work_date])
+  const seniority = useSeniority(user?.start_work_date)
 
   const items = [
     {
@@ -63,7 +47,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
     },
     {
       icon: (
-        <Player
+        <LottiePlayer
           src={animation}
           loop
           autoplay

@@ -192,18 +192,18 @@ const AssetTable: React.FC<AssetTableProps> = ({
     },
   ]
 
-  const tabActions = (
-    <div className="flex items-center gap-[8px]">
-      <ColumnHeightOutlined />
-      <SettingOutlined />
-    </div>
-  )
+  // const tabActions = (
+  //   <div className="flex items-center gap-[8px]">
+  //     <ColumnHeightOutlined />
+  //     <SettingOutlined />
+  //   </div>
+  // )
 
   return (
     <div className="rounded-[8px] bg-[#fff] px-[16px]" suppressHydrationWarning>
       <Tabs
         items={tabs}
-        tabBarExtraContent={tabActions}
+        // tabBarExtraContent={tabActions}
         activeKey={tab}
         onChange={handleChangeTab}
       />

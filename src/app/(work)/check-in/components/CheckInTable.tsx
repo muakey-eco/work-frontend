@@ -25,27 +25,32 @@ type CheckInTableProps = TableProps & {
 }
 
 const generateTimestamp = (start: string, end: string, currentDate: string) => {
-  const startDate = String(dayjs(start).format('DD'))
-  const endDate = String(dayjs(end).format('DD'))
-  if (startDate <= currentDate && endDate >= currentDate) {
-    if (startDate === currentDate && endDate === currentDate) {
+  const startDate = dayjs(start).format('YYYY-MM-DD')
+  const endDate = dayjs(end).format('YYYY-MM-DD')
+  const currentDateFormatted = dayjs(currentDate).format('YYYY-MM-DD')
+
+  if (startDate <= currentDateFormatted && endDate >= currentDateFormatted) {
+    if (
+      startDate === currentDateFormatted &&
+      endDate === currentDateFormatted
+    ) {
       const startTime = dayjs(start).format('HH:mm')
       const endTime = dayjs(end).format('HH:mm')
 
       return [startTime, endTime]
     }
 
-    if (startDate === currentDate) {
+    if (startDate === currentDateFormatted) {
       const startTime = dayjs(start).format('HH:mm')
 
       return [startTime, END_TIME]
     }
 
-    if (currentDate > startDate && currentDate < endDate) {
+    if (currentDateFormatted > startDate && currentDateFormatted < endDate) {
       return [START_TIME, END_TIME]
     }
 
-    if (currentDate === endDate) {
+    if (currentDateFormatted === endDate) {
       const endTime = dayjs(end).format('HH:mm')
 
       return [START_TIME, endTime]
@@ -172,7 +177,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           return (
             <div className="flex flex-col gap-[4px]">
               {checkIn?.map((c: any, index: number) => (
-                <div key={c[0]}>
+                <div key={`${c[0]}-${index}`}>
                   {index > 0 && <Divider className="my-[4px]!" />}
                   <div>
                     {c[0]} - {c[1] ? c[1] : '--:--'}
@@ -204,9 +209,9 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         .flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
 
       const timeOffPropose = myPropose
-        .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
-        .map((p: any) => p?.date)
-        .flat()
+        ?.filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
+        .flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
+
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1
@@ -227,7 +232,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           generateTimestamp(
             t?.start_date,
             t?.end_date,
-            `${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+            `${dateParams}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
           ),
         )
 
@@ -235,7 +240,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           generateTimestamp(
             t?.start_date,
             t?.end_date,
-            `${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+            `${dateParams}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
           ),
         )
 

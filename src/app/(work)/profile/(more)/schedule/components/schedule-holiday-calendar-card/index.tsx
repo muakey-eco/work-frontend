@@ -1,42 +1,29 @@
+'use client'
+
 import { Card, CardProps } from 'antd'
-import dayjs from 'dayjs'
-import React from 'react'
+import React, { useState } from 'react'
 import ScheduleHolidayCalendar from './ScheduleHolidayCalendar'
 import ScheduleHolidayCalendarFilter from './ScheduleHolidayCalendarFilter'
 import ScheduleHolidayCalendarGuide from './ScheduleHolidayCalendarGuide'
 
 export type ScheduleHolidayCalendarCardProps = CardProps & {
-  data?: any
+  query?: any
+  options?: any
 }
 
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
-> = ({ data, ...props }) => {
-  const { attendances, ot_and_holiday } = data
+> = ({ options, query, ...props }) => {
+  const { members, day, propose, ...restOptions } = options
 
-  const attendancesData = attendances?.map((attend: any) => {
-    return {
-      items: [
-        {
-          key: 'planTime',
-          value: [
-            dayjs(attend?.checkin).format('HH:mm'),
-            dayjs(attend?.check_out_regulation).format('HH:mm'),
-          ],
-        },
-        {
-          key: 'realTime',
-          value: [
-            dayjs(attend?.checkin).format('HH:mm'),
-            attend?.checkout ? dayjs(attend?.checkout).format('HH:mm') : null,
-          ],
-        },
-      ],
-      checkInDay: String(dayjs(attend?.checkin).format('DD/MM/YYYY')),
-    }
-  })
+  const filteredPropose = propose?.data?.filter(
+    (p: any) =>
+      ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
+      p?.status === 'approved',
+  )
 
-  console.log('DATA ->', data)
+  const [date, setDate] = useState<any>(new Date())
+
 
   return (
     <Card
@@ -50,7 +37,15 @@ const ScheduleHolidayCalendarCard: React.FC<
         <ScheduleHolidayCalendarGuide />
       </div>
 
-      <ScheduleHolidayCalendar data={attendancesData} />
+      <ScheduleHolidayCalendar
+        options={{
+          ...restOptions,
+          propose: filteredPropose,
+          members: members?.filter((mem: any) => mem?.type !== 'department'),
+          day: Number(day || 0),
+        }}
+        onDateSelect={setDate}
+      />
     </Card>
   )
 }

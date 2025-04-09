@@ -1,17 +1,16 @@
 'use client'
 
 import { PageHeader } from '@/components'
-import { ArrowLeftOutlined } from '@ant-design/icons'
 import { usePathname } from 'next/navigation'
 
-const ProfileHeader = () => {
+const ProfileHeader = ({ account }: { account: any }) => {
   const pathname = usePathname()
 
   return (
     <PageHeader
+      onBack={account.role === 'Quản trị cấp cao'}
       title={
         <div className="flex items-center gap-[8px]">
-          <ArrowLeftOutlined className="cursor-pointer" />
           <span>
             {pathname === '/profile/login-history'
               ? 'Lịch sử đăng nhập cá nhân'

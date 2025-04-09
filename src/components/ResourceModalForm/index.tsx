@@ -47,6 +47,8 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
   formProps,
   ...modalProps
 }) => {
+  console.log(initialValues)
+
   const [accounts, setAccounts] = useState<any>([])
   const [format, setFormat] = useState(initialValues?.type || 'text')
   const [expireType, setExpireType] = useState('has_expire')
@@ -70,8 +72,11 @@ const ResourceModalForm: React.FC<ResourceModalFormProps> = ({
       return
     }
 
-    const res = await getAccountsReuqest()
+    const searchParams = new URLSearchParams()
+    searchParams.set('include', 'profile')
+    const res = await getAccountsReuqest(searchParams)
     const categories = await getResourceCategoriesRequest()
+    console.log(categories)
 
     setResourcesCategories(categories)
     setAccounts(res)

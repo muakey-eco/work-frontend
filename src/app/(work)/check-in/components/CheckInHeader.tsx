@@ -59,7 +59,7 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
       })}
     >
       <div className="flex items-center justify-between text-[20px]">
-        <span className="font-[500] leading-[28px]">
+        <span className="leading-[28px] font-[500]">
           {type !== 'none'
             ? type === 'form-request'
               ? 'Yêu cầu'

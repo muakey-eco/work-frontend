@@ -61,7 +61,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
 
       <div className="h-[calc(100vh-82px)] overflow-auto p-[16px]">
         <RequestTable
-          dataSource={proposes}
+          dataSource={proposes.data}
           query={{
             status:
               searchParams?.status !== 'all' ? searchParams?.status || '' : '',

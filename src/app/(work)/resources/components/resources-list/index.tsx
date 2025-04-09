@@ -111,7 +111,7 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                   >
                     {item?.name?.charAt(0)?.toUpperCase()}
                   </Avatar>
-                  <div className="line-clamp-1 flex-1 text-[16px] font-[500] leading-[24px]">
+                  <div className="line-clamp-1 flex-1 text-[16px] leading-[24px] font-[500]">
                     {item?.name}
                   </div>
                 </div>
@@ -133,7 +133,7 @@ const ResourcesList: React.FC<ResourcesListProps> = ({ resources }) => {
                         >
                           {item?.name?.charAt(0)?.toUpperCase()}
                         </Avatar>
-                        <span className="text-[16px] font-[700] leading-[24px]">
+                        <span className="text-[16px] leading-[24px] font-[700]">
                           {item.name}
                         </span>
                       </div>

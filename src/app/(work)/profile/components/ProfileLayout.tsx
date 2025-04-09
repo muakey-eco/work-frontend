@@ -1,3 +1,4 @@
+import { getMe } from '@/libs/data'
 import { Col, Row } from 'antd'
 import React from 'react'
 import ProfileHeader from './profile-header'
@@ -9,9 +10,13 @@ const ProfileMoreLayout: React.FC<{
   children: React.ReactNode
   user?: any
 }> = async ({ children, user }) => {
+  const account = await getMe({
+    include: 'profile',
+  })
+
   return (
     <>
-      <ProfileHeader />
+      <ProfileHeader account={account} />
 
       <div className="h-[calc(100vh-55px)] bg-[#f6f6f6] p-[16px]">
         <Row gutter={[16, 16]}>
@@ -19,7 +24,7 @@ const ProfileMoreLayout: React.FC<{
           <Col span={6}>
             <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
               <ProfileOverview user={user} />
-              <ProfileSidebar user={user} />
+              <ProfileSidebar />
               <ProfileUserSidebar />
             </div>
           </Col>

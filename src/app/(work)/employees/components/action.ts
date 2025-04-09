@@ -2,6 +2,7 @@
 
 import { addStaff, getAccountById } from '@/libs/account'
 import { getAccountsAsAttendance, getBankList, uploadFiles } from '@/libs/data'
+import { getEmployee } from '@/libs/employee'
 import { createView, getViewFields } from '@/libs/view'
 
 export const getViewFieldsAction = async (query?: any) => {
@@ -30,4 +31,8 @@ export const addStaffAction = async (data: any, body?: FormData) => {
 
 export const getAccountByIdAction = async (id: number, query?: any) => {
   return await getAccountById(id, query)
+}
+
+export const getEmployeeAction = async (query?: any) => {
+  return await getEmployee(query)
 }

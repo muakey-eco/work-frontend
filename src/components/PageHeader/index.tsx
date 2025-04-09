@@ -10,12 +10,14 @@ type Tab = {
   className?: TabsProps['className']
   onChangeTab?: (key: string) => void
   extra?: React.ReactNode
+  activeKey?: string
 }
 
 export type PageHeaderProps = {
   title?: React.ReactNode
   extra?: React.ReactNode
   tab?: Tab
+  activeKey?: string
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
@@ -40,6 +42,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, extra, tab }) => {
                 tabBarStyle={{ marginBottom: 0 }}
                 items={tab?.items}
                 onChange={tab?.onChangeTab}
+                activeKey={tab?.activeKey}
               />
             )}
             {tab?.extra && (

@@ -38,8 +38,8 @@ export const getContractCategoriesAction = async () => {
   return await getContractCategories()
 }
 
-export const getAccountByIdAction = async (id: number) => {
-  return await getAccountById(id)
+export const getAccountByIdAction = async (id: number, query?: any) => {
+  return await getAccountById(id, query)
 }
 
 export const updateAccountAction = async (

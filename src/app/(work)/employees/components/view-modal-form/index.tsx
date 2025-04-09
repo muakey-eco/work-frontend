@@ -97,7 +97,6 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
     if (!open) return
 
     const res = await getViewFieldsAction()
-
     setViewFields(res)
   }, [open])
 
@@ -144,7 +143,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
             <div className="no-scroll relative h-[346px] overflow-y-auto rounded-[8px] border border-[#D9D9D9] bg-[#0000000A]">
               {viewFields.map((field: any) => (
                 <>
-                  <div className="sticky top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pt-[4px] pl-[16px]">
+                  <div className="top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pt-[4px] pl-[16px]">
                     <div className="flex items-center gap-[8px] text-[14px] leading-[22px] font-[600]">
                       <RightOutlined className="text-[12px]" />
                       <span>{field.name}</span>

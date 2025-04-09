@@ -11,7 +11,7 @@ import {
 import { Button, Dropdown, Input, MenuProps, TabsProps, theme } from 'antd'
 import { createStyles } from 'antd-style'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
+import React, { useRef } from 'react'
 import EmployeeModalForm from './employee-modal-form'
 import ViewModalForm from './view-modal-form'
 
@@ -37,6 +37,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
   const searchParams = useSearchParams()
   const query = new URLSearchParams(searchParams)
   const router = useRouter()
+  const refActiveKey = useRef(query.get('view') || 'tong-quan')
 
   const tabItems: TabsProps['items'] = [
     ...(tabs || []).map((tab, index) => ({
@@ -78,13 +79,13 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
 
   const handleChangeTab = (key: string) => {
     query.set('view', key)
-
+    refActiveKey.current = key
     router.push(`?${query.toString()}`)
   }
 
   const handleViewClick = (key: string) => {
     query.set('view', key)
-
+    refActiveKey.current = key
     router.push(`?${query.toString()}`)
   }
 
@@ -101,6 +102,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
       tab={{
         items: tabItems,
         onChangeTab: handleChangeTab,
+        activeKey: refActiveKey.current,
         extra: (
           <div className="flex items-center gap-[32px]">
             <Dropdown

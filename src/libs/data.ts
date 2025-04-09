@@ -104,8 +104,17 @@ export const deleteStageById = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const getAccounts = async (query?: any) => {
-  return requestWithAuthorized('accounts?' + new URLSearchParams(query))
+export const getAccounts = async (
+  query?: any,
+  page?: number,
+  pageSize?: number,
+  search?: string,
+) => {
+  return requestWithAuthorized(
+    'accounts?' +
+      new URLSearchParams(query) +
+      `&page=${page}&per_page=${pageSize}&search=${search}`,
+  )
     .then((data) => data)
     .catch(() => [])
 }

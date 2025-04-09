@@ -40,7 +40,6 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
 
-  console.log('notifications', notifications)
   const router = useRouter()
   const { message, modal } = App.useApp()
 

@@ -9,6 +9,7 @@ type CalendarDropdownProps = {
   currentDate?: any
   day?: any
   options?: any
+  isProfile?: boolean
   onDateClick?: (date: any) => void
 }
 
@@ -17,6 +18,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   day,
   options,
   onDateClick,
+  isProfile,
 }) => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -26,7 +28,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   const currentDate = String(dayjs(current).format('YYYY-MM-DD'))
 
   const { isCurrentMonth, info } = options
-
 
   const dropdownRender = () => {
     return (
@@ -112,6 +113,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
         <div className="w-full text-center">
           {String(dayjs(current).format('DD/MM'))}
         </div>
+
         {day?.go_to_work !== undefined ? (
           <div className="flex h-full flex-col justify-between">
             {day?.go_to_work === 0 ? (
@@ -218,7 +220,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                         ),
                     )}
                 </div>
-                {info?.checkInValue?.[0] && (
+                {info?.checkInValue?.[0] && !isProfile && (
                   <div className="flex items-center justify-between gap-[8px] px-[4px]">
                     <div className="flex items-center gap-[4px]">
                       <ClockCircleOutlined /> <span>{info?.hoursPerDay}h</span>

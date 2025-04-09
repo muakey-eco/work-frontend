@@ -11,7 +11,9 @@ import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
-import { END_TIME, GLOBAL_BAN, START_TIME } from '@/libs/constant'
+import { GLOBAL_BAN } from '@/libs/constant'
+import { generateTimestamp } from '@/utils/generateTimestamp'
+
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjsLocale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -22,37 +24,6 @@ import CheckInTableExplanation from './CheckInTableExplanation'
 type CheckInTableProps = TableProps & {
   options?: any
   onDateSelect?: (date: any) => void
-}
-
-const generateTimestamp = (start: string, end: string, currentDate: string) => {
-  const startDate = String(dayjs(start).format('DD'))
-  const endDate = String(dayjs(end).format('DD'))
-  if (startDate <= currentDate && endDate >= currentDate) {
-    if (startDate === currentDate && endDate === currentDate) {
-      const startTime = dayjs(start).format('HH:mm')
-      const endTime = dayjs(end).format('HH:mm')
-
-      return [startTime, endTime]
-    }
-
-    if (startDate === currentDate) {
-      const startTime = dayjs(start).format('HH:mm')
-
-      return [startTime, END_TIME]
-    }
-
-    if (currentDate > startDate && currentDate < endDate) {
-      return [START_TIME, END_TIME]
-    }
-
-    if (currentDate === endDate) {
-      const endTime = dayjs(end).format('HH:mm')
-
-      return [START_TIME, endTime]
-    }
-  }
-
-  return null
 }
 
 const useStyle = createStyles(({ css }) => {
@@ -108,6 +79,8 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 }) => {
   const searchParams = useSearchParams()
   const today = useMemo(() => new Date(), [])
+  const todayFormatted = dayjs(today).format('YYYY-MM')
+
   const [mode, setMode] = useState('dashboard')
   const [date, setDate] = useState<any>(dayjs(today))
 
@@ -205,8 +178,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
       const timeOffPropose = myPropose
         .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
-        .map((p: any) => p?.date)
-        .flat()
+        ?.flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1
@@ -227,7 +199,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           generateTimestamp(
             t?.start_date,
             t?.end_date,
-            `${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+            `${dateParams ? dateParams : todayFormatted}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
           ),
         )
 
@@ -235,7 +207,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           generateTimestamp(
             t?.start_date,
             t?.end_date,
-            `${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+            `${dateParams ? dateParams : todayFormatted}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
           ),
         )
 
@@ -283,7 +255,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   const checkInData = checkInDataSource?.find(
     (c: any) => c?.member?.fullName === user?.full_name,
   )
-
   const checkInStatisticsItems = [
     {
       title: 'Công chuẩn',
@@ -391,7 +362,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 ),
               },
             ]}
-            onChange={(key) => setMode(key)}
+            onChange={(key) => {
+              if (key === 'schedule') {
+                setMode(key)
+                onDateSelect?.(dayjs(new Date()))
+              }
+            }}
           />
         </div>
       ) : (

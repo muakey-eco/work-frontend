@@ -165,36 +165,73 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       },
     },
     onPaste: async (e) => {
-      e.preventDefault()
+      const clipboard = e.clipboardData
+      const file = clipboard?.files?.[0]
+      const text = clipboard?.getData('text/plain')
 
-      const file = e.clipboardData?.files[0]
+      // Trường hợp là file ảnh (dán từ clipboard)
+      if (file && file.type.startsWith('image/')) {
+        e.preventDefault()
 
-      if (!file) return
-
-      const maxSize = 2 * 1024 * 1024
-
-      if (file.size > maxSize) {
-        message.error('Kích thước file vượt quá 2MB')
-        return
-      }
-
-      const formData = new FormData()
-
-      formData.append('image', file || '')
-
-      try {
-        const { urlImage: url, error } = await uploadImageAction(formData)
-
-        if (error) {
-          message.error(error)
+        const maxSize = 2 * 1024 * 1024
+        if (file.size > maxSize) {
+          message.error('Kích thước file vượt quá 2MB')
           return
         }
 
-        if (url) {
-          editor?.chain().focus().setImage({ src: url }).run()
+        const formData = new FormData()
+        formData.append('image', file)
+
+        try {
+          const { urlImage: url, error } = await uploadImageAction(formData)
+          if (error) {
+            message.error(error)
+            return
+          }
+
+          editor
+            ?.chain()
+            .focus()
+            .insertContent([
+              {
+                type: 'image',
+                attrs: { src: url },
+              },
+              {
+                type: 'paragraph',
+                content: [],
+              },
+            ])
+            .run()
+        } catch (error) {
+          console.error(error)
+          message.error('Tải ảnh thất bại')
         }
-      } catch (error) {
-        throw new Error(String(error))
+
+        return
+      }
+
+      // Trường hợp là paste link văn bản
+      if (text && /^https?:\/\//.test(text)) {
+        e.preventDefault()
+        editor
+          ?.chain()
+          .focus()
+          .insertContent({
+            type: 'text',
+            text,
+            marks: [
+              {
+                type: 'link',
+                attrs: {
+                  href: text,
+                  target: '_blank',
+                },
+              },
+            ],
+          })
+          .run()
+        return
       }
     },
   })

@@ -1,5 +1,4 @@
 import { getAccountsAsAttendance, getAttendances, getMe } from '@/libs/data'
-import { getProposes } from '@/libs/propose'
 import { getWorkSchedule } from '@/libs/schedule'
 import React from 'react'
 import ScheduleHolidayCalendarCard from './components/schedule-holiday-calendar-card'
@@ -12,23 +11,18 @@ const SchedulePage: React.FC<any> = async (prop: { searchParams: any }) => {
 
   const hasSearchParams = Object.keys(searchParams).length > 0
 
-  const [attendances, members, user, workSchedule, propose] = await Promise.all(
-    [
-      getAttendances({
-        date: searchParams?.date || '',
-      }),
-      getAccountsAsAttendance({
-        date: searchParams?.date || '',
-      }),
-      getMe(),
-      getWorkSchedule({
-        date: searchParams?.date || '',
-      }),
-      getProposes({
-        date: searchParams?.date || '',
-      }),
-    ],
-  )
+  const [attendances, members, user, workSchedule] = await Promise.all([
+    getAttendances({
+      date: searchParams?.date || '',
+    }),
+    getAccountsAsAttendance({
+      date: searchParams?.date || '',
+    }),
+    getMe(),
+    getWorkSchedule({
+      date: searchParams?.date || '',
+    }),
+  ])
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
@@ -43,7 +37,7 @@ const SchedulePage: React.FC<any> = async (prop: { searchParams: any }) => {
               : 'none',
           searchParams,
         }}
-        options={{ attendances, members, day, user, workSchedule, propose }}
+        options={{ attendances, members, day, user, workSchedule }}
       />
     </div>
   )

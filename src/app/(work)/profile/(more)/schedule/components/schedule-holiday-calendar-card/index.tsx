@@ -14,16 +14,9 @@ export type ScheduleHolidayCalendarCardProps = CardProps & {
 const ScheduleHolidayCalendarCard: React.FC<
   ScheduleHolidayCalendarCardProps
 > = ({ options, query, ...props }) => {
-  const { members, day, propose, ...restOptions } = options
-
-  const filteredPropose = propose?.data?.filter(
-    (p: any) =>
-      ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
-      p?.status === 'approved',
-  )
+  const { members, day, ...restOptions } = options
 
   const [date, setDate] = useState<any>(new Date())
-
 
   return (
     <Card
@@ -40,7 +33,6 @@ const ScheduleHolidayCalendarCard: React.FC<
       <ScheduleHolidayCalendar
         options={{
           ...restOptions,
-          propose: filteredPropose,
           members: members?.filter((mem: any) => mem?.type !== 'department'),
           day: Number(day || 0),
         }}

@@ -90,17 +90,13 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         (a: any) => a?.account_id === m?.id,
       )
 
-      const myPropose = propose?.filter(
-        (p: any) => p?.account?.full_name === m?.full_name,
+      const otPropose = attendances?.ot_and_holiday.filter(
+        (p: any) => p?.name_category === 'Đăng ký OT',
       )
 
-      const otPropose = myPropose
-        .filter((p: any) => p?.category_name === 'Đăng ký OT')
-        .flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
-
-      const timeOffPropose = myPropose
-        .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
-        ?.flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
+      const timeOffPropose = attendances?.ot_and_holiday.filter(
+        (p: any) => p?.name_category === 'Đăng ký nghỉ',
+      )
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1

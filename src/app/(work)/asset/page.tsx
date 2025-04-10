@@ -1,8 +1,6 @@
 import { PageHeader } from '@/components'
 import { getAssetsByPagnition } from '@/libs/asset'
-import PageContent from './components/PageContent'
-import AssetFilter from './components/asset-search'
-import AssetTable from './components/asset-table'
+import AssetClientWrapper from './components/AssetClientWrapper'
 
 const AssetPage: React.FC<any> = async ({
   searchParams,
@@ -23,16 +21,7 @@ const AssetPage: React.FC<any> = async ({
   return (
     <>
       <PageHeader title="Quản lý tài sản" />
-      <PageContent className="flex flex-col gap-[16px]">
-        <AssetFilter />
-        <AssetTable
-          dataSource={assets.data}
-          total={assets.total}
-          per_page={assets.per_page}
-          total_status={assets.total_status}
-          defaultActiveKey={status}
-        />
-      </PageContent>
+      <AssetClientWrapper assets={assets} status={status} />
     </>
   )
 }

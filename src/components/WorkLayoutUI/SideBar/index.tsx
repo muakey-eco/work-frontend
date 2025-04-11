@@ -185,6 +185,34 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       href: '/resources',
     },
     {
+      label: 'Marketing',
+      icon: <CalendarFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      children: [
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className="h-[14px] w-[12px]" />
+              <span>Tổng quan</span>
+            </div>
+          ),
+          shouldRound: false,
+          href: '/marketing',
+        },
+        {
+          label: (
+            <div className="flex items-center gap-[10px]">
+              <div className="h-[14px] w-[12px]" />
+              <span>So sánh dữ liệu</span>
+            </div>
+          ),
+          shouldRound: false,
+          href: '/compare-data',
+        },
+      ],
+    },
+    {
       label: 'Tài sản công ty',
       icon: (
         <DatabaseFilled className="text-[14px]" style={{ color: 'white' }} />

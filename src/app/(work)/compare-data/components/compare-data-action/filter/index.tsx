@@ -2,26 +2,35 @@
 
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, DatePicker, DatePickerProps, Select } from 'antd'
+import { useState } from 'react'
 
 const CompareDataFilter = () => {
+  const [picker, setPicker] = useState<'date' | 'week' | 'month' | 'year'>(
+    'date',
+  )
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
     console.log(date, dateString)
   }
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`)
+    setPicker(value as 'date' | 'week' | 'month' | 'year')
   }
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex gap-4">
-        <DatePicker onChange={onChange} style={{ width: 310 }} />
+        <DatePicker
+          picker={picker}
+          onChange={onChange}
+          style={{ width: 310 }}
+        />
         <Select
-          defaultValue="Ngày"
+          defaultValue="date"
           style={{ width: 310 }}
           onChange={handleChange}
           options={[
-            { value: 'Ngày', label: 'Ngày' },
-            { value: 'Tháng', label: 'Tháng' },
-            { value: 'Năm', label: 'Năm' },
+            { value: 'date', label: 'Ngày' },
+            { value: 'week', label: 'Tuần' },
+            { value: 'month', label: 'Tháng' },
+            { value: 'year', label: 'Năm' },
           ]}
         />
       </div>

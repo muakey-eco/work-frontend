@@ -1,5 +1,11 @@
 'use client'
 
+import {
+  EyeOutlined,
+  LikeOutlined,
+  MessageOutlined,
+  ShoppingOutlined,
+} from '@ant-design/icons'
 import { Card, Select } from 'antd'
 import React from 'react'
 import MarketingChart from '../charts'
@@ -8,13 +14,14 @@ type DataCardProps = {
   title: string
   value: string
   options?: any[]
-  data?: any[]
+  data?: any
   total?: number
 }
 const DataCard: React.FC<DataCardProps> = ({
   title,
   value,
   total,
+  data,
   options,
 }) => {
   const handleChange = (value: string) => {
@@ -37,11 +44,21 @@ const DataCard: React.FC<DataCardProps> = ({
       </div>
       {options && (
         <div className="flex items-center justify-center gap-2 px-6 text-sm font-bold">
-          <div>👁️ 1.3M</div>
-          <div>👍 2.4K</div>
-          <div>💬 100</div>
-          <div>⏱️ 234</div>
-          <div>📅 40</div>
+          <span className="flex items-center gap-1">
+            <EyeOutlined /> {data.totalView}
+          </span>
+          <span className="flex items-center gap-1">
+            <LikeOutlined /> {data.totalLike}
+          </span>
+          <span className="flex items-center gap-1">
+            <MessageOutlined /> {data.totalComment}
+          </span>
+          <span className="flex items-center gap-1">
+            <img src="Gestures.svg" alt="" /> {data.totalClick}
+          </span>
+          <span className="flex items-center gap-1">
+            <ShoppingOutlined /> {data.totalOrder}
+          </span>
         </div>
       )}
 

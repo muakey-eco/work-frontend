@@ -1,5 +1,11 @@
 'use client'
 
+import {
+  EyeOutlined,
+  LikeOutlined,
+  MessageOutlined,
+  ShoppingOutlined,
+} from '@ant-design/icons'
 import type { TableColumnsType, TableProps } from 'antd'
 import { Avatar, Table } from 'antd'
 import React, { useState } from 'react'
@@ -9,106 +15,26 @@ type Filters = Parameters<OnChange>[1]
 type GetSingle<T> = T extends (infer U)[] ? U : never
 type Sorts = GetSingle<Parameters<OnChange>[2]>
 
-interface Executor {
+interface Worker {
   name: string
   avatar: string
 }
 
 interface DataType {
   key: string
-  productName: string
+  name: string
   data: string
   revenue: string
-  commission: string
-  received: string
-  completionTime: string
-  executors: Executor[]
+  commission_percent: string
+  net_income: string
+  completion_time: string
+  workers: Worker[]
 }
 
-const data: DataType[] = [
-  {
-    key: '1',
-    productName:
-      'Dark Legion - giới thiệu game và đăng ký trước kỳ game để nhận quà',
-    data: '👁️ 1.3M, 👍 2.4K, 💬 100, ⏱️ 234, 📅 40',
-    revenue: '500,000 đ',
-    commission: '240,000 đ',
-    received: '240,000 đ',
-    completionTime: '8.6',
-    executors: [
-      { name: 'User A', avatar: 'https://i.pravatar.cc/150?u=a' },
-      { name: 'User B', avatar: 'https://i.pravatar.cc/150?u=b' },
-      { name: 'User C', avatar: 'https://i.pravatar.cc/150?u=c' },
-      { name: '+2', avatar: '' },
-    ],
-  },
-  {
-    key: '2',
-    productName:
-      'Dark Legion - giới thiệu game và đăng ký trước kỳ game để nhận quà',
-    data: '👁️ 1.3M, 👍 2.4K, 💬 100, ⏱️ 234, 📅 40',
-    revenue: '500,000 đ',
-    commission: '240,000 đ',
-    received: '240,000 đ',
-    completionTime: '8',
-    executors: [
-      { name: 'User A', avatar: 'https://i.pravatar.cc/150?u=a' },
-      { name: 'User B', avatar: 'https://i.pravatar.cc/150?u=b' },
-      { name: 'User C', avatar: 'https://i.pravatar.cc/150?u=c' },
-      { name: '+2', avatar: '' },
-    ],
-  },
-  {
-    key: '3',
-    productName:
-      'Dark Legion - giới thiệu game và đăng ký trước kỳ game để nhận quà',
-    data: '👁️ 1.3M, 👍 2.4K, 💬 100, ⏱️ 234, 📅 40',
-    revenue: '500,000 đ',
-    commission: '240,000 đ',
-    received: '240,000 đ',
-    completionTime: '8',
-    executors: [
-      { name: 'User A', avatar: 'https://i.pravatar.cc/150?u=a' },
-      { name: 'User B', avatar: 'https://i.pravatar.cc/150?u=b' },
-      { name: 'User C', avatar: 'https://i.pravatar.cc/150?u=c' },
-      { name: '+2', avatar: '' },
-    ],
-  },
-  {
-    key: '4',
-    productName:
-      'Dark Legion - giới thiệu game và đăng ký trước kỳ game để nhận quà',
-    data: '👁️ 1.3M, 👍 2.4K, 💬 100, ⏱️ 234, 📅 40',
-    revenue: '500,000 đ',
-    commission: '240,000 đ',
-    received: '240,000 đ',
-    completionTime: '8',
-    executors: [
-      { name: 'User A', avatar: 'https://i.pravatar.cc/150?u=a' },
-      { name: 'User B', avatar: 'https://i.pravatar.cc/150?u=b' },
-      { name: 'User C', avatar: 'https://i.pravatar.cc/150?u=c' },
-      { name: '+2', avatar: '' },
-    ],
-  },
-  {
-    key: '5',
-    productName:
-      'Dark Legion - giới thiệu game và đăng ký trước kỳ game để nhận quà',
-    data: '👁️ 1.3M, 👍 2.4K, 💬 100, ⏱️ 234, 📅 40',
-    revenue: '500,000 đ',
-    commission: '240,000 đ',
-    received: '240,000 đ',
-    completionTime: '8',
-    executors: [
-      { name: 'User A', avatar: 'https://i.pravatar.cc/150?u=a' },
-      { name: 'User B', avatar: 'https://i.pravatar.cc/150?u=b' },
-      { name: 'User C', avatar: 'https://i.pravatar.cc/150?u=c' },
-      { name: '+2', avatar: '' },
-    ],
-  },
-]
-
-const MarketingDetail: React.FC = () => {
+type MarketingDetailProps = {
+  data: any
+}
+const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
   const [filteredInfo, setFilteredInfo] = useState<Filters>({})
   const [sortedInfo, setSortedInfo] = useState<Sorts>({})
 
@@ -120,19 +46,37 @@ const MarketingDetail: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Tên sản phẩm',
-      dataIndex: 'productName',
-      key: 'productName',
+      dataIndex: 'name',
+      key: 'name',
       //   ellipsis: true,
       width: 335,
-      sorter: (a, b) => a.productName.length - b.productName.length,
+      sorter: (a, b) => a.name.length - b.name.length,
     },
     {
       title: 'Số liệu',
-      dataIndex: 'data',
-      key: 'data',
+      dataIndex: 'count_youtube',
+      key: 'count_youtube',
       ellipsis: true,
       width: 335,
-      render: (text) => <span>{text}</span>,
+      render: (text) => (
+        <span className="flex gap-4 font-bold">
+          <span className="flex items-center gap-1">
+            <EyeOutlined /> {text.view_count}
+          </span>
+          <span className="flex items-center gap-1">
+            <LikeOutlined /> {text.like_count}
+          </span>
+          <span className="flex items-center gap-1">
+            <MessageOutlined /> {text.comment_count}
+          </span>
+          <span className="flex items-center gap-1">
+            <img src="Gestures.svg" alt="" /> {text.click}
+          </span>
+          <span className="flex items-center gap-1">
+            <ShoppingOutlined /> {text.order}
+          </span>
+        </span>
+      ),
     },
     {
       title: 'Doanh thu',
@@ -145,37 +89,37 @@ const MarketingDetail: React.FC = () => {
     },
     {
       title: 'Hoa hồng',
-      dataIndex: 'commission',
-      key: 'commission',
+      dataIndex: 'commission_percent',
+      key: 'commission_percent',
       sorter: (a, b) =>
-        parseFloat(a.commission.replace(/[^\d]/g, '')) -
-        parseFloat(b.commission.replace(/[^\d]/g, '')),
+        parseFloat(a.commission_percent.replace(/[^\d]/g, '')) -
+        parseFloat(b.commission_percent.replace(/[^\d]/g, '')),
       ellipsis: true,
     },
     {
       title: 'Thực nhận',
-      dataIndex: 'received',
-      key: 'received',
+      dataIndex: 'net_income',
+      key: 'net_income',
       sorter: (a, b) =>
-        parseFloat(a.received.replace(/[^\d]/g, '')) -
-        parseFloat(b.received.replace(/[^\d]/g, '')),
+        parseFloat(a.net_income.replace(/[^\d]/g, '')) -
+        parseFloat(b.net_income.replace(/[^\d]/g, '')),
       ellipsis: true,
     },
     {
       title: 'Thời gian HT (giờ)',
-      dataIndex: 'completionTime',
-      key: 'completionTime',
+      dataIndex: 'completion_time',
+      key: 'completion_time',
       sorter: (a, b) =>
-        parseFloat(a.completionTime) - parseFloat(b.completionTime),
+        parseFloat(a.completion_time) - parseFloat(b.completion_time),
       ellipsis: true,
     },
     {
       title: 'Người thực hiện',
-      dataIndex: 'executors',
-      key: 'executors',
-      render: (executors: Executor[]) => (
+      dataIndex: 'workers',
+      key: 'workers',
+      render: (workers: Worker[]) => (
         <Avatar.Group>
-          {executors.map((e, index) =>
+          {workers.map((e, index) =>
             e.avatar ? (
               <Avatar key={index} src={e.avatar} alt={e.name} />
             ) : (
@@ -193,6 +137,7 @@ const MarketingDetail: React.FC = () => {
       dataSource={data}
       onChange={handleChange}
       pagination={false}
+      scroll={{ y: 320 }}
     />
   )
 }

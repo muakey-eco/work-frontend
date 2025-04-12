@@ -145,7 +145,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           return (
             <div className="flex flex-col gap-[4px]">
               {checkIn?.map((c: any, index: number) => (
-                <div key={c[0]}>
+                <div key={`${c[0]}-${c[1]}-${index}`}>
                   {index > 0 && <Divider className="my-[4px]!" />}
                   <div>
                     {c[0]} - {c[1] ? c[1] : '--:--'}
@@ -159,7 +159,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     }),
   ]
 
-  const { user, workSchedule, attendances, propose } = options
+  const { user, workSchedule, attendances } = options
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
@@ -168,17 +168,13 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         (a: any) => a?.account_id === m?.id,
       )
 
-      const myPropose = propose?.filter(
-        (p: any) => p?.account?.full_name === m?.full_name,
+      const otPropose = attendances?.ot_and_holiday.filter(
+        (p: any) => p?.name_category === 'Đăng ký OT',
       )
 
-      const otPropose = myPropose
-        .filter((p: any) => p?.category_name === 'Đăng ký OT')
-        .flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
-
-      const timeOffPropose = myPropose
-        .filter((p: any) => p?.category_name === 'Đăng ký nghỉ')
-        ?.flatMap((p: any) => (Array.isArray(p?.date) ? p?.date : [p?.date]))
+      const timeOffPropose = attendances?.ot_and_holiday.filter(
+        (p: any) => p?.name_category === 'Đăng ký nghỉ',
+      )
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1

@@ -17,12 +17,8 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
 
   const { type } = query
 
-  const filteredPropose = propose?.data?.filter(
-    (p: any) =>
-      ['Đăng ký OT', 'Đăng ký nghỉ'].includes(p?.category_name) &&
-      p?.status === 'approved',
-  )
   const { attendances } = restOptions?.attendances
+ 
 
   switch (type) {
     case 'form-request':
@@ -44,7 +40,6 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
         <CheckInTable
           options={{
             ...restOptions,
-            propose: filteredPropose,
             members: members?.filter((mem: any) => mem?.type !== 'department'),
             day: Number(day || 0),
           }}

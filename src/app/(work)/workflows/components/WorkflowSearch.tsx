@@ -1,10 +1,8 @@
 'use client'
 
-import { SearchOutlined } from '@/ui/icons'
 import { Input } from 'antd'
-import clsx from 'clsx'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type WorkflowSearchProps = {
   className?: string
@@ -19,34 +17,26 @@ const WorkflowSearch: React.FC<WorkflowSearchProps> = ({ className }) => {
     [searchParams],
   )
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value)
+  const handleChange = (text: string) => {
+    setSearchValue(text)
   }
 
   useEffect(() => {
     if (searchValue) {
       query.set('q', String(searchValue))
-      router.push(`?${String(query)}`)
     } else {
       query.delete('q')
     }
+    router.push(`?${String(query)}`)
   }, [searchValue, query, router])
 
   return (
-    <div
-      className={clsx(
-        'flex items-center gap-[8px] overflow-hidden rounded-[4px] border border-[#ddd] pr-[8px]',
-        className,
-      )}
-    >
-      <Input
-        className="border-transparent"
-        placeholder="Lọc nhanh"
-        size="middle"
-        onChange={handleChange}
-      />
-      <SearchOutlined />
-    </div>
+    <Input.Search
+      className="border-transparent"
+      placeholder="Lọc nhanh"
+      size="middle"
+      onSearch={handleChange}
+    />
   )
 }
 

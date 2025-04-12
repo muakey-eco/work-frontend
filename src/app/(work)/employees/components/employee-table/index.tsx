@@ -1,14 +1,14 @@
 'use client'
 
-import { getAccounts } from '@/libs/data'
 import { convertToSlug, randomColor } from '@/libs/utils'
 import { Avatar, Table, TableProps } from 'antd'
 import { createStyles } from 'antd-style'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { getEmployeeAction } from '../action'
 import EmployeeFilter from '../employee-filter'
-import EmployeePaginationTable from '../employee-pagination-table'
+import EmployeePaginationTable from './employee-pagination-table'
 
 export type EmployeeTableProps = Omit<TableProps, 'columns'> & {
   views?: any[]
@@ -41,32 +41,34 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
   columns: externalColumns,
   ...rest
 }) => {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const query = new URLSearchParams(searchParams)
+  const view = searchParams.get('view')
+  const search = searchParams.get('search')
+  const page = searchParams.get('page')
+
   const [viewColumns, setViewColumns] = useState([])
   const { styles } = useStyle()
   const [data, setData] = useState<any[]>()
   const [loading, setLoading] = useState(false)
   const refpagination = useRef({
-    current: 1,
+    current: Number(page) || 1,
     pageSize: 10,
     total: 0,
   })
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const view = searchParams.get('view')
-  const search = searchParams.get('search')
 
   const fetchData = useCallback(
     async (page: number, pageSize: number) => {
       setLoading(true)
       try {
-        const response = await getAccounts(
-          {
-            include: 'profile',
-          },
-          page,
-          pageSize,
-          search || '',
-        )
+        query.set('include', 'profile')
+        query.set('page', page.toString())
+        query.set('per_page', pageSize.toString())
+        query.set('search', search || '')
+
+        const response = await getEmployeeAction(query)
+
         const { data, current_page, per_page, total } = response
         setData(data)
         refpagination.current = {
@@ -80,26 +82,15 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         setLoading(false)
       }
     },
-    [search],
+    [search, page],
   )
 
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination
+    query.set('page', current.toString())
+    router.push(`?${query.toString()}`)
     fetchData(current, pageSize)
   }
-
-  useEffect(() => {
-    const { current, pageSize } = refpagination.current
-    fetchData(current, pageSize)
-  }, [fetchData, search])
-
-  useEffect(() => {
-    const c = externalColumns?.find(
-      (column) => convertToSlug(column.name) === (view || 'tong-quan'),
-    )
-
-    setViewColumns(c?.field_name || [])
-  }, [view, externalColumns])
 
   const specialColumns: any = {
     full_name: {
@@ -126,19 +117,37 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
     personal_documents: {
       dataIndex: ['personal_documents', 0, 'file_url'],
       render: (text: any) => {
-        return text && <Link href={text}>Link</Link>
+        return (
+          text && (
+            <Link target="_blank" href={text}>
+              Link
+            </Link>
+          )
+        )
       },
     },
     url_contract: {
       dataIndex: ['url_contract'],
       render: (text: any) => {
-        return text && <Link href={text}>Link</Link>
+        return (
+          text && (
+            <Link target="_blank" href={text}>
+              Link
+            </Link>
+          )
+        )
       },
     },
     avatar: {
       dataIndex: ['avatar'],
       render: (text: any) => {
-        return text && <Link href={text}>Link</Link>
+        return (
+          text && (
+            <Link target="_blank" href={text}>
+              Link
+            </Link>
+          )
+        )
       },
     },
     start_date: {
@@ -168,6 +177,22 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
       ...specialColumns[field?.value],
     }
   })
+
+  useEffect(() => {
+    if (!page) {
+      refpagination.current.current = 1
+    }
+    const { current, pageSize } = refpagination.current
+    fetchData(current, pageSize)
+  }, [fetchData, search])
+
+  useEffect(() => {
+    const c = externalColumns?.find(
+      (column) => convertToSlug(column.name) === (view || 'tong-quan'),
+    )
+
+    setViewColumns(c?.field_name || [])
+  }, [view, externalColumns])
 
   return (
     <div className="space-y-[16px]">

@@ -9,7 +9,7 @@ import ProfileWorkHistoryCard from './components/profile-work-history-card'
 import ProfileMoreLayout from './components/ProfileLayout'
 
 export default async function ProfilePage({ searchParams }: any) {
-  const id = searchParams.id
+  const { id } = searchParams
   let user = await getMe({
     include: 'profile',
   })

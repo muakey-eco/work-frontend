@@ -7,3 +7,9 @@ export const getPauseHistory = async (accountId: number, type: string) => {
     .then((data) => data)
     .catch(() => null)
 }
+
+export const getEmployee = async (query?: any) => {
+  return requestWithAuthorized(`employees?` + new URLSearchParams(query))
+    .then((data) => data)
+    .catch(() => [])
+}

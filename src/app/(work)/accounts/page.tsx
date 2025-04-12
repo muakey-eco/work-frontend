@@ -1,24 +1,23 @@
-import { getAccounts } from '@/libs/data'
 import React from 'react'
+import AccountTable from './components/account-table'
 import AccountPageHeader from './components/AccountPageHeader'
 import AccountPageProvider from './components/AccountPageProvider'
-import AccountTable from './components/account-table'
 import { getRolesRequest } from './components/action'
 
 const AccountsPage: React.FC<any> = async () => {
-  const accounts = await getAccounts({
-    include: 'list',
-  })
-
   const roles = await getRolesRequest()
+  const views = [
+    { name: 'Tất cả', id: 'all' },
+    ...roles,
+    { name: 'Vô hiệu hoá', id: 'disabled' },
+  ]
 
   return (
     <AccountPageProvider>
       <div className="h-[100vh] bg-[#f5f5f5]">
-        <AccountPageHeader options={{ accounts, roles }} />
-
+        <AccountPageHeader options={{ views }} />
         <div className="p-[16px]">
-          <AccountTable dataSource={accounts} />
+          <AccountTable views={views} />
         </div>
       </div>
     </AccountPageProvider>

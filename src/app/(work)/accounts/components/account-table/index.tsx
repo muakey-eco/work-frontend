@@ -1,16 +1,17 @@
 'use client'
 
 import AccountModalForm from '@/components/AccountModalForm'
-import { useAsyncEffect } from '@/libs/hook'
-import { randomColor } from '@/libs/utils'
+import { convertToSlug, randomColor } from '@/libs/utils'
 import { EditOutlined, LockOutlined } from '@ant-design/icons'
 import { App, Avatar, Badge, Table, TableProps } from 'antd'
-import { useRouter } from 'next/navigation'
-import React, { useContext, useState } from 'react'
-import { AccountPageContext } from '../AccountPageProvider'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { disableAccountAction, getAccountsRequest } from '../action'
+import AccountPaginationTable from './AccountPaginationTable'
 
-export type AccountTableProps = TableProps & {}
+export type AccountTableProps = TableProps & {
+  views: any
+}
 
 const generateRole = (role: string) => {
   switch (role) {
@@ -45,16 +46,27 @@ const generateRole = (role: string) => {
   }
 }
 
-const AccountTable: React.FC<AccountTableProps> = ({
-  dataSource: externalDataSource,
-  ...props
-}) => {
-  const [loading, setLoading] = useState(false)
-  const [dataSource, setDataSource] = useState<any>(externalDataSource || [])
-  const { roleId } = useContext(AccountPageContext)
-
+const AccountTable: React.FC<AccountTableProps> = ({ ...props }) => {
   const { modal, message } = App.useApp()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const query = new URLSearchParams(searchParams)
+  const search = query.get('search')
+  const view = query.get('view')
+  const quit_work = query.get('quit_work')
+  const page = Number(query.get('page'))
+
+  const [loading, setLoading] = useState(false)
+  const [dataSource, setDataSource] = useState<any>([])
+  const refpagination = useRef({
+    current: Number(page) || 1,
+    pageSize: 10,
+    total: 0,
+  })
+
+  const role_id = props.views.find(
+    (value: any) => convertToSlug(value.name) === view,
+  )?.id
 
   const handleLockAccount = async (id: number) => {
     try {
@@ -141,33 +153,70 @@ const AccountTable: React.FC<AccountTableProps> = ({
     },
   ]
 
-  useAsyncEffect(async () => {
-    if (!roleId) return
+  const fetchData = useCallback(
+    async (page: number, pageSize: number) => {
+      setLoading(true)
 
-    setLoading(true)
+      try {
+        query.set('include', 'list')
+        query.set('page', page.toString())
+        query.set('per_page', pageSize.toString())
+        query.set('search', search || '')
+        query.set('view', view || '')
+        query.set('role_id', (role_id === 'disabled' ? '' : role_id) || '')
+        query.set('quit_work', quit_work || '')
+        const response = await getAccountsRequest(query)
 
-    if (typeof roleId === 'number') {
-      var accounts = await getAccountsRequest({
-        include: 'list',
-        role_id: roleId,
-      })
-    } else {
-      var accounts: any = externalDataSource?.filter((acc: any) =>
-        roleId === 'disabled' ? acc.role === 'Vô hiệu hoá' : true,
-      )
+        const { data, current_page, per_page, total } = response
+        setDataSource(data)
+        refpagination.current = {
+          current: current_page,
+          pageSize: per_page,
+          total,
+        }
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [search, role_id, quit_work, page],
+  )
+
+  const handleTableChange = (pagination: any) => {
+    if (page) {
+      refpagination.current.current = 1
     }
+    const { current, pageSize } = pagination
+    query.set('page', current.toString())
+    router.push(`?${query.toString()}`)
+    fetchData(current, pageSize)
+  }
 
-    setDataSource(accounts)
-    setLoading(false)
-  }, [roleId])
+  useEffect(() => {
+    if (!page) {
+      refpagination.current.current = 1
+    }
+    const { current, pageSize } = refpagination.current
+    fetchData(current, pageSize)
+  }, [refpagination, fetchData, page, search])
 
   return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      loading={loading}
-      {...props}
-    />
+    <div>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={loading}
+        pagination={false}
+        {...props}
+      />
+      <AccountPaginationTable
+        current={refpagination.current.current}
+        pageSize={refpagination.current.pageSize}
+        total={refpagination.current.total}
+        onChange={handleTableChange}
+      />
+    </div>
   )
 }
 

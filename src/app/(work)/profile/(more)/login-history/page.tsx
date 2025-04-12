@@ -65,7 +65,7 @@ const LoginHistoryPage: React.FC = () => {
 
   useEffect(() => {
     fetchData(pagination.current, pagination.pageSize)
-  }, [])
+  }, [pagination])
 
   return (
     <div className="no-scroll h-screen overflow-y-scroll pb-[104px]">

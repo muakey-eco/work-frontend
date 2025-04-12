@@ -80,12 +80,14 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
   const handleChangeTab = (key: string) => {
     query.set('view', key)
     refActiveKey.current = key
+    query.delete('page')
     router.push(`?${query.toString()}`)
   }
 
   const handleViewClick = (key: string) => {
     query.set('view', key)
     refActiveKey.current = key
+    query.delete('page')
     router.push(`?${query.toString()}`)
   }
 

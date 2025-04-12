@@ -128,8 +128,8 @@ export const updateResourceAction = async (id: number, data: any) => {
   return await updateResource(id, data)
 }
 
-export const getAccountsReuqest = async () => {
-  return await getAccounts()
+export const getAccountsReuqest = async (query?: any) => {
+  return await getAccounts(query)
 }
 
 export const getResourceCategoriesRequest = async () => {

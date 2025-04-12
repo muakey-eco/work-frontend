@@ -35,7 +35,7 @@ const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
   request,
   userRole,
 }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
 
   return (
     <>

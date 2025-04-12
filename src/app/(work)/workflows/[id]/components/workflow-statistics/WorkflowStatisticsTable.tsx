@@ -48,7 +48,7 @@ const WorkflowStatisticsTable: React.FC<
   const renderStageColumn = (value: any) =>
     Array.isArray(value) ? (
       <span
-        className="cursor-pointer hover:text-[#1987FF]"
+        // className="cursor-pointer hover:text-[#1987FF]"
         onClick={() => {
           setOpenModal(true)
           setValueModal(value)

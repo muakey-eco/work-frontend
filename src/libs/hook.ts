@@ -43,10 +43,10 @@ export const useDragScroll = () => {
 
   const handleMouseDown = useCallback<any>(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault()
-
       if (!node) return
+      if ((e.target as HTMLElement)?.closest('[data-no-drag]')) return
 
+      e.preventDefault()
       // Lưu vị trí ban đầu
       const startPosition = {
         left: node?.scrollLeft,

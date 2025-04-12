@@ -35,6 +35,8 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader />
+      
+      {/* new */}
 
       <div className="p-[16px]">
         <div className="relative h-[calc(100vh-101px)] overflow-hidden rounded-[16px] border bg-[#fff]">

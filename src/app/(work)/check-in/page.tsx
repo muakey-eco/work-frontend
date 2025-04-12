@@ -45,7 +45,7 @@ const page: React.FC<any> = async (prop: {
         }}
         activeKey={form || (table ? 'all' : status)}
       />
-      <div className="h-[calc(100vh-72px)] overflow-auto p-[16px]">
+      <div className="overflow-auto p-[16px]">
         <CheckInContent
           query={{
             type:

@@ -45,7 +45,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
           }}
           scroll={{
             x: 'max-content',
-            y: 'calc(100vh - 218px)',
+            y: 'calc(100vh - 230px)',
           }}
           pagination={false}
           bordered

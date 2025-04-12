@@ -13,7 +13,7 @@ import StatisticsColHeader from './statistics-col-header'
 const StatisticsRows = dynamic(() => import('./statistics-rows'), {
   ssr: false,
 })
-
+ 
 type StatisticsScheduleProps = {
   options?: any
 }
@@ -27,6 +27,8 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   const { schedule, accounts, account_id, workflows, as } = options
 
   const days = week?.map((w: any) => w?.date)
+  
+  // Lọc task theo account
   const todosWithAccounts = accounts
     ?.filter(
       (acc: any) =>

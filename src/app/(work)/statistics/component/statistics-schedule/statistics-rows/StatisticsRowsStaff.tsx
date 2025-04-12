@@ -14,6 +14,7 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
   options,
 }) => {
   const { days } = options
+  console.log('todos', todos)
 
   return (
     <>
@@ -58,10 +59,8 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
                     <Link
                       className="block rounded-[8px] bg-[#fff] hover:text-[#000]"
                       key={`${task?.name_task}_${index}`}
-                      href={`/task/${task?.task_id}`}
-                      onMouseDown={(e) => e.preventDefault()}
-                      onMouseUp={(e) => e.preventDefault()}
-                      onClick={(e) => e.preventDefault()}
+                      href={task?.stage_id ? `/task/${task?.task_id}` : '#'}
+                      data-no-drag
                     >
                       <StatisticsCard
                         title={

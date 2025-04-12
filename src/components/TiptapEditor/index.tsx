@@ -191,7 +191,20 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         }
 
         if (url) {
-          editor?.chain().focus().setImage({ src: url }).run()
+          editor
+            ?.chain()
+            .focus()
+            .insertContent([
+              {
+                type: 'image',
+                attrs: { src: url },
+              },
+              {
+                type: 'paragraph',
+                content: [],
+              },
+            ])
+            .run()
         }
       } catch (error) {
         throw new Error(String(error))

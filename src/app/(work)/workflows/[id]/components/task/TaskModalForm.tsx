@@ -96,8 +96,12 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                         const tagName = tags.find(
                           (s: any) => s?.id === t,
                         )?.title
+                        const tagColor = tags.find(
+                          (s: any) => s?.id === t,
+                        )?.code_color
                         return {
                           name: tagName,
+                          color: tagColor,
                           sticker_id: t,
                         }
                       }),

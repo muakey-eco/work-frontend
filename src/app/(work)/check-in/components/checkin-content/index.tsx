@@ -33,7 +33,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
       )
 
     case 'table-history':
-      return <CheckInHistoryTable options={{ propose, user: options?.user }} />
+      return <CheckInHistoryTable options={{ attendances, user: options?.user }} />
 
     default:
       return (

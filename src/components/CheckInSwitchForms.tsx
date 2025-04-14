@@ -11,6 +11,7 @@ export type CheckInSwitchFormsProps = {
 
 const CheckInSwitchForms: React.FC<CheckInSwitchFormsProps> = ({ params }) => {
   const { initialValues, ...rest } = params
+  
 
   switch (rest?.type) {
     case 'dang-ky-nghi':

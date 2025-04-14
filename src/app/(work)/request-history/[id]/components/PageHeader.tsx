@@ -10,7 +10,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
   return (
     <div className="bg-[#fff] px-[24px] py-[16px] font-[500]">
       <div className="flex items-center gap-[12px]">
-        <Link href="/check-in?table=request-history">
+        <Link href="/request">
           <ArrowLeftOutlined />
         </Link>
         <span className="text-[20px]">{title}</span>

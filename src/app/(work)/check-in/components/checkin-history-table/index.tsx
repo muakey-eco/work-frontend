@@ -56,7 +56,7 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
   options,
 }) => {
   const [loading, setLoading] = useState(false)
-  const { propose, user } = options
+  const { attendances, user } = options
   const { message, modal } = App.useApp()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -152,7 +152,7 @@ const CheckInHistoryTable: React.FC<CheckInHistoryTableProps> = ({
     },
   ]
 
-  const dataSource: TableProps['dataSource'] = propose
+  const dataSource: TableProps['dataSource'] = attendances
     .filter((p: any) => p?.account?.id === user?.id)
     .filter((p: any) =>
       !statusParams || statusParams === 'all'

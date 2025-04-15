@@ -75,6 +75,7 @@ const FormFields: React.FC<{
     setStartDate(initialValues?.startDate)
   }, [initialValues?.startDate])
 
+
   return (
     <>
       <div className="flex items-start justify-between gap-[24px]">
@@ -306,13 +307,13 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
     }
 
     const start = new Date(
-      `${String(dayjs(startDate).format('YYYY-MM-DD'))} ${startTime ? String(dayjs(startTime).format('HH:mm:ss')) : ''}`,
+      `${String(dayjs(startDate).format('YYYY-MM-DD'))} ${startTime ? String(dayjs(startTime).format('HH:mm:ss')) : '08:30:00'}`,
     )
     const end = new Date(
-      `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : '23:59:59'}`,
+      `${String(dayjs(endDate).format('YYYY-MM-DD'))} ${endTime ? String(dayjs(endTime).format('HH:mm:ss')) : '17:30:00'}`,
     )
 
-    const total = calculateDayOffTotal(start, end)
+    const total = calculateDayOffTotal(start.toISOString(), end.toISOString())
 
     setTimeOff(total)
   }, [timestamps])

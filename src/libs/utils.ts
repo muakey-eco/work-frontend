@@ -1,6 +1,9 @@
 import dayjs from 'dayjs'
 import locale from 'dayjs/locale/vi'
+import minMax from 'dayjs/plugin/minMax'
 import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(minMax)
 
 export const arrayMove = (array: any[], from: number, to: number) => {
   const newArray = [...array]
@@ -280,82 +283,72 @@ const generateShift = (day: string) => {
   return { startM, endM, startA, endA }
 }
 
-export const calculateDayOffTotal = (startDate: Date, endDate: Date) => {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
 
-  let hourPerDayOff = 0
-  const startDay = Number(dayjs(startDate).format('DD'))
-  const endDay = Number(dayjs(endDate).format('DD'))
+export const calculateDayOffTotal = (
+  startDate: string,
+  endDate: string,
+): number => {
+  const workStart = '08:30:00'
+  const lunchStart = '12:00:00'
+  const lunchEnd = '13:30:00'
+  const workEnd = '17:30:00'
+  const msPerHour = 1000 * 60 * 60
+  const workHoursPerDay = 7.5
 
-  const secondsPerHour = 1000 * 60 * 60
-  // Thời gian nghỉ trưa (s)
-  const timeOffPerDay = 1000 * 60 * 60 * 1.5
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
 
-  if (startDay === endDay) {
-    const { startM, endM, startA, endA } = generateShift(
-      String(dayjs(start).format('YYYY-MM-DD')),
-    )
+  if (start.isAfter(end)) return 0
 
-    // Thời gian yêu cầu không đúng
-    // const inValidTime = +start > +endA || +end < +startM || +start === +end
-    const inValidTime = +start === +end || +start > +end
+  let totalWorkHours = 0
+  let current = start.startOf('day')
 
-    const startT = Math.max(+start, +startM)
-    const endT = Math.max(+end, +endA)
-    const tPerDay = +start >= +startA || +end <= +endM ? 0 : timeOffPerDay
+  while (current.isBefore(end, 'day') || current.isSame(end, 'day')) {
+    const dateStr = current.format('YYYY-MM-DD')
 
-    hourPerDayOff += inValidTime
-      ? 0
-      : (endT - startT - tPerDay) / secondsPerHour
+    // Thời gian làm việc trong ngày
+    const dayStart = dayjs(`${dateStr} ${workStart}`)
+    const dayLunchStart = dayjs(`${dateStr} ${lunchStart}`)
+    const dayLunchEnd = dayjs(`${dateStr} ${lunchEnd}`)
+    const dayEnd = dayjs(`${dateStr} ${workEnd}`)
 
-    return hourPerDayOff / 7.5
-  }
+    let fromTime = dayStart
+    let toTime = dayEnd
 
-  const date = dayjs(new Date())
-  for (let i = startDay; i <= endDay; i++) {
-    const currentDate = `${String(date.format('YYYY'))}-${String(date.format('MM'))}-${i > 9 ? i : `0${i}`}`
-
-    const { startM, endM, startA, endA } = generateShift(currentDate)
-
-    // Thời gian bắt đầu hiện tại
-    const s = new Date(
-      `${currentDate} ${String(dayjs(start).format('HH:mm:ss'))}`,
-    )
-    // Thời gian kết thúc hiện tại
-    const e = new Date(
-      `${currentDate} ${String(dayjs(end).format('HH:mm:ss'))}`,
-    )
-
-    if (i === startDay) {
-      if (+s > +startM) {
-        const t = +s < +endM ? +s : +startA
-        const tPerDay = +s < +endM ? timeOffPerDay : 0
-
-        hourPerDayOff += +s > +endA ? 0 : (+endA - t - tPerDay) / secondsPerHour
-      }
-
-      if (+s <= +startM) {
-        hourPerDayOff += (+endA - +startM - timeOffPerDay) / secondsPerHour
-      }
-    } else if (i === endDay) {
-      if (+e >= +endA) {
-        hourPerDayOff += (+endA - +startM - timeOffPerDay) / secondsPerHour
-      }
-
-      if (+e < +endA) {
-        const t = +e > +startA || +e < +endM ? +e : +endM
-        const tPerDay = +e > +startA ? timeOffPerDay : 0
-
-        hourPerDayOff +=
-          +e < +startM ? 0 : (t - +startM - tPerDay) / secondsPerHour
-      }
-    } else {
-      hourPerDayOff += 7.5
+    if (current.isSame(start, 'day')) {
+      fromTime = dayjs(start)
     }
+
+    if (current.isSame(end, 'day')) {
+      toTime = dayjs(end)
+    }
+
+    // Cắt theo giờ làm việc
+    const actualStart = dayjs.max(fromTime, dayStart)
+    const actualEnd = dayjs.min(toTime, dayEnd)
+
+    if (actualEnd.isAfter(actualStart)) {
+      let workDuration = actualEnd.diff(actualStart, 'millisecond')
+
+      // Trừ thời gian nghỉ trưa nếu giao nhau
+      const overlapLunchStart = dayjs.max(actualStart, dayLunchStart)
+      const overlapLunchEnd = dayjs.min(actualEnd, dayLunchEnd)
+
+      if (overlapLunchEnd.isAfter(overlapLunchStart)) {
+        const lunchOverlap = overlapLunchEnd.diff(
+          overlapLunchStart,
+          'millisecond',
+        )
+        workDuration -= lunchOverlap
+      }
+
+      totalWorkHours += workDuration / msPerHour
+    }
+
+    current = current.add(1, 'day')
   }
 
-  return Number((hourPerDayOff / 7.5).toFixed(3))
+  return Number((totalWorkHours / workHoursPerDay).toFixed(3))
 }
 
 export const maskValue = (cc: any, num = 4, mask = '*') =>

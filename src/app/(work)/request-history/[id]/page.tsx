@@ -1,14 +1,14 @@
 import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
-import { randomColor } from '@/libs/utils'
+import { calculateDayOffTotal } from '@/libs/utils'
 import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, Button, Divider } from 'antd'
+import { Badge, Button, Divider } from 'antd'
 import dayjs from 'dayjs'
 import { uniqueId } from 'lodash'
 import React from 'react'
@@ -61,6 +61,7 @@ const page: React.FC<any> = async (props) => {
   const user = await getMe()
   const propose = await getProposeById(id)
 
+
   const isAdmin = user?.role === 'Quản trị cấp cao'
 
   const oldTime = `${propose?.old_check_in ? dayjs(propose?.old_check_in).format('DD/MM/YYYY HH:mm') : dayjs(propose?.start_time).format('DD/MM/YYYY') + ' --:--'} - ${propose?.old_check_out ? dayjs(propose?.old_check_out).format('DD/MM/YYYY HH:mm') : '--:--'}`
@@ -72,21 +73,12 @@ const page: React.FC<any> = async (props) => {
           {
             key: uniqueId(),
             label: 'Ngày yêu cầu',
-            children: (
-              <div className="flex flex-wrap items-center gap-[8px]">
-                {propose?.date_holidays?.map((d: any) => {
-                  const start = dayjs(d?.start_date).format('DD/MM/YYYY HH:mm')
-                  const end = dayjs(d?.end_date).format('DD/MM/YYYY HH:mm')
-
-                  return `${start} - ${end}`
-                })}
-              </div>
-            ),
+            children: `${dayjs(propose?.date_holidays[0]?.start_date).format('DD/MM/YYYY HH:mm')} - ${dayjs(propose?.date_holidays[0]?.end_date).format('DD/MM/YYYY HH:mm')}`,
           },
           {
             key: uniqueId(),
             label: 'Tổng thời gian',
-            children: `${propose?.number_holiday} ngày`,
+            children: `${calculateDayOffTotal(dayjs(propose?.date_holidays[0]?.start_date).format('YYYY-MM-DD HH:mm:ss'), dayjs(propose?.date_holidays[0]?.end_date).format('YYYY-MM-DD HH:mm:ss'))} ngày`,
           },
         ]
       : [
@@ -134,24 +126,6 @@ const page: React.FC<any> = async (props) => {
         label: 'Trạng thái',
         children: generateStatus(propose?.status),
       },
-      {
-        key: uniqueId(),
-        label: 'Người yêu cầu',
-        children: (
-          <div className="flex items-center gap-[8px]">
-            <Avatar
-              shape="circle"
-              src={propose?.account?.avatar}
-              style={{
-                backgroundColor: randomColor(propose?.account?.full_name),
-              }}
-            >
-              {String(propose?.account?.full_name).charAt(0).toUpperCase()}
-            </Avatar>
-            <span>{propose?.account?.full_name}</span>
-          </div>
-        ),
-      },
     ],
     [
       {
@@ -159,6 +133,20 @@ const page: React.FC<any> = async (props) => {
         component: <Divider />,
       },
     ],
+
+    // Hiện thị thông tin ngày nghỉ
+    ...(propose?.propose_category?.name === 'Đăng ký nghỉ'
+      ? [
+          [
+            ...timeInfo,
+            {
+              key: uniqueId(),
+              label: 'Lý do đăng ký nghỉ',
+              children: propose?.description || 'Chưa có',
+            },
+          ],
+        ]
+      : []),
     // Thông tin chỉnh tài khoản
     ...(propose?.new_value
       ? [

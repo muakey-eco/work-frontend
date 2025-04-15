@@ -9,26 +9,69 @@ import {
   Input,
   Modal,
   ModalProps,
+  message,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
-import React, { useState } from 'react'
-
+import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { updateAccountProfileAction } from './action'
 export type ScheduleHolidayModalFormProps = ModalProps & {
   children?: React.ReactNode
   formProps?: FormProps
   initialValues?: any
+  user?: any
 }
 
 const ScheduleHolidayModalForm: React.FC<ScheduleHolidayModalFormProps> = ({
   children,
   formProps,
   initialValues,
+  user,
   ...props
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [form] = Form.useForm()
+  const router = useRouter()
 
-  const handleSubmit = (values: any) => {
-    console.log(values)
+  useEffect(() => {
+    if (open && initialValues) {
+      form.setFieldsValue({
+        ...initialValues,
+        effective_date: initialValues?.effective_date
+          ? dayjs(initialValues?.effective_date)
+          : null,
+      })
+    }
+  }, [initialValues, open, form])
+
+  const handleSubmit = async (values: any) => {
+    setLoading(true)
+    try {
+      const formatDate = (date: any) => date?.format('YYYY-MM-DD') || null
+      const formData = {
+        dayoff_account: {
+          ...values,
+          effective_date: formatDate(values.effective_date),
+        },
+      }
+
+      const res = await updateAccountProfileAction(user?.id, formData)
+      if (res) {
+        message.success('Cập nhật thành công')
+        setOpen(false)
+        form.resetFields()
+        router.refresh()
+      } else {
+        message.error(res.error || 'Có lỗi xảy ra')
+      }
+    } catch (error) {
+      console.error('Update error:', error)
+      message.error('Có lỗi xảy ra khi cập nhật')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -46,9 +89,15 @@ const ScheduleHolidayModalForm: React.FC<ScheduleHolidayModalFormProps> = ({
         cancelText="Hủy"
         okButtonProps={{
           htmlType: 'submit',
+          loading,
         }}
         modalRender={(dom) => (
-          <Form onFinish={handleSubmit} layout="vertical" {...formProps}>
+          <Form
+            onFinish={handleSubmit}
+            layout="vertical"
+            {...formProps}
+            form={form}
+          >
             {dom}
           </Form>
         )}
@@ -90,7 +139,12 @@ const ScheduleHolidayModalForm: React.FC<ScheduleHolidayModalFormProps> = ({
           className="mb-[16px]!"
           message={
             <span>
-              Tổng ngày phép: <span className="font-[600]">4</span> ngày
+              Tổng ngày phép:{' '}
+              <span className="font-[600]">
+                {Number(initialValues?.total_holiday_with_salary) +
+                  Number(initialValues?.seniority_holiday)}
+              </span>{' '}
+              ngày
             </span>
           }
           type="success"

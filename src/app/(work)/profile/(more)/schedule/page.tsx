@@ -1,5 +1,5 @@
 import { getAccountsAsAttendance, getAttendances, getMe } from '@/libs/data'
-import { getWorkSchedule } from '@/libs/schedule'
+import { getAccountProfile, getWorkSchedule } from '@/libs/schedule'
 import React from 'react'
 import ScheduleHolidayCalendarCard from './components/schedule-holiday-calendar-card'
 import ScheduleHolidayCard from './components/schedule-holiday-card'
@@ -24,9 +24,21 @@ const SchedulePage: React.FC<any> = async (prop: { searchParams: any }) => {
     }),
   ])
 
+  const accountProfile = await getAccountProfile(user?.id)
+
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
-      <ScheduleHolidayCard title="Thông tin ngày nghỉ" />
+      <ScheduleHolidayCard
+        title="Thông tin ngày nghỉ"
+        options={{
+          attendances,
+          members,
+          day,
+          user,
+          workSchedule,
+          accountProfile,
+        }}
+      />
       <ScheduleHolidayCalendarCard
         query={{
           type:
@@ -37,7 +49,13 @@ const SchedulePage: React.FC<any> = async (prop: { searchParams: any }) => {
               : 'none',
           searchParams,
         }}
-        options={{ attendances, members, day, user, workSchedule }}
+        options={{
+          attendances,
+          members,
+          day,
+          user,
+          workSchedule,
+        }}
       />
     </div>
   )

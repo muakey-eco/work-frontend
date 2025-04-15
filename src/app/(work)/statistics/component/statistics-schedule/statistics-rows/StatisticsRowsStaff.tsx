@@ -14,7 +14,6 @@ const StatisticsRowsStaff: React.FC<StatisticsRowsStaffProps> = ({
   options,
 }) => {
   const { days } = options
-  console.log('todos', todos)
 
   return (
     <>

@@ -258,6 +258,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
   useEffect(() => {
     onTagsChange?.(tags)
   }, [tags, onTagsChange])
+  console.log('tags', tags)
 
   return (
     <Select

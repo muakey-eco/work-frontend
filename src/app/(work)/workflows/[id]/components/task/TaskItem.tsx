@@ -579,17 +579,30 @@ const TaskItem: React.FC<TaskItemProps> = memo(
               {task?.name}
             </div>
             <div className="flex items-center">
-              {task?.tags?.map((s: any) => (
-                <Tooltip key={s?.id} title={s?.title}>
-                  <Tag
-                    className="w-max max-w-[100px]"
-                    style={{ marginInlineEnd: 4 }}
-                    color={s?.code_color || '#888'}
-                  >
-                    <span className="line-clamp-1">{s?.title}</span>
-                  </Tag>
-                </Tooltip>
-              ))}
+              {/* Tag name or sticker */}
+              {task.sticker
+                ? task?.sticker?.map((s: any) => (
+                    <Tooltip key={s?.id} title={s?.title}>
+                      <Tag
+                        className="w-max max-w-[100px]"
+                        style={{ marginInlineEnd: 4 }}
+                        color={s?.color || '#888'}
+                      >
+                        <span className="line-clamp-1">{s?.name}</span>
+                      </Tag>
+                    </Tooltip>
+                  ))
+                : task?.tags?.map((s: any) => (
+                    <Tooltip key={s?.id} title={s?.title}>
+                      <Tag
+                        className="w-max max-w-[100px]"
+                        style={{ marginInlineEnd: 4 }}
+                        color={s?.code_color || '#888'}
+                      >
+                        <span className="line-clamp-1">{s?.title}</span>
+                      </Tag>
+                    </Tooltip>
+                  ))}
             </div>
             <div
               className="line-clamp-2 leading-[17px] !text-[#000000D9]"

@@ -1,5 +1,5 @@
 import { getAttendances, getMe } from '@/libs/data'
-import { getProposeCategories, getProposes } from '@/libs/propose'
+import { getProposeCategories, getProposesWithPagination } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
 import RequestModalForm from '../../../components/RequestModalForm'
@@ -10,12 +10,14 @@ import RequestTable from './components/RequestTable'
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
 
+  const pageParams = Number(searchParams.page || 1)
   const [attendances, proposes, proposeCategories, user] = await Promise.all([
     getAttendances(),
-    getProposes(),
+    getProposesWithPagination(pageParams),
     getProposeCategories(),
     getMe(),
   ])
+  
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -29,7 +31,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
         extra={
           <RequestModalForm
             groups={proposeCategories}
-            options={{ user, attendances: attendances.attendances }}
+            options={{ user, attendances: attendances?.attendances }}
           >
             <Button type="primary">Tạo yêu cầu</Button>
           </RequestModalForm>
@@ -62,6 +64,7 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
       <div className="h-[calc(100vh-82px)] overflow-auto p-[16px]">
         <RequestTable
           dataSource={proposes.data}
+          proposes={proposes}
           query={{
             status:
               searchParams?.status !== 'all' ? searchParams?.status || '' : '',

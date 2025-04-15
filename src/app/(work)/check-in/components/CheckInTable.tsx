@@ -321,39 +321,43 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                         role="admin"
                       />
                     </div>
-                    <Calendar
-                      rootClassName="border border-[#0505050f]"
-                      headerRender={() => <></>}
-                      fullCellRender={(current) => {
-                        const timestamp = dayjs(current).format('D/M')
+                    <div className="h-[70vh] overflow-y-auto">
+                      <Calendar
+                        rootClassName="border border-[#0505050f]"
+                        headerRender={() => <></>}
+                        fullCellRender={(current) => {
+                          const timestamp = dayjs(current).format('D/M')
 
-                        const info = checkInData?.[String(timestamp)]
+                          const info = checkInData?.[String(timestamp)]
 
-                        const date = String(dayjs(current).format('YYYY-MM-DD'))
+                          const date = String(
+                            dayjs(current).format('YYYY-MM-DD'),
+                          )
 
-                        const day = workSchedule?.find(
-                          (s: any) => s?.day_of_week === date,
-                        )
+                          const day = workSchedule?.find(
+                            (s: any) => s?.day_of_week === date,
+                          )
 
-                        const isCurrentMonth =
-                          String(dayjs(current).format('YYYY-MM')) ===
-                          (dateParams || dayjs(new Date()).format('YYYY-MM'))
+                          const isCurrentMonth =
+                            String(dayjs(current).format('YYYY-MM')) ===
+                            (dateParams || dayjs(new Date()).format('YYYY-MM'))
 
-                        return (
-                          <CalendarDropdown
-                            currentDate={current}
-                            day={day}
-                            options={{
-                              isCurrentMonth,
-                              info,
-                            }}
-                            onDateClick={(date) => onDateSelect?.(date)}
-                          />
-                        )
-                      }}
-                      value={date}
-                      locale={locale}
-                    />
+                          return (
+                            <CalendarDropdown
+                              currentDate={current}
+                              day={day}
+                              options={{
+                                isCurrentMonth,
+                                info,
+                              }}
+                              onDateClick={(date) => onDateSelect?.(date)}
+                            />
+                          )
+                        }}
+                        value={date}
+                        locale={locale}
+                      />
+                    </div>
                   </>
                 ),
               },

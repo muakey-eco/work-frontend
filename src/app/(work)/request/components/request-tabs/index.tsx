@@ -3,7 +3,7 @@
 import { DropdownProps, Space, SpaceProps } from '@/ui'
 import clsx from 'clsx'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 type Tab = {
@@ -40,6 +40,17 @@ const RequestTabs: React.FC<RequestTabsProps> = ({
   ...rest
 }) => {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const handleTabClick = (key?: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    // Cập nhật status
+    if (key) params.set('status', key)
+    else params.delete('status')
+
+    router.push(`?${params.toString()}`)
+  }
 
   return (
     <Space size="middle" {...rest}>
@@ -49,11 +60,11 @@ const RequestTabs: React.FC<RequestTabsProps> = ({
             className={clsx(
               'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#111]',
               activeKey === item?.key
-                ? '!border-[#111] text-[#111]'
+                ? '!border-[#1677FF] text-[#1677FF]'
                 : '!border-transparent text-[#888]',
             )}
             onClick={() => {
-              router.push(`?status=${item?.key}`)
+              handleTabClick(item?.key)
             }}
           >
             {item?.label}

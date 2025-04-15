@@ -90,13 +90,13 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         (a: any) => a?.account_id === m?.id,
       )
 
-      const otPropose = attendances?.ot_and_holiday.filter(
-        (p: any) => p?.name_category === 'Đăng ký OT',
-      )
+      const otPropose = attendances?.ot_and_holiday
+        .filter((p: any) => p?.name_category === 'Đăng ký OT')
+        .filter((p: any) => p?.account_id === user.id)
 
-      const timeOffPropose = attendances?.ot_and_holiday.filter(
-        (p: any) => p?.name_category === 'Đăng ký nghỉ',
-      )
+      const timeOffPropose = attendances?.ot_and_holiday
+        .filter((p: any) => p?.name_category === 'Đăng ký nghỉ')
+        .filter((p: any) => p?.account_id === user.id)
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1

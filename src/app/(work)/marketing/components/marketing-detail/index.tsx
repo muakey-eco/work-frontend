@@ -18,11 +18,13 @@ type Sorts = GetSingle<Parameters<OnChange>[2]>
 interface Worker {
   name: string
   avatar: string
+  full_name: string
 }
 
 interface DataType {
   key: string
   name: string
+  username: string
   data: string
   revenue: string
   commission_percent: string
@@ -120,10 +122,12 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
       render: (workers: Worker[]) => (
         <Avatar.Group>
           {workers.map((e, index) =>
-            e.avatar ? (
+            e.avatar || e.avatar !== null ? (
               <Avatar key={index} src={e.avatar} alt={e.name} />
             ) : (
-              <Avatar key={index}>{e.name}</Avatar>
+              <Avatar key={index} style={{ backgroundColor: '#f56a00' }}>
+                {e.full_name.split(' ')[0].toUpperCase()}
+              </Avatar>
             ),
           )}
         </Avatar.Group>
@@ -131,6 +135,7 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
     },
   ]
 
+  console.log('data', data)
   return (
     <Table<DataType>
       columns={columns}

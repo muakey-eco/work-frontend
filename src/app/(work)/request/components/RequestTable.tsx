@@ -18,6 +18,7 @@ import { deleteProposeAction } from './action'
 type RequestTableProps = TableProps & {
   query?: any
   options?: any
+  proposes?: any
 }
 
 const generateStatus = (status: string) => {
@@ -37,13 +38,28 @@ const generateStatus = (status: string) => {
 }
 
 const RequestTable: React.FC<RequestTableProps> = memo(
-  ({ dataSource, query, options, ...rest }) => {
+  ({ dataSource, query, options, proposes, ...rest }) => {
     const [requests, setRequests] = useState<any>([])
+    const searchParams = new URLSearchParams(window.location.search)
+    const currentPage = searchParams.get('page') || 1
+    const [current, setCurrent] = useState<number>(Number(currentPage))
+    const router = useRouter()
+
+    const handleChangePage = (page: number) => {
+      setCurrent(page)
+      const newSearchParams = new URLSearchParams(window.location.search)
+      newSearchParams.set('page', String(page))
+      router.push(`?${newSearchParams.toString()}`)
+    }
+
+    useEffect(() => {
+      setCurrent(Number(currentPage))
+    }, [currentPage])
+
     const { user } = options
 
     const { message, modal } = App.useApp()
     const [open, setOpen] = useState(false)
-    const router = useRouter()
 
     const handleDeletePropose = async (id: number) => {
       try {
@@ -175,7 +191,23 @@ const RequestTable: React.FC<RequestTableProps> = memo(
       )
     }, [query?.status, dataSource, user])
 
-    return <Table columns={columns} dataSource={requests} {...rest} />
+    return (
+      <Table
+        columns={columns}
+        dataSource={requests}
+        {...rest}
+        pagination={{
+          pageSize: proposes?.per_page,
+          position: ['bottomLeft'],
+          current: current,
+          total: proposes?.total,
+          showTotal: (total) => `Total ${total} items`,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          onChange: handleChangePage,
+        }}
+      />
+    )
   },
 )
 

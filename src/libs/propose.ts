@@ -5,6 +5,11 @@ export const getProposes = async (query?: any) =>
     .then((data) => data)
     .catch(() => [])
 
+export const getProposesWithPagination = async (query?: any) =>
+  requestWithAuthorized('proposes?page=' + query)
+    .then((data) => data)
+    .catch(() => [])
+
 export const getProposeById = async (id: number) =>
   requestWithAuthorized(`proposes/${id}`)
     .then((data) => data)

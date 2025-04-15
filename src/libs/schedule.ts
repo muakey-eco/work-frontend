@@ -5,6 +5,17 @@ export const getWorkSchedule = async (query?: any) =>
     .then((data) => data)
     .catch(() => [])
 
+export const getAccountProfile = async (id: string) =>
+  requestWithAuthorized(`accounts/${id}?include=profile`)
+    .then((data) => data)
+    .catch(() => [])
+
+export const updateAccountProfile = async (id: string, data: any) =>
+  requestWithAuthorized(`accounts/${id}`, {
+    method: 'PUT',
+    data,
+  }).then((data) => data)
+
 export const updateWorkSchedule = async (data: any) =>
   requestWithAuthorized('day-off/1', {
     method: 'PUT',

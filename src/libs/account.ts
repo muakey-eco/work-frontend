@@ -14,6 +14,7 @@ export const getAccountById = async (id: number, query?: any) => {
     .catch(() => null)
 }
 
+
 export const updateAccount = async (
   id: number,
   data: any,

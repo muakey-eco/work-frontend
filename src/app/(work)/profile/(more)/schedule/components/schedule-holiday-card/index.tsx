@@ -6,13 +6,16 @@ import ScheduleHolidayModalForm from './ScheduleHolidayModalForm'
 export type ScheduleHolidayCardProps = CardProps & {
   title: React.ReactNode
   extra?: React.ReactNode
+  options?: any
 }
 
 const ScheduleHolidayCard: React.FC<ScheduleHolidayCardProps> = ({
   title,
   extra,
+  options,
   ...props
 }) => {
+  const { accountProfile, user } = options
   return (
     <Card
       classNames={{
@@ -23,7 +26,10 @@ const ScheduleHolidayCard: React.FC<ScheduleHolidayCardProps> = ({
       <div className="flex items-center justify-between">
         <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
         {extra || (
-          <ScheduleHolidayModalForm>
+          <ScheduleHolidayModalForm
+            initialValues={accountProfile?.dayoff_account}
+            user={user}
+          >
             <Button icon={<EditOutlined />}>Chỉnh sửa</Button>
           </ScheduleHolidayModalForm>
         )}
@@ -34,13 +40,18 @@ const ScheduleHolidayCard: React.FC<ScheduleHolidayCardProps> = ({
           <div className="text-[14px] leading-[22px] text-[#00000073]">
             Tổng ngày phép có hưởng lương
           </div>
-          <div className="text-[14px] leading-[22px] font-[600]">3 ngày</div>
+          <div className="text-[14px] leading-[22px] font-[600]">
+            {accountProfile?.dayoff_account?.total_holiday_with_salary || 0}{' '}
+            ngày
+          </div>
         </div>
         <div className="flex-1 space-y-[8px]">
           <div className="text-[14px] leading-[22px] text-[#00000073]">
             Phép thâm niên
           </div>
-          <div className="text-[14px] leading-[22px] font-[600]">1 ngày</div>
+          <div className="text-[14px] leading-[22px] font-[600]">
+            {accountProfile?.dayoff_account?.seniority_holiday || 0} ngày
+          </div>
         </div>
       </div>
     </Card>

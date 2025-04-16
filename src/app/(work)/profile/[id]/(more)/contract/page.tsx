@@ -1,12 +1,13 @@
-import { getMe } from '@/libs/data'
+import { getUserAccount } from '@/libs/data'
 import React from 'react'
 import ContractCard from './components/contract-card'
 import ContractDocumentCard from './components/contract-document-card'
 
-const ContractPage: React.FC = async () => {
-  const user = await getMe({
-    include: 'profile',
-  })
+const ContractPage: React.FC<{ params: { id: string } }> = async ({
+  params,
+}) => {
+  const user = await getUserAccount(Number(params.id))
+  console.log('user', user)
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">

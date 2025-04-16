@@ -1,13 +1,14 @@
-import { getMe } from '@/libs/data'
+import { getUserById } from '@/libs/data'
 import React from 'react'
-import ProfileLayout from '../components/ProfileLayout'
+import ProfileLayout from '../../components/ProfileLayout'
 
 const ProfileMoreLayout: React.FC<
   Readonly<{
     children: React.ReactNode
+    params: { id: string }
   }>
-> = async ({ children }) => {
-  const user = await getMe({
+> = async ({ children, params }) => {
+  const user = await getUserById(Number(params.id), {
     include: 'profile',
   })
 

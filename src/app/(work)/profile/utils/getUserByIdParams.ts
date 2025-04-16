@@ -1,6 +1,6 @@
 import { getMe } from '@/libs/data'
 import { notFound } from 'next/navigation'
-import { getAccountByIdAction } from '../(more)/action'
+import { getAccountByIdAction } from '../[id]/(more)/action'
 
 export default async function getUserByIdParams(searchParams: any) {
   const { id } = await searchParams

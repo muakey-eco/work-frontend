@@ -211,7 +211,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
               if (target.closest('a')) {
                 return
               }
-              router.push(`/profile?id=${record?.id}`)
+              router.push(`/profile/${record?.id}`)
             },
             className: 'cursor-pointer z-10',
           })}

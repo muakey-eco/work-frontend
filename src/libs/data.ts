@@ -293,6 +293,22 @@ export const getMe = async (query?: any, options?: RequestOptions) =>
     .then((data) => data)
     .catch(() => [])
 
+export const getUserById = async (
+  id: number,
+  query?: any,
+  options?: RequestOptions,
+) =>
+  requestWithAuthorized(`accounts/${id}?` + new URLSearchParams(query), {
+    ...options,
+  })
+    .then((data) => data)
+    .catch(() => [])
+
+export const getUserAccount = async (id: number) =>
+  requestWithAuthorized(`accounts/${id}?include=profile`)
+    .then((data) => data)
+    .catch(() => [])
+
 export const getNotifications = async (query?: any) =>
   requestWithAuthorized('notifications?' + new URLSearchParams(query))
     .then((data) => data)

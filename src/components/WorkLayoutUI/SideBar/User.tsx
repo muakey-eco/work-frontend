@@ -8,7 +8,7 @@ const User: React.FC<{
 }> = ({ user }) => {
   return (
     <Link
-      href="/profile"
+      href={`/profile/${user?.id}`}
       className="flex w-full cursor-pointer items-center gap-[6px] py-[16px]"
     >
       <Avatar

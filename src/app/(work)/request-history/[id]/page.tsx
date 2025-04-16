@@ -1,7 +1,7 @@
 import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
-import { calculateDayOffTotal } from '@/libs/utils'
+import { calculateDayOffTotal, formatLable } from '@/libs/utils'
 import {
   CheckOutlined,
   CloseOutlined,
@@ -60,7 +60,6 @@ const page: React.FC<any> = async (props) => {
 
   const user = await getMe()
   const propose = await getProposeById(id)
-
 
   const isAdmin = user?.role === 'Quản trị cấp cao'
 
@@ -150,11 +149,19 @@ const page: React.FC<any> = async (props) => {
     // Thông tin chỉnh tài khoản
     ...(propose?.new_value
       ? [
-          Object.entries(propose?.new_value || {}).map(([key, value]) => ({
-            key: uniqueId(),
-            label: key,
-            children: String(value), // Chuyển về string để tránh lỗi nếu value không phải text
-          })),
+          Object.entries(propose?.new_value || {}).map(([key, value]) => {
+            return {
+              key: uniqueId(),
+              label: 'Thông tin cập nhật',
+              children: Object.entries(value as { [key: string]: string }).map(
+                ([subKey, subValue]) => (
+                  <div key={subKey}>
+                    {formatLable(subKey)}: {String(subValue)}
+                  </div>
+                ),
+              ),
+            }
+          }),
         ]
       : []),
     // Hiện thị thông tin chỉnh ngày

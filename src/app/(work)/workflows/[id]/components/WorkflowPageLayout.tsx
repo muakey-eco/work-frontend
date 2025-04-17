@@ -46,7 +46,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
         <PageHeader
           className="h-[82px] bg-[#fff]"
           title={
-            <div className="flex items-center gap-[8px] text-[24px] font-[600] leading-[28px]">
+            <div className="flex items-center gap-[8px] text-[24px] leading-[28px] font-[600]">
               <span>{workflow?.name}</span>
               <Avatar.Group
                 className="h-[32px] overflow-hidden"

@@ -249,6 +249,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
         router.refresh()
       } catch (error: any) {
+        message.error('Có lỗi xảy ra khi di chuyển task')
         throw new Error(error)
       }
     }

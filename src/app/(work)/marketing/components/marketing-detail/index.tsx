@@ -1,5 +1,6 @@
 'use client'
 
+import { randomColor } from '@/libs/utils'
 import {
   EyeOutlined,
   LikeOutlined,
@@ -125,8 +126,12 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
             e.avatar || e.avatar !== null ? (
               <Avatar key={index} src={e.avatar} alt={e.name} />
             ) : (
-              <Avatar key={index} style={{ backgroundColor: '#f56a00' }}>
-                {e.full_name.split(' ')[0].toUpperCase()}
+              <Avatar
+                key={index}
+                style={{ backgroundColor: randomColor(String(e.full_name)) }}
+                alt={e.full_name}
+              >
+                {e.full_name.charAt(0).toUpperCase()}
               </Avatar>
             ),
           )}

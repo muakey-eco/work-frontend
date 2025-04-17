@@ -162,10 +162,29 @@ export const assignTaskWithoutWork = async (id: number, data: any) => {
 }
 
 export const moveStage = async (id: number, stageId: number, data?: any) => {
-  return await requestWithAuthorized(`tasks/${id}?stage_id=${stageId}`, {
-    method: 'PUT',
-    data,
-  }).then((data) => data)
+  try {
+    const response = await requestWithAuthorized(
+      `tasks/${id}?stage_id=${stageId}`,
+      {
+        method: 'PUT',
+        data,
+      },
+    )
+
+    if (response.errors) {
+      return {
+        errors: response.errors,
+        message: response.message || 'Có lỗi xảy ra',
+      }
+    }
+
+    return response
+  } catch (error) {
+    return {
+      errors: true,
+      message: 'Có lỗi xảy ra khi di chuyển task',
+    }
+  }
 }
 
 export const getTaskById = async (id: number, options?: RequestOptions) =>

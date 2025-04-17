@@ -137,51 +137,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
 
-      const taskHistory = await getTaskHistoriesAction({
-        task_id: activeData.id,
-        stage_id: stageId,
-      })
-
-      setStages((prevStages: any) => {
-        const newStages = cloneDeep(prevStages)
-
-        const activeColumn = newStages.find(
-          (s: any) => s.id === `stage_${activeData.stage_id}`,
-        )
-        const overColumn = newStages.find(
-          (s: any) => s.id === `stage_${stageId}`,
-        )
-
-        if (activeColumn) {
-          activeColumn.tasks = activeColumn.tasks.filter(
-            (t: any) => t.id !== activeTaskId,
-          )
-        }
-
-        if (overColumn) {
-          overColumn.tasks = [
-            {
-              ...activeData,
-              stage_id: stageId,
-              account_id: taskHistory?.worker || null,
-              expired: taskHistory?.worker
-                ? taskHistory?.expired_at
-                  ? taskHistory?.expired_at
-                  : overColumn.expired_after_hours
-                    ? new Date().setHours(
-                        new Date().getHours() + overColumn.expired_after_hours,
-                      )
-                    : null
-                : null,
-              started_at: taskHistory?.started_at || null,
-            },
-            ...overColumn.tasks,
-          ]
-        }
-
-        return newStages
-      })
-
       try {
         const { message: msg, errors } = await moveStageAction(
           activeTaskId as number,
@@ -192,7 +147,54 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           message.error(msg)
           return
         }
+
+        const taskHistory = await getTaskHistoriesAction({
+          task_id: activeData.id,
+          stage_id: stageId,
+        })
+
+        setStages((prevStages: any) => {
+          const newStages = cloneDeep(prevStages)
+
+          const activeColumn = newStages.find(
+            (s: any) => s.id === `stage_${activeData.stage_id}`,
+          )
+          const overColumn = newStages.find(
+            (s: any) => s.id === `stage_${stageId}`,
+          )
+
+          if (activeColumn) {
+            activeColumn.tasks = activeColumn.tasks.filter(
+              (t: any) => t.id !== activeTaskId,
+            )
+          }
+
+          if (overColumn) {
+            overColumn.tasks = [
+              {
+                ...activeData,
+                stage_id: stageId,
+                account_id: taskHistory?.worker || null,
+                expired: taskHistory?.worker
+                  ? taskHistory?.expired_at
+                    ? taskHistory?.expired_at
+                    : overColumn.expired_after_hours
+                      ? new Date().setHours(
+                          new Date().getHours() +
+                            overColumn.expired_after_hours,
+                        )
+                      : null
+                  : null,
+                started_at: taskHistory?.started_at || null,
+              },
+              ...overColumn.tasks,
+            ]
+          }
+
+          return newStages
+        })
       } catch (error: any) {
+        message.error('Có lỗi xảy ra khi di chuyển task')
         throw new Error(error)
       }
     }

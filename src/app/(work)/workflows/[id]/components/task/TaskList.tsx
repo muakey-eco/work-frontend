@@ -34,7 +34,6 @@ const TaskList: React.FC<TaskListProps> = ({
 
   const sortItems = tasks ? tasks.map((t: any) => t.id) : []
 
-  console.log('tasks', tasks)
   const handleDelete = useCallback(
     async (id: number) => {
       try {

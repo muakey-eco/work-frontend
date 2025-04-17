@@ -283,7 +283,6 @@ const generateShift = (day: string) => {
   return { startM, endM, startA, endA }
 }
 
-
 export const calculateDayOffTotal = (
   startDate: string,
   endDate: string,
@@ -353,3 +352,14 @@ export const calculateDayOffTotal = (
 
 export const maskValue = (cc: any, num = 4, mask = '*') =>
   `${cc}`.slice(-num).padStart(`${cc}`.length, mask)
+
+export const formatLable = (label: string) => {
+  switch (label) {
+    case 'total_holiday_with_salary':
+      return 'Tổng ngày phép có hưởng lương'
+    case 'seniority_holiday':
+      return 'Phép thâm niên'
+    default:
+      return label
+  }
+}

@@ -181,7 +181,7 @@ const EmployeeInfomationFormItemBox: React.FC<
       <div className="flex items-center gap-[16px]">
         <Form.Item
           className="mb-[16px]! flex-1"
-          name="department"
+          name="department_name"
           label="Phòng ban"
         >
           <Input placeholder="Nhập phòng ban" />

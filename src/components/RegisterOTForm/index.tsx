@@ -173,7 +173,10 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
     const start = new Date(startTime)
     const end = new Date(endTime)
 
-    const total = calculateDayOffTotal(start, end)
+    const total = calculateDayOffTotal(
+      String(dayjs(start).format('YYYY-MM-DD')),
+      String(dayjs(end).format('YYYY-MM-DD')),
+    )
 
     setOt(Number(total.toFixed(3)))
   }, [startTime, endTime])

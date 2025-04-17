@@ -17,7 +17,6 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
     getProposeCategories(),
     getMe(),
   ])
-  
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -39,10 +38,10 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
       >
         <RequestTabs
           className="mt-[12px]"
-          activeKey={searchParams?.status || 'all'}
+          activeKey={searchParams?.status || '/'}
           items={[
             {
-              key: 'all',
+              key: '/',
               label: 'Tất cả yêu cầu',
             },
             {

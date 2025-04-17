@@ -45,8 +45,9 @@ const RequestTabs: React.FC<RequestTabsProps> = ({
   const handleTabClick = (key?: string) => {
     const params = new URLSearchParams(searchParams.toString())
 
+    if (key === '/') params.delete('status')
     // Cập nhật status
-    if (key) params.set('status', key)
+    else if (key) params.set('status', key)
     else params.delete('status')
 
     router.push(`?${params.toString()}`)

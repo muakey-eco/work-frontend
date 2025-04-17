@@ -1,22 +1,27 @@
 import { getMe } from '@/libs/data'
 import { notFound } from 'next/navigation'
-import { getAccountByIdAction } from './[id]/(more)/action'
-import ProfileContactCard from './components/profile-contact-card'
-import ProfileDeductionsCard from './components/profile-deductions-card'
-import ProfileEduInfomationCard from './components/profile-edu-infomation-card'
-import ProfileInfomationCard from './components/profile-infomation-card'
-import ProfileWorkHistoryCard from './components/profile-work-history-card'
-import ProfileMoreLayout from './components/ProfileLayout'
+import ProfileContactCard from '../components/profile-contact-card'
+import ProfileDeductionsCard from '../components/profile-deductions-card'
+import ProfileEduInfomationCard from '../components/profile-edu-infomation-card'
+import ProfileInfomationCard from '../components/profile-infomation-card'
+import ProfileWorkHistoryCard from '../components/profile-work-history-card'
+import ProfileMoreLayout from '../components/ProfileLayout'
+import { getAccountByIdAction } from './(more)/action'
 
-export default async function ProfilePage({ searchParams }: any) {
-  const { id } = searchParams
+export default async function ProfilePage({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const { id } = params
+  console.log('idParams', params)
   let user = await getMe({
     include: 'profile',
   })
 
   if (!id) {
   } else if (id && user.role === 'Quản trị cấp cao') {
-    user = await getAccountByIdAction(id, {
+    user = await getAccountByIdAction(Number(id), {
       include: 'profile',
     })
   } else {

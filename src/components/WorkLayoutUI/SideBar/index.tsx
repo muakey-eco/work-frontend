@@ -185,6 +185,16 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       href: '/resources',
     },
     {
+      label: 'Tài sản công ty',
+      icon: (
+        <DatabaseFilled className="text-[14px]" style={{ color: 'white' }} />
+      ),
+      type: 'filled-rounded',
+      expand: true,
+      children: [],
+      href: '/asset',
+    },
+    {
       label: 'Marketing',
       icon: <CalendarFilled className="text-[14px]" />,
       expand: true,
@@ -212,16 +222,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         },
       ],
     },
-    {
-      label: 'Tài sản công ty',
-      icon: (
-        <DatabaseFilled className="text-[14px]" style={{ color: 'white' }} />
-      ),
-      type: 'filled-rounded',
-      expand: true,
-      children: [],
-      href: '/asset',
-    },
+
     ...(workflowCategories && workflowCategories.length > 0
       ? workflowCategories?.map((w: any) => ({
           label: w?.name,

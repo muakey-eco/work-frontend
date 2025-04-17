@@ -11,51 +11,53 @@ import {
 import { Card, List, ListProps } from 'antd'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import React from 'react'
 
 export type ProfileSidebarProps = {}
 
 const ProfileSidebar: React.FC<ProfileSidebarProps> = () => {
+  const { id } = useParams()
   const pathname = usePathname()
+  const basePath = `/profile/${id}`
   const currentPath = pathname.toString()
 
   const items: ListProps<any>['dataSource'] = [
     {
       label: 'Thông tin cá nhân',
       icon: <UserOutlined />,
-      href: '/profile',
-      active: currentPath === '/profile',
+      href: `${basePath}`,
+      active: currentPath === `${basePath}`,
     },
     {
       label: 'Thông tin công việc',
       icon: <FlagOutlined />,
-      href: '/profile/job',
-      active: currentPath === '/profile/job',
+      href: `${basePath}/job`,
+      active: currentPath === `${basePath}/job`,
     },
     {
       label: 'Đánh giá & Phản hồi',
       icon: <StarOutlined />,
-      href: '/profile/feedback',
-      active: currentPath === '/profile/feedback',
+      href: `${basePath}/feedback`,
+      active: currentPath === `${basePath}/feedback`,
     },
     {
       label: 'Hợp đồng & Văn bản',
       icon: <FileOutlined />,
-      href: '/profile/contract',
-      active: currentPath === '/profile/contract',
+      href: `${basePath}/contract`,
+      active: currentPath === `${basePath}/contract`,
     },
     {
       label: 'Lịch làm việc & Nghỉ phép',
       icon: <CalendarOutlined />,
-      href: '/profile/schedule',
-      active: currentPath === '/profile/schedule',
+      href: `${basePath}/schedule`,
+      active: currentPath === `${basePath}/schedule`,
     },
     {
       label: 'Tình trạng việc làm',
       icon: <CoffeeOutlined />,
-      href: '/profile/work-status',
-      active: currentPath === '/profile/work-status',
+      href: `${basePath}/work-status`,
+      active: currentPath === `${basePath}/work-status`,
     },
   ]
 

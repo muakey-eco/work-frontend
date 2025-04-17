@@ -81,7 +81,9 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
   const dateParams = searchParams?.get('date')
   const dateNumber = new Date(year, month, 0).getDate()
 
-  const { user, workSchedule, attendances, propose } = options
+  const { user, workSchedule, attendances } = options
+
+  console.log(attendances, 'attendances')
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))

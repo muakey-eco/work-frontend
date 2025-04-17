@@ -21,19 +21,29 @@ dayjs.extend(duration)
 
 const useStyle = createStyles(({ css }) => ({
   customTable: css`
-    .ant-table-thead {
-      tr {
-        th {
-          background-color: #fff;
-        }
-      }
+    /* Nền tiêu đề */
+    .ant-table-thead tr th {
+      background-color: #fff;
     }
-    .ant-table-tbody {
-      .ant-table-row:hover {
-        .ant-table-cell {
-          background: transparent;
-        }
-      }
+
+    /* Hover row */
+    .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+      background: transparent;
+    }
+
+    /* Fixed column xử lý z-index + nền */
+    .ant-table
+      .ant-table-container
+      .ant-table-content
+      .ant-table-cell-fix-left {
+      z-index: 10 !important;
+      background: white;
+    }
+
+    /* Tùy chỉnh scrollbar cho cả nội dung ngang & dọc */
+    .ant-table-content,
+    .ant-table-body {
+      scrollbar-width: thin;
     }
   `,
 }))
@@ -57,7 +67,8 @@ const columns: TableProps['columns'] = [
   {
     title: 'Công việc',
     dataIndex: 'name',
-    width: 500,
+    width: 380,
+    fixed: 'left',
     render: (name, record) => {
       return (
         <>
@@ -89,8 +100,12 @@ const columns: TableProps['columns'] = [
     render: (_, record) => (
       <div className="flex items-center gap-[8px]">
         <Avatar
+          size={32}
           src={record?.account_avatar}
-          style={{ backgroundColor: randomColor(record?.account_name) }}
+          style={{
+            backgroundColor: randomColor(record?.account_name),
+            flexShrink: 0,
+          }}
         >
           {String(record?.account_name).charAt(0).toUpperCase()}
         </Avatar>
@@ -187,6 +202,9 @@ const TodoTable: React.FC<TodoTableProps> = ({
     <Table
       className={styles.customTable}
       columns={columns}
+      scroll={{
+        x: 1500,
+      }}
       dataSource={dataSource}
       rowClassName="bg-transparent hover:bg-[#E6F4FF] transition-all duration-200"
       loading={loading}

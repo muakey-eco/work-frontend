@@ -11,7 +11,7 @@ import {
 import { App, Avatar, Table, TableProps, Tag, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { memo, useEffect, useState } from 'react'
 import { deleteProposeAction } from './action'
 
@@ -40,14 +40,18 @@ const generateStatus = (status: string) => {
 const RequestTable: React.FC<RequestTableProps> = memo(
   ({ dataSource, query, options, proposes, ...rest }) => {
     const [requests, setRequests] = useState<any>([])
-    const searchParams = new URLSearchParams(window.location.search)
+    const searchParams = useSearchParams()
     const currentPage = searchParams.get('page') || 1
     const [current, setCurrent] = useState<number>(Number(currentPage))
     const router = useRouter()
 
+    const hasStatusQuery = searchParams.has('status')
+    console.log('hasStatusQuery', hasStatusQuery)
+    console.log('requests', requests)
+
     const handleChangePage = (page: number) => {
       setCurrent(page)
-      const newSearchParams = new URLSearchParams(window.location.search)
+      const newSearchParams = new URLSearchParams(searchParams.toString())
       newSearchParams.set('page', String(page))
       router.push(`?${newSearchParams.toString()}`)
     }
@@ -200,7 +204,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
           pageSize: proposes?.per_page,
           position: ['bottomLeft'],
           current: current,
-          total: proposes?.total,
+          total: hasStatusQuery ? requests?.length : proposes?.total,
           showTotal: (total) => `Total ${total} items`,
           showSizeChanger: true,
           showQuickJumper: true,

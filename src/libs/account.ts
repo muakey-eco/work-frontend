@@ -6,6 +6,12 @@ export const disableAccount = async (id: number) => {
   })
 }
 
+export const activeAccount = async (id: number) => {
+  return await requestWithAuthorized(`active-account/${id}`, {
+    method: 'PUT',
+  })
+}
+
 export const getAccountById = async (id: number, query?: any) => {
   return await requestWithAuthorized(
     `accounts/${id}?` + new URLSearchParams(query),
@@ -13,7 +19,6 @@ export const getAccountById = async (id: number, query?: any) => {
     .then((data) => data)
     .catch(() => null)
 }
-
 
 export const updateAccount = async (
   id: number,

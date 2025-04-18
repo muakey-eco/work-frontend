@@ -1,11 +1,12 @@
 'use client'
 
-import { PageHeader } from '@/components'
+import { AccountModalForm, PageHeader } from '@/components'
 import { useAsyncEffect } from '@/libs/hook'
 import { convertToSlug } from '@/libs/utils'
-import { TabsProps } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button, TabsProps } from 'antd'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Search from './Search'
 import { getAccountsRequest } from './action'
 
@@ -23,8 +24,9 @@ const AccountPageHeader: React.FC<AccountPageHeaderProps> = ({ options }) => {
   const search = query.get('search') || ''
 
   const [dataAccount, setDataAccount] = useState<any>()
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  useAsyncEffect(async () => {
+  const fetchData = async () => {
     query.set('include', 'list')
     query.set('page', '1')
     query.set('per_page', '10')
@@ -34,7 +36,22 @@ const AccountPageHeader: React.FC<AccountPageHeaderProps> = ({ options }) => {
     query.set('quit_work', '')
     const accounts = await getAccountsRequest(query)
     setDataAccount(accounts)
-  }, [view, search])
+  }
+
+  useAsyncEffect(async () => {
+    await fetchData()
+  }, [view, search, refreshKey])
+
+  // Expose refresh function to parent
+  useEffect(() => {
+    const handleRefresh = () => {
+      setRefreshKey((prev) => prev + 1)
+    }
+    window.addEventListener('accountStatusChanged', handleRefresh)
+    return () => {
+      window.removeEventListener('accountStatusChanged', handleRefresh)
+    }
+  }, [])
 
   let activeKey =
     view === 'all'
@@ -70,6 +87,13 @@ const AccountPageHeader: React.FC<AccountPageHeaderProps> = ({ options }) => {
         <div className="flex h-full items-end">
           <Search />
         </div>
+      }
+      headerExtra={
+        <AccountModalForm>
+          <Button type="primary" icon={<PlusOutlined />}>
+            Thêm tài khoản
+          </Button>
+        </AccountModalForm>
       }
       tab={{
         items: tabItems,

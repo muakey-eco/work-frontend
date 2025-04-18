@@ -1,4 +1,6 @@
+import { addAccount, deleteAccount, editAccount, uploadImage } from './data'
 import { requestWithAuthorized } from './request'
+import { getRoles } from './role'
 
 export const disableAccount = async (id: number) => {
   return await requestWithAuthorized(`disable-account/${id}`, {
@@ -13,7 +15,6 @@ export const getAccountById = async (id: number, query?: any) => {
     .then((data) => data)
     .catch(() => null)
 }
-
 
 export const updateAccount = async (
   id: number,
@@ -33,4 +34,24 @@ export const addStaff = async (data: any, formData?: FormData) => {
     data,
     body: formData,
   })
+}
+
+export const addAccountAction = async (data: any) => {
+  return await addAccount(data)
+}
+
+export const editAccountAction = async (id: number, data: any) => {
+  return await editAccount(id, data)
+}
+
+export const deleteAccountAction = async (id: number) => {
+  return await deleteAccount(id)
+}
+
+export const getRolesRequest = async () => {
+  return await getRoles()
+}
+
+export const uploadImageAction = async (data: any) => {
+  return await uploadImage(data)
 }

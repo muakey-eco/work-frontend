@@ -46,7 +46,6 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
         var { message: msg, errors } = await editAccountAction(
           initialValues.id,
           {
-            ...initialValues,
             ...values,
           },
         )
@@ -66,6 +65,9 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
           : 'Cập nhật tài khoản thành công.',
       )
       router.refresh()
+      // Dispatch event to update both header and table
+      window.dispatchEvent(new Event('accountStatusChanged'))
+      window.dispatchEvent(new Event('accountTableChanged'))
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))
@@ -74,9 +76,10 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
 
   const roleOptions: SelectProps['options'] = roles?.map((role: any) => ({
     label: role.name,
-    value: role.name,
+    value: role.id,
   }))
 
+  // Lấy thông tin các roles mỗi khi các modal được mở
   useAsyncEffect(async () => {
     if (!open) return
 
@@ -143,8 +146,7 @@ const AccountModalForm: React.FC<AccountModalFormProps> = ({
           <Form.Item
             className="mb-[16px]! flex-1"
             label="Phân quyền sử dụng"
-            name="role"
-            initialValue="Thành viên thông thường"
+            name="role_id"
           >
             <Select options={roleOptions} />
           </Form.Item>

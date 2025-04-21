@@ -27,6 +27,7 @@ const Search: React.FC = () => {
       width={278}
       defaultValue={search || ''}
       onSearch={handleSearch}
+      allowClear
     />
   )
 }

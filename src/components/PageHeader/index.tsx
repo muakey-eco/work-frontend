@@ -17,6 +17,7 @@ type Tab = {
 export type PageHeaderProps = {
   title?: React.ReactNode
   extra?: React.ReactNode
+  headerExtra?: React.ReactNode
   tab?: Tab
   activeKey?: string
   onBack?: boolean
@@ -25,6 +26,7 @@ export type PageHeaderProps = {
 const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   extra,
+  headerExtra,
   tab,
   onBack,
 }) => {
@@ -40,14 +42,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       )}
     >
       <div className="flex flex-col">
-        <div className="flex gap-[16px]">
-          {onBack && (
-            <ArrowLeftOutlined
-              onClick={handleBack}
-              className="cursor-pointer text-[16px]"
-            />
-          )}
-          <span className="text-[20px] font-[500]">{title}</span>
+        <div className="flex items-center justify-between">
+          {/* Tên header */}
+          <div className="flex gap-[16px]">
+            {onBack && (
+              <ArrowLeftOutlined
+                onClick={handleBack}
+                className="cursor-pointer text-[16px]"
+              />
+            )}
+            <span className="text-[20px] font-[500]">{title}</span>
+          </div>
         </div>
         <div className="flex items-center">
           {tab?.items && (
@@ -70,7 +75,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           )}
         </div>
       </div>
-      <div className="pb-[11px]">{extra}</div>
+      <div className="flex flex-col items-end gap-[16px]">
+        <div className="flex items-center">{headerExtra}</div>
+        <div className="pb-[11px]">{extra}</div>
+      </div>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
-import { uploadImageAction } from '@/app/admin/accounts/account-actions/action'
 import { cn } from '@/lib/utils'
+import { uploadImageAction } from '@/libs/account'
 import BulletList from '@tiptap/extension-bullet-list'
 import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'

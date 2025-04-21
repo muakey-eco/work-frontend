@@ -35,6 +35,12 @@ const JobOverView: React.FC<JobOverViewProps> = async ({
         </Link>
       </div>
       <div>
+        Người tạo nhiệm vụ:{' '}
+        <span className="font-[700]">
+          {task?.creator_by?.full_name || 'Không có người tạo'}
+        </span>
+      </div>
+      <div>
         Giai đoạn hiện tại: <span className="font-[700]">{currentStage}</span>
       </div>
       <div>

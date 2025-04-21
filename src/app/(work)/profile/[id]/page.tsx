@@ -14,7 +14,6 @@ export default async function ProfilePage({
   params: { id: string }
 }) {
   const { id } = params
-  console.log('idParams', params)
   let user = await getMe({
     include: 'profile',
   })

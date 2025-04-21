@@ -140,7 +140,6 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
     },
   ]
 
-  console.log('data', data)
   return (
     <Table<DataType>
       columns={columns}

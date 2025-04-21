@@ -75,7 +75,6 @@ const FormFields: React.FC<{
     setStartDate(initialValues?.startDate)
   }, [initialValues?.startDate])
 
-
   return (
     <>
       <div className="flex items-start justify-between gap-[24px]">
@@ -188,23 +187,34 @@ const FormFields: React.FC<{
                 </div>
 
                 <div className="absolute top-0 right-0 flex items-center">
-                  <Button
-                    type="primary"
-                    className="rounded-none rounded-bl-lg bg-[#52C41A]"
-                    onClick={() => add()}
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm
-                  </Button>
-                  {index > 0 && (
+                  {index > 0 ? (
+                    <>
+                      <Button
+                        type="primary"
+                        className="!rounded-t-none !rounded-r-none !bg-[#52C41A]"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Thêm
+                      </Button>
+                      <Button
+                        type="primary"
+                        className="!rounded-l-none !rounded-b-none"
+                        danger
+                        onClick={() => remove(name)}
+                        icon={<DeleteOutlined />}
+                      >
+                        Xóa
+                      </Button>
+                    </>
+                  ) : (
                     <Button
                       type="primary"
-                      className="rounded-none"
-                      danger
-                      onClick={() => remove(name)}
-                      icon={<DeleteOutlined />}
+                      className="!rounded-tl-none !rounded-br-none !bg-[#52C41A]"
+                      onClick={() => add()}
+                      icon={<PlusOutlined />}
                     >
-                      Xóa
+                      Thêm
                     </Button>
                   )}
                 </div>
@@ -215,7 +225,7 @@ const FormFields: React.FC<{
       </Form.List>
 
       <Form.Item
-        className="mt-[24px]"
+        className="!mt-[24px]"
         name="description"
         label="Lý do đăng ký nghỉ"
       >
@@ -263,6 +273,9 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
     setLoading(true)
 
     const { timestamps, type, ...restFormData } = formData
+    console.log('formData1', formData)
+    console.log('type1', type)
+    console.log('timestamps1', timestamps)
 
     const holiday = timestamps?.map((t: any) => {
       const startDate = `${String(dayjs(t?.startDate).format('YYYY-MM-DD'))} ${t?.startTime ? String(dayjs(t?.startTime).format('HH:mm:ss')) : ''}`
@@ -320,15 +333,32 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
 
   if (initMode === 'modal') {
     return (
-      <FormFields
-        mode={mode}
-        timeOff={timeOff}
-        onModeChange={setMode}
+      <Form
+        layout="vertical"
+        onFinish={handleSubmit}
+        onValuesChange={(_, { timestamps }) => {
+          setTimestamps(timestamps[0])
+        }}
+        form={form}
         initialValues={{
           type: 'Nghỉ không hưởng lương',
-          timestamps: [{ isDefault: true, startDate: restInitialValues?.date }],
+          timestamps: [
+            {
+              isDefault: true,
+              startDate: dayjs(restInitialValues?.date),
+            },
+          ],
         }}
-      />
+      >
+        <FormFields
+          mode={mode}
+          timeOff={timeOff}
+          onModeChange={setMode}
+          initialValues={{
+            startDate: restInitialValues?.date,
+          }}
+        />
+      </Form>
     )
   }
 

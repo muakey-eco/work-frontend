@@ -7,7 +7,6 @@ const ContractPage: React.FC<{ params: { id: string } }> = async ({
   params,
 }) => {
   const user = await getUserAccount(Number(params.id))
-  console.log('user', user)
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">

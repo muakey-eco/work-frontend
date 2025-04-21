@@ -34,28 +34,18 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
-    const { check_in, check_out, timestamps, type, date, ...restFormData } =
-      formData
+    const { check_in, check_out, date, ...restFormData } = formData
+    console.log('formData', formData)
 
-    const holiday = timestamps?.map((t: any) => {
-      if (date) {
-        const day = String(dayjs(date).format('YYYY-MM-DD'))
+    let holiday = []
+    let type = ''
 
-        return {
-          start_date:
-            `${day} ${t?.from ? String(dayjs(t?.from).format('HH:mm:ss')) : ''}`.trim(),
-          end_date:
-            `${day} ${t?.from ? String(dayjs(t?.to).format('HH:mm:ss')) : ''}`.trim(),
-        }
-      }
-
-      return {
-        start_date:
-          `${String(dayjs(t?.startDate).format('YYYY-MM-DD'))} ${t?.startTime ? String(dayjs(t?.startTime).format('HH:mm:ss')) : ''}`.trim(),
-        end_date:
-          `${String(dayjs(t?.endDate).format('YYYY-MM-DD'))} ${t?.endTime ? String(dayjs(t?.endTime).format('HH:mm:ss')) : ''}`.trim(),
-      }
-    })
+    // Nếu là đăng ký nghỉ, lấy dữ liệu từ CheckInSwitchForms
+    if (group?.name === 'Đăng ký nghỉ') {
+      const checkInFormData = formData.checkInFormData || {}
+      holiday = checkInFormData.timestamps || []
+      type = checkInFormData.type || 'Nghỉ không hưởng lương'
+    }
 
     try {
       const { message: msg, errors } = await addProposeAction(
@@ -70,8 +60,8 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
             }
           : {
               ...restFormData,
-              name: type || 'Đăng ký OT',
-              propose_category_id: type ? 5 : 4,
+              name: group?.name === 'Đăng ký nghỉ' ? type : 'Đăng ký OT',
+              propose_category_id: group?.name === 'Đăng ký nghỉ' ? 5 : 4,
               holiday,
             },
       )

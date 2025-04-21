@@ -66,7 +66,6 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
     try {
       var { errors } = await moveStageAction(task?.id, failedStageId)
 
-      console.log('errors', errors)
 
       if (errors) {
         message.error(errors)

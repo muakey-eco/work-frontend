@@ -17,8 +17,39 @@ const FormFields: React.FC<{
   initialValues?: any
   onStartChange?: (time: any) => void
   onEndChange?: (time: any) => void
-}> = ({ initialValues, onStartChange, onEndChange }) => {
-  console.log(initialValues)
+  form: any
+}> = ({ initialValues, onStartChange, onEndChange, form }) => {
+  const [startTime, setStartTime] = useState<any>(null)
+
+  const handleGetStartTime = (time: any, name: any) => {
+    const timestamps = form.getFieldValue('timestamps')
+    const start = timestamps?.[name]?.from
+    setStartTime(start)
+    onStartChange?.(time ? time.toDate() : '')
+  }
+
+  const disabledEndTime = (current: dayjs.Dayjs) => {
+    if (!startTime) {
+      return {
+        disabledHours: () => [],
+        disabledMinutes: () => [],
+      }
+    }
+
+    return {
+      disabledHours: () => {
+        const startHour = dayjs(startTime).hour()
+        return Array.from({ length: startHour }, (_, i) => i)
+      },
+      disabledMinutes: (selectedHour: number) => {
+        if (selectedHour === dayjs(startTime).hour()) {
+          return Array.from({ length: dayjs(startTime).minute() }, (_, i) => i)
+        }
+        return []
+      },
+    }
+  }
+
   return (
     <>
       <div className="flex items-start justify-between gap-[24px]">
@@ -51,7 +82,7 @@ const FormFields: React.FC<{
                         locale={locale}
                         picker="time"
                         showSecond={false}
-                        onChange={(e) => onStartChange?.(e ? e.toDate() : '')}
+                        onChange={(e) => handleGetStartTime(e, name)}
                       />
                     </Form.Item>
                     <Form.Item
@@ -66,28 +97,40 @@ const FormFields: React.FC<{
                         picker="time"
                         showSecond={false}
                         onChange={(e) => onEndChange?.(e ? e.toDate() : '')}
+                        disabledTime={disabledEndTime}
                       />
                     </Form.Item>
                   </div>
 
                   <div className="absolute top-0 right-0 flex items-center">
-                    <Button
-                      type="primary"
-                      className="rounded-none rounded-bl-lg bg-[#52C41A]"
-                      onClick={() => add()}
-                      icon={<PlusOutlined />}
-                    >
-                      Thêm
-                    </Button>
-                    {index > 0 && (
+                    {index > 0 ? (
+                      <>
+                        <Button
+                          type="primary"
+                          className="!rounded-t-none !rounded-r-none !bg-[#52C41A]"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                        >
+                          Thêm
+                        </Button>
+                        <Button
+                          type="primary"
+                          className="!rounded-l-none !rounded-b-none"
+                          danger
+                          onClick={() => remove(name)}
+                          icon={<DeleteOutlined />}
+                        >
+                          Xóa
+                        </Button>
+                      </>
+                    ) : (
                       <Button
                         type="primary"
-                        className="rounded-none"
-                        danger
-                        onClick={() => remove(name)}
-                        icon={<DeleteOutlined />}
+                        className="!rounded-tl-none !rounded-br-none !bg-[#52C41A]"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
                       >
-                        Xóa
+                        Thêm
                       </Button>
                     )}
                   </div>
@@ -99,7 +142,7 @@ const FormFields: React.FC<{
       </Form.List>
 
       <Form.Item
-        className="mt-[24px]"
+        className="!mt-[24px]"
         name="description"
         label="Lý do đăng ký OT"
       >
@@ -194,6 +237,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
         }}
         onStartChange={setStartTime}
         onEndChange={setEndTime}
+        form={form}
       />
     )
   }
@@ -220,6 +264,7 @@ const RegisterOTForm: React.FC<RegisterOTFormProps> = ({ initialValues }) => {
           }}
           onStartChange={setStartTime}
           onEndChange={setEndTime}
+          form={form}
         />
 
         <Form.Item className="mt-[24px] mb-0!">

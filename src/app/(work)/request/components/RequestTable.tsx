@@ -46,8 +46,6 @@ const RequestTable: React.FC<RequestTableProps> = memo(
     const router = useRouter()
 
     const hasStatusQuery = searchParams.has('status')
-    console.log('hasStatusQuery', hasStatusQuery)
-    console.log('requests', requests)
 
     const handleChangePage = (page: number) => {
       setCurrent(page)

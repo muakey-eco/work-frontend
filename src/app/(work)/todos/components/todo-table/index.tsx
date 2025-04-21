@@ -40,6 +40,11 @@ const useStyle = createStyles(({ css }) => ({
       background: white;
     }
 
+    .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+      background-color: #e6f4ff !important;
+      transition: background-color 0.2s ease;
+    }
+
     /* Tùy chỉnh scrollbar cho cả nội dung ngang & dọc */
     .ant-table-content,
     .ant-table-body {
@@ -206,7 +211,6 @@ const TodoTable: React.FC<TodoTableProps> = ({
         x: 1500,
       }}
       dataSource={dataSource}
-      rowClassName="bg-transparent hover:bg-[#E6F4FF] transition-all duration-200"
       loading={loading}
       pagination={{
         pageSize: 8,

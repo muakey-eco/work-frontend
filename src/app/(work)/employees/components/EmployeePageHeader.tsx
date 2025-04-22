@@ -4,26 +4,39 @@ import { PageHeader } from '@/components'
 import { convertToSlug } from '@/libs/utils'
 import {
   MenuOutlined,
-  MoreOutlined,
   PlusCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons'
-import { Button, Dropdown, Input, MenuProps, TabsProps, theme } from 'antd'
+import { Button, Dropdown, Input, TabsProps, theme } from 'antd'
 import { createStyles } from 'antd-style'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import Sortable from 'sortablejs'
 import EmployeeModalForm from './employee-modal-form'
 import ViewModalForm from './view-modal-form'
+import ViewOption from './view-option'
 
 export type EmployeePageHeaderProps = {
   tabs?: any[]
 }
 
 const useStyle = createStyles(({ css }) => ({
-  menu: css`
-    .ant-dropdown-menu {
-      .ant-dropdown-menu-item {
-        padding: 0;
+  sortable: css`
+    .sortable-ghost {
+      opacity: 0.4;
+      background: #f0f0f0;
+    }
+    .sortable-chosen {
+      background: #e6f7ff;
+    }
+    .sortable-drag {
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .drag-handle {
+      cursor: grab;
+      &:active {
+        cursor: grabbing;
       }
     }
   `,
@@ -37,58 +50,70 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
   const searchParams = useSearchParams()
   const query = new URLSearchParams(searchParams)
   const router = useRouter()
-  const refActiveKey = useRef(query.get('view') || 'tong-quan')
-
-  const tabItems: TabsProps['items'] = [
-    ...(tabs || []).map((tab, index) => ({
-      label:
-        index === 0 ? (
-          <div className="flex items-center gap-[8px]">
-            <span>Tổng quan</span>
-            <MoreOutlined />
-          </div>
-        ) : (
-          tab.name
-        ),
-      key: convertToSlug(tab.name),
-    })),
-  ]
-
-  const menuItems: MenuProps['items'] = (tabs || []).map((tab) => ({
-    label: (
-      <div
-        className="flex items-center gap-[8px] px-[12px] leading-[32px]"
-        onClick={() => handleViewClick(convertToSlug(String(tab.name)))}
-      >
-        <MenuOutlined />
-        <span>{tab.name}</span>
-      </div>
-    ),
-    key: convertToSlug(String(tab.name)),
-  }))
-
-  const menuStyle: React.CSSProperties = {
-    boxShadow: 'none',
-  }
-
-  const contentStyle: React.CSSProperties = {
-    backgroundColor: token.colorBgElevated,
-    borderRadius: token.borderRadiusLG,
-    boxShadow: token.boxShadowSecondary,
-  }
+  const activeTab = query.get('view') || 'tong-quan'
 
   const handleChangeTab = (key: string) => {
     query.set('view', key)
-    refActiveKey.current = key
     query.delete('page')
     router.push(`?${query.toString()}`)
   }
 
   const handleViewClick = (key: string) => {
     query.set('view', key)
-    refActiveKey.current = key
     query.delete('page')
     router.push(`?${query.toString()}`)
+  }
+
+  const [sortableTabs, setSortableTabs] = useState(
+    (tabs || []).map((tab) => ({
+      label: tab.name,
+      key: convertToSlug(String(tab.name)),
+    })),
+  )
+
+  const tabItems: TabsProps['items'] = [
+    ...sortableTabs.map((tab, index) => ({
+      label: (
+        <ViewOption
+          name={index === 0 ? 'Tổng quan' : tab.label}
+          activeTab={activeTab}
+        />
+      ),
+      key: tab.key,
+    })),
+  ]
+
+  const sortableRef = useRef<HTMLUListElement>(null)
+  const sortableInstance = useRef<Sortable | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+
+  useEffect(() => {
+    if (dropdownOpen && sortableRef.current && !sortableInstance.current) {
+      sortableInstance.current = new Sortable(sortableRef.current, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: function (evt) {
+          setSortableTabs((prev) => {
+            const newList = [...prev]
+            const [removed] = newList.splice(evt.oldIndex!, 1)
+            newList.splice(evt.newIndex!, 0, removed)
+            return newList
+          })
+        },
+      })
+    }
+    return () => {
+      if (!dropdownOpen && sortableInstance.current) {
+        sortableInstance.current.destroy()
+        sortableInstance.current = null
+      }
+    }
+  }, [dropdownOpen])
+
+  const contentStyle: React.CSSProperties = {
+    backgroundColor: token.colorBgElevated,
+    borderRadius: token.borderRadiusLG,
+    boxShadow: token.boxShadowSecondary,
   }
 
   return (
@@ -104,21 +129,32 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
       tab={{
         items: tabItems,
         onChangeTab: handleChangeTab,
-        activeKey: refActiveKey.current,
+        activeKey: activeTab,
         extra: (
           <div className="flex items-center gap-[32px]">
             <Dropdown
               trigger={['click']}
-              rootClassName={styles.menu}
-              menu={{ items: menuItems }}
-              dropdownRender={(menu) => (
+              onOpenChange={setDropdownOpen}
+              dropdownRender={() => (
                 <div style={contentStyle}>
                   <div className="px-[4px] pt-[4px]">
                     <Input.Search placeholder="Tìm kiếm" />
                   </div>
-                  {React.cloneElement(menu as React.ReactElement, {
-                    style: menuStyle,
-                  })}
+                  <ul
+                    ref={sortableRef}
+                    className={`m-0 list-none p-0 ${styles.sortable}`}
+                  >
+                    {sortableTabs.map((tab) => (
+                      <li
+                        key={tab.key}
+                        onClick={() => handleViewClick(tab.key)}
+                        className="flex items-center gap-[8px] rounded-[4px] px-[12px] leading-[32px] select-none hover:bg-gray-100"
+                      >
+                        <MenuOutlined className="drag-handle cursor-move" />
+                        <span>{tab.label}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             >

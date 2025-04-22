@@ -29,6 +29,11 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
 
   const grossSalary = netSalary + insurance + insuranceEmployee
 
+  const DISABLED_SALARY_FIELDS = {
+    insurance: 1161000,
+    insurance_employee: 567000,
+  }
+
   const data: ListProps<any>['dataSource'] = [
     {
       label: 'Lương Gross',
@@ -40,13 +45,11 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
     },
     {
       label: 'BHXH, BHYT, BHTN do CTY đóng (21,5%)',
-      value: isNaN(insurance) ? '--' : `${formatCurrency(insurance)} đ`,
+      value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance)} đ`,
     },
     {
       label: 'BHXH, BHYT, BHTN do NLĐ đóng (10,5%)',
-      value: isNaN(insuranceEmployee)
-        ? '--'
-        : `${formatCurrency(insuranceEmployee)} đ`,
+      value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance_employee)} đ`,
     },
     {
       label: 'Lương cơ bản',

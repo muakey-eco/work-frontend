@@ -93,7 +93,8 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
 
       <div className="flex items-center justify-center gap-[8px]">
         <span className="text-[14px] leading-[22px] font-[600]">
-          {user?.personnel_class || ''}
+          {String(user?.employee_type).charAt(0).toUpperCase() +
+            String(user?.employee_type).slice(1)}
         </span>
         <Badge
           status="success"

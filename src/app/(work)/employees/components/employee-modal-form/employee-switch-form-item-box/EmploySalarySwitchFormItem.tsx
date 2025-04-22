@@ -19,6 +19,11 @@ const EmploySalarySwitchFormItem: React.FC<EmploySalarySwitchFormItemProps> = ({
     parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
   }
 
+  const DISABLED_SALARY_FIELDS = {
+    insurance: 1161000,
+    insurance_employee: 567000,
+  }
+
   return (
     <div className={className}>
       <SwitchFormItem title="Nhập thông tin lương (VND)" checked={checked}>
@@ -87,8 +92,9 @@ const EmploySalarySwitchFormItem: React.FC<EmploySalarySwitchFormItemProps> = ({
                 <InputNumber
                   className="w-full!"
                   placeholder="Nhập"
+                  value={formatCurrency(DISABLED_SALARY_FIELDS.insurance)}
                   disabled
-                  {...formatProps}
+                  // {...formatProps}
                 />
               </Form.Item>
               <Form.Item
@@ -99,8 +105,11 @@ const EmploySalarySwitchFormItem: React.FC<EmploySalarySwitchFormItemProps> = ({
                 <InputNumber
                   className="w-full!"
                   placeholder="Nhập"
+                  value={formatCurrency(
+                    DISABLED_SALARY_FIELDS.insurance_employee,
+                  )}
                   disabled
-                  {...formatProps}
+                  // {...formatProps}
                 />
               </Form.Item>
             </div>

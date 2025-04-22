@@ -1,7 +1,6 @@
 'use client'
 
-import { DownOutlined, FilterOutlined } from '@ant-design/icons'
-import { Button, Input, Select } from 'antd'
+import { Input, Select } from 'antd'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 
@@ -46,8 +45,6 @@ const EmployeeFilter: React.FC<EmployeeFilterProps> = () => {
         onSearch={handleSearch}
       />
       <Select options={statusOptions} defaultValue={statusOptions[0].value} />
-      <Button icon={<FilterOutlined />}>Bộ lọc (2)</Button>
-      <Button icon={<DownOutlined />}>Sắp xếp</Button>
     </div>
   )
 }

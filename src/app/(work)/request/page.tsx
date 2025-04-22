@@ -1,22 +1,24 @@
 import { getAttendances, getMe } from '@/libs/data'
-import { getProposeCategories, getProposesWithPagination } from '@/libs/propose'
+import { getProposeCategories, getProposesWithQuery } from '@/libs/propose'
 import { Button } from 'antd'
 import React from 'react'
 import RequestModalForm from '../../../components/RequestModalForm'
 import PageHeader from './components/PageHeader'
+import RequestFilter from './components/request-filter'
 import RequestTabs from './components/request-tabs'
 import RequestTable from './components/RequestTable'
 
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
+  console.log('searchParams', searchParams)
 
-  const pageParams = Number(searchParams.page || 1)
   const [attendances, proposes, proposeCategories, user] = await Promise.all([
     getAttendances(),
-    getProposesWithPagination(pageParams),
+    getProposesWithQuery(searchParams),
     getProposeCategories(),
     getMe(),
   ])
+  console.log('proposes', proposes)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -60,7 +62,8 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
         />
       </PageHeader>
 
-      <div className="h-[calc(100vh-82px)] overflow-auto p-[16px]">
+      <div className="flex h-[calc(100vh-82px)] flex-col gap-[16px] overflow-auto p-[16px]">
+        <RequestFilter />
         <RequestTable
           dataSource={proposes.data}
           proposes={proposes}

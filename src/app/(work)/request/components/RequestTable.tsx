@@ -44,13 +44,21 @@ const RequestTable: React.FC<RequestTableProps> = memo(
     const currentPage = searchParams.get('page') || 1
     const [current, setCurrent] = useState<number>(Number(currentPage))
     const router = useRouter()
+    
+    const perPage = searchParams.get('per_page') || 5
+    const [pageSize, setPageSize] = useState<number>(Number(perPage))
 
     const hasStatusQuery = searchParams.has('status')
 
-    const handleChangePage = (page: number) => {
+    const handleChangePage = (page: number, newPageSize?: number) => {
       setCurrent(page)
+      if (newPageSize && newPageSize !== pageSize) {
+        setPageSize(newPageSize)
+      }
+
       const newSearchParams = new URLSearchParams(searchParams.toString())
       newSearchParams.set('page', String(page))
+      newSearchParams.set('per_page', String(newPageSize || pageSize))
       router.push(`?${newSearchParams.toString()}`)
     }
 
@@ -80,6 +88,11 @@ const RequestTable: React.FC<RequestTableProps> = memo(
     }
 
     const columns: TableProps['columns'] = [
+      {
+        title: 'Mã yêu cầu',
+        dataIndex: 'id',
+        width: 120,
+      },
       {
         title: 'Tên',
         dataIndex: 'name',
@@ -198,8 +211,14 @@ const RequestTable: React.FC<RequestTableProps> = memo(
         columns={columns}
         dataSource={requests}
         {...rest}
+        rowKey={(record) => record.id}
+        loading={proposes?.isLoading}
+        scroll={{
+          y: 'calc(100vh - 280px)',
+        }}
         pagination={{
-          pageSize: proposes?.per_page,
+          pageSize: Number(perPage),
+          pageSizeOptions: [5, 10, 15, 20],
           position: ['bottomLeft'],
           current: current,
           total: hasStatusQuery ? requests?.length : proposes?.total,

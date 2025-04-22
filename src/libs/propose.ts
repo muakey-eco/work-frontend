@@ -5,8 +5,8 @@ export const getProposes = async (query?: any) =>
     .then((data) => data)
     .catch(() => [])
 
-export const getProposesWithPagination = async (query?: any) =>
-  requestWithAuthorized('proposes?page=' + query)
+export const getProposesWithQuery = async (query?: any) =>
+  requestWithAuthorized('proposes?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => [])
 

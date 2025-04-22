@@ -25,7 +25,8 @@ const TodoCompletedButton: React.FC<TodoCompletedButtonProps> = ({
       const { message: msg, errors } = await markTodoCompletedAction(id)
 
       if (errors) {
-        message.error(msg)
+        message.error('Đang lỗi có mù không')
+        console.log('lỗi', msg)
         setLoading(false)
         setOpen(false)
         return
@@ -43,7 +44,7 @@ const TodoCompletedButton: React.FC<TodoCompletedButtonProps> = ({
   return (
     <Tooltip title="Đánh dấu hoàn thành">
       <CheckOutlined
-        className="cursor-pointer text-[#389e0d]"
+        className="cursor-pointer text-[#389e0d] hover:!text-red-500"
         onClick={() => {
           modal.confirm({
             title: 'Xác nhận',

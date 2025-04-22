@@ -295,6 +295,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             className="mb-[16px]! flex-1"
             name="price"
             label="Giá mua"
+            rules={[{ required: true, message: 'Giá mua là bắt buộc' }]}
           >
             <Input placeholder="Nhập giá mua" />
           </Form.Item>

@@ -27,11 +27,10 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
     personnel_class,
     department_name,
   } = data
-
   const guideItems = [
     {
       label: 'Lương khi tuyển',
-      value: '2,000,000 đ',
+      value: '--',
     },
     {
       label: 'Mức lương hiện tại',

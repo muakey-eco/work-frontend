@@ -1,6 +1,7 @@
-import { EditOutlined, PaperClipOutlined } from '@ant-design/icons'
+import { EditOutlined } from '@ant-design/icons'
 import { Badge, Button, Card, ListProps } from 'antd'
 import dayjs from 'dayjs'
+import Link from 'next/link'
 import React from 'react'
 import JobInfomationList from './JobInfomationList'
 import JobInfomationModalForm from './JobInfomationModalForm'
@@ -16,6 +17,7 @@ const JobInfomationCard: React.FC<JobInfomationCardProps> = ({
   data: externalData,
   extra,
 }) => {
+  console.log('externalData', externalData)
   const data: ListProps<any>['dataSource'] = [
     {
       label: 'Phòng ban',
@@ -40,7 +42,9 @@ const JobInfomationCard: React.FC<JobInfomationCardProps> = ({
     },
     {
       label: 'Phân loại nhân sự',
-      value: externalData?.personnel_class || '--',
+      value:
+        String(externalData?.employee_type).charAt(0).toUpperCase() +
+          String(externalData?.employee_type).slice(1) || '--',
     },
     {
       label: 'Ngày bắt đầu làm việc',
@@ -57,23 +61,21 @@ const JobInfomationCard: React.FC<JobInfomationCardProps> = ({
     {
       label: 'Thông tin hợp đồng',
       value: (
-        <div className="flex items-center gap-[8px]">
-          <PaperClipOutlined className="text-[#00000073]!" />
-          <span className="text-[14px] leading-[22px] font-[400] text-[#1890FF]">
-            xxx.pdf
+        <Link href={`/profile/${externalData?.id}/contract`}>
+          <span className="text-[14px] leading-[22px] font-bold text-[#1890FF] hover:underline">
+            Xem hợp đồng
           </span>
-        </div>
+        </Link>
       ),
     },
     {
       label: 'Giấy tờ nhân sự',
       value: (
-        <div className="flex items-center gap-[8px]">
-          <PaperClipOutlined className="text-[#00000073]!" />
-          <span className="text-[14px] leading-[22px] font-[400] text-[#1890FF]">
-            xxx.pdf
+        <Link href={`/profile/${externalData?.id}/contract`}>
+          <span className="text-[14px] leading-[22px] font-bold text-[#1890FF] hover:underline">
+            Xem giấy tờ
           </span>
-        </div>
+        </Link>
       ),
     },
   ]

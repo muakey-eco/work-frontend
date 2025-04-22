@@ -41,15 +41,26 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   const { message } = App.useApp()
   const formRef = useRef<FormInstance>(null)
 
-  const { salary, ...restInitialValues } = initialValues
+  const { salary, position, ...restInitialValues } = initialValues
   const totalSalary =
     salary?.basic_salary +
     salary?.travel_allowance +
     salary?.eat_allowance +
     salary?.kpi
 
+  const DISABLED_SALARY_FIELDS = {
+    insurance: 1161000,
+    insurance_employee: 567000,
+  }
+
   const handleSubmit = async (values: any) => {
     setLoading(true)
+
+    if (!position) {
+      message.error('Phải có chức danh sau đó mới sửa được')
+      setLoading(false)
+      return
+    }
 
     const { insurance, insurance_employee, ...restValues } = values
 
@@ -148,12 +159,12 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
             ref={formRef}
             initialValues={{
               ...salary,
-              insurance: Number(salary?.basic_salary * 0.215),
-              insurance_employee: Number(salary?.basic_salary * 0.105),
+              insurance: DISABLED_SALARY_FIELDS.insurance,
+              insurance_employee: DISABLED_SALARY_FIELDS.insurance_employee,
               gross_salary: Number(
                 totalSalary +
-                  Number(salary?.basic_salary * 0.215) +
-                  Number(salary?.basic_salary * 0.105),
+                  Number(DISABLED_SALARY_FIELDS.insurance) +
+                  Number(DISABLED_SALARY_FIELDS.insurance_employee),
               ),
               net_salary: Number(totalSalary),
             }}
@@ -228,6 +239,7 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               name="insurance"
             >
               <InputNumber
+                value={DISABLED_SALARY_FIELDS.insurance}
                 className="w-full!"
                 placeholder="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
                 disabled
@@ -241,6 +253,7 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               name="insurance_employee"
             >
               <InputNumber
+                value={DISABLED_SALARY_FIELDS.insurance_employee}
                 className="w-full!"
                 placeholder="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
                 disabled

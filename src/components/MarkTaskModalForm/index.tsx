@@ -24,8 +24,9 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
   const formRef = useRef<FormInstance>(null)
   const router = useRouter()
 
-  const { failedStageId, task } = options
+  const { stageId, task } = options
   const { message, modal } = App.useApp()
+  console.log('options', options)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -33,9 +34,9 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
     try {
       let result
       if (mark === 'failed') {
-        result = await moveStageAction(task?.id, failedStageId, formData)
+        result = await moveStageAction(task?.id, stageId, formData)
       } else {
-        result = await moveStageAction(task?.id, failedStageId)
+        result = await moveStageAction(task?.id, stageId)
       }
 
       if (result.errors) {
@@ -64,8 +65,7 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
 
   const handleMarkCompleted = async () => {
     try {
-      var { errors } = await moveStageAction(task?.id, failedStageId)
-
+      var { errors } = await moveStageAction(task?.id, stageId)
 
       if (errors) {
         message.error(errors)

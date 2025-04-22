@@ -57,6 +57,7 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
           open={isModalOpen}
           onCancel={handleModalClose}
           onSuccess={handleModalSuccess}
+          action="add"
         >
           <Button icon={<PlusOutlined />} type="primary" onClick={handleAdd}>
             Thêm

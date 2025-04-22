@@ -20,6 +20,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
   const { attendances } = restOptions?.attendances
 
 
+  
   switch (type) {
     case 'form-request':
       return (
@@ -33,7 +34,9 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
       )
 
     case 'table-history':
-      return <CheckInHistoryTable options={{ attendances, user: options?.user }} />
+      return (
+        <CheckInHistoryTable options={{ attendances, user: options?.user }} />
+      )
 
     default:
       return (

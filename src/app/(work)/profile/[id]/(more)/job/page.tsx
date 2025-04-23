@@ -6,7 +6,6 @@ import JobSalaryCard from './components/job-salary-card'
 
 const JobPage: React.FC<{ params: { id: string } }> = async ({ params }) => {
   const userAccount = await getUserAccount(Number(params.id))
-  console.log('userAccount', userAccount)
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">

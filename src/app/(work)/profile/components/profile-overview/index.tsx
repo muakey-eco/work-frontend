@@ -2,14 +2,22 @@
 
 import { formatCurrency } from '@/lib/utils'
 import { randomColor } from '@/libs/utils'
-import { HeartFilled, MailOutlined, PhoneOutlined } from '@ant-design/icons'
+import {
+  EditOutlined,
+  HeartFilled,
+  MailOutlined,
+  PhoneOutlined,
+} from '@ant-design/icons'
 
-import { Avatar, Badge, Card, Progress } from 'antd'
-import React, { useMemo } from 'react'
+import { Avatar, Badge, Card, message, Progress } from 'antd'
+import React, { useMemo, useRef, useState } from 'react'
 import animation from './lotties/gold-coin-animation.json'
 
+import { uploadFiles } from '@/libs/data'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import useSeniority from '../../hooks/useSeniority'
+import { updateProfileAction } from '../action'
 
 const LottiePlayer = dynamic(
   () => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player),
@@ -23,6 +31,8 @@ export type ProfileOverviewProps = {
 }
 
 const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
+  const router = useRouter()
+  const [avatar, setAvatar] = useState(user?.avatar)
   const { basic_salary, travel_allowance, kpi, eat_allowance } =
     user?.salary || {}
 
@@ -57,6 +67,37 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
       label: user?.salary ? `${formatCurrency(totalSalary)}đ` : '--',
     },
   ]
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleIconClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('files', file)
+
+    const res = await uploadFiles(formData)
+
+    const avatar = res?.url
+    if (avatar) {
+      setAvatar(avatar)
+      const { message: msg, errors } = await updateProfileAction(user?.id, {
+        avatar: avatar,
+      })
+      if (errors) {
+        message.error(msg)
+        return
+      }
+      router.refresh()
+      message.success('Cập nhật avatar thành công')
+    } else {
+      message.error('Cập nhật avatar thất bại')
+    }
+  }
 
   return (
     <Card
@@ -65,21 +106,39 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
       }}
     >
       <div className="flex justify-center">
-        <Avatar
-          className="rounded-full! text-[16px]!"
-          size={98}
-          shape="circle"
-          src={user?.avatar}
-          style={{
-            backgroundColor: randomColor(String(user?.full_name)),
-            fontSize: 30,
-          }}
-          alt={user?.full_name}
+        <Badge
+          count={
+            <EditOutlined
+              className="!rounded-full !border-2 !border-white !bg-[#1677FF] !p-[6px] !text-[14px] !text-[#fff]"
+              onClick={handleIconClick}
+            />
+          }
+          offset={[-15, 85]} // điều chỉnh vị trí icon
+          style={{ cursor: 'pointer' }}
         >
-          <p className="text-3xl">
-            {String(user?.full_name).charAt(0).toLocaleUpperCase()}
-          </p>
-        </Avatar>{' '}
+          <Avatar
+            className="rounded-full! text-[16px]!"
+            size={98}
+            shape="circle"
+            src={avatar}
+            style={{
+              backgroundColor: randomColor(String(user?.full_name)),
+              fontSize: 30,
+            }}
+            alt={user?.full_name}
+          >
+            <p className="text-3xl">
+              {String(user?.full_name).charAt(0).toLocaleUpperCase()}
+            </p>
+          </Avatar>{' '}
+        </Badge>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
       </div>
 
       <div className="text-center">

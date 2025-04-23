@@ -29,8 +29,6 @@ const ViewOption: React.FC<ViewOptionProps> = ({
   onMenuClick,
   activeTab,
 }) => {
-  console.log('activeTab', activeTab)
-  console.log('name', name)
   return (
     <Space>
       <span>{name}</span>

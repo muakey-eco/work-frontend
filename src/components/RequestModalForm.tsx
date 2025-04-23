@@ -35,7 +35,6 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
     setLoading(true)
 
     const { check_in, check_out, date, ...restFormData } = formData
-    console.log('formData', formData)
 
     let holiday = []
     let type = ''

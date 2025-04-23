@@ -1,5 +1,5 @@
 import { getMe } from '@/libs/data'
-import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import ProfileContactCard from '../components/profile-contact-card'
 import ProfileDeductionsCard from '../components/profile-deductions-card'
 import ProfileEduInfomationCard from '../components/profile-edu-infomation-card'
@@ -14,17 +14,26 @@ export default async function ProfilePage({
   params: { id: string }
 }) {
   const { id } = params
-  let user = await getMe({
-    include: 'profile',
-  })
 
-  if (!id) {
-  } else if (id && user.role === 'Quản trị cấp cao') {
-    user = await getAccountByIdAction(Number(id), {
-      include: 'profile',
-    })
-  } else {
-    notFound()
+  let user = await getMe({ include: 'profile' })
+
+  if (user.role === 'Quản trị cấp cao') {
+    if (id) {
+      user = await getAccountByIdAction(Number(id), {
+        include: 'profile',
+      })
+    }
+  } else if (user.id !== Number(id)) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <div className="text-2xl">Không có mùa xuân đấy đâu 👉👈</div>
+        <Link href={`/profile/${user.id}`}>
+          <button className="!cursor-pointer rounded-lg bg-[#1677FF] px-4 py-2 text-white transition hover:bg-[#4096ff]">
+            Về nào
+          </button>
+        </Link>
+      </div>
+    )
   }
 
   return (

@@ -273,9 +273,6 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
     setLoading(true)
 
     const { timestamps, type, ...restFormData } = formData
-    console.log('formData1', formData)
-    console.log('type1', type)
-    console.log('timestamps1', timestamps)
 
     const holiday = timestamps?.map((t: any) => {
       const startDate = `${String(dayjs(t?.startDate).format('YYYY-MM-DD'))} ${t?.startTime ? String(dayjs(t?.startTime).format('HH:mm:ss')) : ''}`

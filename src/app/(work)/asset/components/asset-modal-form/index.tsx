@@ -5,12 +5,15 @@ import BrandFormItems from '@/components/BrandFormItem'
 import CategoryFormItems from '@/components/CategoryFormItem'
 import AssetUserFormItem from '@/components/UserFormItem'
 
+import { formatCurrency } from '@/lib/utils'
 import {
   App,
   DatePicker,
   Form,
   FormProps,
   Input,
+  InputNumber,
+  InputNumberProps,
   Modal,
   ModalProps,
   Select,
@@ -53,6 +56,11 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
   const [status, setStatus] = useState<'liquidated' | 'using' | undefined>(
     initialValues?.status || 'unused',
   )
+  //format
+  const formatProps: Pick<InputNumberProps, 'formatter' | 'parser'> = {
+    formatter: formatCurrency,
+    parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
+  }
 
   // Theo dõi giá trị status trong form
   const watchedStatus = useWatch('status', form)
@@ -297,7 +305,11 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             label="Giá mua"
             rules={[{ required: true, message: 'Giá mua là bắt buộc' }]}
           >
-            <Input placeholder="Nhập giá mua" />
+            <InputNumber
+              className="!w-full"
+              placeholder="Nhập giá mua"
+              {...formatProps}
+            />
           </Form.Item>
           <Form.Item
             key="buy_date"
@@ -350,9 +362,11 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
             name="sell_price"
             label="Giá thanh lý"
           >
-            <Input
+            <InputNumber
+              className="!w-full"
               placeholder="Nhập giá thanh lý"
               disabled={status !== 'liquidated'}
+              {...formatProps}
             />
           </Form.Item>
         </div>

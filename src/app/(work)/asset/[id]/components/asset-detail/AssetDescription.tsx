@@ -7,51 +7,25 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
       key: '1',
       label: 'Loại tài sản',
       children: (
-        <span className="font-bold">{asset?.asset_category?.name}</span>
+        <span className="font-bold">{asset?.asset_category?.name || '--'}</span>
       ),
     },
     {
       key: '2',
-      label: 'Nhà cung cấp',
-      children: <span className="font-bold">{asset?.brand?.name}</span>,
+      label: 'Số serial',
+      children: (
+        <span className="font-bold">{asset?.serial_number || '--'}</span>
+      ),
     },
     {
       key: '3',
-      label: 'Người mua',
-      children: <span className="font-bold">{asset?.buyer?.full_name}</span>,
+      label: 'Người sử dụng',
+      children: (
+        <span className="font-bold">{asset?.account?.full_name || '--'}</span>
+      ),
     },
     {
       key: '4',
-      label: 'Số serial',
-      children: <span className="font-bold">{asset?.code}</span>,
-    },
-    {
-      key: '5',
-      label: 'Giá mua',
-      children: <span className="font-bold">{asset?.price}</span>,
-    },
-    {
-      key: '6',
-      label: 'Ngày thanh lý',
-      children: <span className="font-bold">{asset?.buy_date}</span>,
-    },
-    {
-      key: '7',
-      label: 'Người sử dụng',
-      children: <span className="font-bold">{asset?.account?.full_name}</span>,
-    },
-    {
-      key: '8',
-      label: 'Ngày mua',
-      children: <span className="font-bold">{asset?.buy_date}</span>,
-    },
-    {
-      key: '9',
-      label: 'Giá thanh lí',
-      children: <span className="font-bold">{asset?.sell_price}</span>,
-    },
-    {
-      key: '10',
       label: 'Thời gian sử dụng',
       children: (
         <span className="font-bold">
@@ -71,19 +45,60 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
       ),
     },
     {
-      key: '11',
+      key: '5',
+      label: 'Nhà cung cấp',
+      children: <span className="font-bold">{asset?.brand?.name || '--'}</span>,
+    },
+    {
+      key: '6',
+      label: 'Giá mua',
+      children: <span className="font-bold">{asset?.price || '--'}</span>,
+    },
+    {
+      key: '7',
+      label: 'Ngày mua',
+      children: <span className="font-bold">{asset?.buy_date || '--'}</span>,
+    },
+    {
+      key: '8',
       label: 'Hạn bảo hành',
-      children: <span className="font-bold">{asset?.warranty_date}</span>,
+      children: (
+        <span className="font-bold">{asset?.warranty_date || '--'}</span>
+      ),
+    },
+    {
+      key: '9',
+      label: 'Người mua',
+      children: (
+        <span className="font-bold">{asset?.buyer?.full_name || '--'}</span>
+      ),
+    },
+    {
+      key: '10',
+      label: 'Ngày thanh lý',
+      children: <span className="font-bold">{asset?.buy_date || '--'}</span>,
+    },
+    {
+      key: '11',
+      label: 'Giá thanh lí',
+      children: <span className="font-bold">{asset?.sell_price || '--'}</span>,
     },
     {
       key: '12',
       label: 'Người thanh lý',
-      children: <span className="font-bold">{asset?.seller?.full_name}</span>,
+      children: (
+        <span className="font-bold">{asset?.seller?.full_name || '--'}</span>
+      ),
     },
     {
       key: '13',
       label: 'Ghi chú',
-      children: <span className="font-bold">{asset?.description}</span>,
+      children: (
+        <span
+          className="font-bold"
+          dangerouslySetInnerHTML={{ __html: asset?.description || '--' }}
+        />
+      ),
     },
   ]
   return (

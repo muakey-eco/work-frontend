@@ -35,12 +35,12 @@ const ProfileSidebar: React.FC<ProfileSidebarProps> = () => {
       href: `${basePath}/job`,
       active: currentPath === `${basePath}/job`,
     },
-    {
-      label: 'Đánh giá & Phản hồi',
-      icon: <StarOutlined />,
-      href: `${basePath}/feedback`,
-      active: currentPath === `${basePath}/feedback`,
-    },
+    // {
+    //   label: 'Đánh giá & Phản hồi',
+    //   icon: <StarOutlined />,
+    //   href: `${basePath}/feedback`,
+    //   active: currentPath === `${basePath}/feedback`,
+    // },
     {
       label: 'Hợp đồng & Văn bản',
       icon: <FileOutlined />,

@@ -10,7 +10,6 @@ import RequestTable from './components/RequestTable'
 
 const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
   const searchParams = await prop.searchParams
-  console.log('searchParams', searchParams)
 
   const [attendances, proposes, proposeCategories, user] = await Promise.all([
     getAttendances(),
@@ -18,7 +17,6 @@ const Page: React.FC<any> = async (prop: { searchParams?: any }) => {
     getProposeCategories(),
     getMe(),
   ])
-  console.log('proposes', proposes)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">

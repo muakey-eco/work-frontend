@@ -26,7 +26,6 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
 
   const { stageId, task } = options
   const { message, modal } = App.useApp()
-  console.log('options', options)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)

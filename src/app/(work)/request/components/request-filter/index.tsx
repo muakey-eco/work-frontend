@@ -1,37 +1,60 @@
 'use client'
 
 import { getAccounts } from '@/libs/data'
-import { DatePicker, Input, Select } from 'antd'
-import { Dayjs } from 'dayjs'
+import { Button, DatePicker, Input, Select } from 'antd'
+import dayjs, { Dayjs } from 'dayjs'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const { RangePicker } = DatePicker
 
 const RequestFilter: React.FC<any> = () => {
-  //người tạo
   const [account, setAccount] = useState<any[]>([])
   const [accountId, setAccountId] = useState('')
-  //ngày tạo
   const [date, setDate] = useState<[Dayjs | null, Dayjs | null]>([null, null])
-  //mã yêu cầu
   const [idRequest, setIdRequest] = useState('')
 
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  useEffect(() => {
-    const account = async () => {
-      const account = await getAccounts()
-      setAccount(account)
-    }
-    account()
-  }, [])
+  // Tạo danh sách options cho Select
   const accountOptions = account.map((item) => ({
     value: item.id,
     label: item.full_name,
   }))
 
+  // Hàm lấy object value phù hợp cho Select khi dùng labelInValue
+  const getSelectedAccountOption = () => {
+    const acc = account.find((item) => item.id.toString() === accountId)
+    return acc ? { value: acc.id, label: acc.full_name } : undefined
+  }
+
+  // Đồng bộ query string vào state + fetch data
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const data = await getAccounts()
+      setAccount(data)
+
+      const queryAccountId = searchParams.get('account_id') ?? ''
+      const queryStartDate = searchParams.get('start_date')
+      const queryEndDate = searchParams.get('end_date')
+      const queryCode = searchParams.get('code') ?? ''
+
+      setAccountId(queryAccountId)
+      setIdRequest(queryCode)
+
+      if (queryStartDate && queryEndDate) {
+        setDate([
+          dayjs(queryStartDate, 'YYYY-MM-DD'),
+          dayjs(queryEndDate, 'YYYY-MM-DD'),
+        ])
+      }
+    }
+
+    fetchAccounts()
+  }, [])
+
+  // Cập nhật URL query
   const updateSearchParams = (...args: string[]) => {
     const params = new URLSearchParams(searchParams.toString())
 
@@ -51,16 +74,20 @@ const RequestFilter: React.FC<any> = () => {
 
   return (
     <div className="flex flex-wrap items-center gap-4">
+      {/* Dùng labelInValue để hiển thị label từ account_id */}
       <Select
         placeholder="Chọn người tạo"
         className="w-[276px] px-3 py-2"
         options={accountOptions}
-        onChange={(value) => {
-          setAccountId(value)
-          updateSearchParams('account_id', value ?? '')
+        onChange={(option) => {
+          setAccountId(option?.value?.toString() ?? '')
+          updateSearchParams('account_id', option?.value?.toString() ?? '')
         }}
+        value={getSelectedAccountOption()}
         allowClear
+        labelInValue
       />
+
       <RangePicker
         className="w-[276px] px-3 py-2"
         placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
@@ -69,19 +96,19 @@ const RequestFilter: React.FC<any> = () => {
         onChange={(dates) => {
           setDate(dates ?? [null, null])
 
-          // Gửi lên query nếu có giá trị
           if (dates && dates[0] && dates[1]) {
             updateSearchParams(
-              'date_start',
+              'start_date',
               dates[0].format('YYYY-MM-DD'),
-              'date_end',
+              'end_date',
               dates[1].format('YYYY-MM-DD'),
             )
           } else {
-            updateSearchParams('date_start', '', 'date_end', '')
+            updateSearchParams('start_date', '', 'end_date', '')
           }
         }}
       />
+
       <Input.Search
         placeholder="Mã yêu cầu"
         allowClear
@@ -95,6 +122,27 @@ const RequestFilter: React.FC<any> = () => {
         }}
         onSearch={(value) => updateSearchParams('code', value)}
       />
+
+      <Button
+        onClick={() => {
+          updateSearchParams(
+            'account_id',
+            '',
+            'start_date',
+            '',
+            'end_date',
+            '',
+            'code',
+            '',
+          )
+
+          setAccountId('')
+          setDate([null, null])
+          setIdRequest('')
+        }}
+      >
+        Xóa tất cả
+      </Button>
     </div>
   )
 }

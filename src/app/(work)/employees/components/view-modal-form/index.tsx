@@ -3,6 +3,7 @@
 import { useAsyncEffect } from '@/libs/hook'
 import {
   CheckOutlined,
+  CloseOutlined,
   DoubleRightOutlined,
   MenuOutlined,
   RightOutlined,
@@ -19,8 +20,10 @@ import {
 } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import Sortable from 'sortablejs'
 import { createViewAction, getViewFieldsAction } from '../action'
+
 export type ViewModalFormProps = ModalProps & {
   formProps?: FormProps
   children?: React.ReactNode
@@ -35,10 +38,48 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const [viewFields, setViewFields] = useState<any[]>([])
   const [selectedFields, setSelectedFields] = useState<any[]>([])
+  const [searchValue, setSearchValue] = useState('')
 
+  const selectedFieldsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = selectedFieldsRef.current
+    if (!el) return
+
+    const sortable = Sortable.create(el, {
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'drag-ghost',
+      onEnd: (evt) => {
+        const oldIndex = evt.oldIndex ?? -1
+        const newIndex = evt.newIndex ?? -1
+        if (oldIndex === -1 || newIndex === -1) return
+
+        const newOrder = [...selectedFields]
+        const [movedItem] = newOrder.splice(oldIndex, 1)
+        newOrder.splice(newIndex, 0, movedItem)
+        setSelectedFields(newOrder)
+      },
+    })
+
+    return () => sortable.destroy()
+  }, [selectedFields])
+
+  //Lọc viewFields theo tên cột
+  const filteredViewFields = viewFields
+    .map((field) => ({
+      ...field,
+      children: field.children.filter((child: any) =>
+        child.label.toLowerCase().includes(searchValue.toLowerCase()),
+      ),
+    }))
+    .filter((field) => field.children.length > 0)
+
+  //Thông báo
   const { message } = App.useApp()
   const router = useRouter()
 
+  //Tạo views
   const handleSubmit = async (values: any) => {
     setLoading(true)
 
@@ -75,6 +116,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
     }
   }
 
+  //Chọn cột
   const handleSelect = (child: any, type: string, isSelected: boolean) => {
     setSelectedFields((prev) => {
       const newFields = [...prev]
@@ -91,6 +133,11 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
         },
       ]
     })
+  }
+
+  //Xóa cột khỏi selectedFields
+  const handleDelete = (field: any) => {
+    setSelectedFields((prev) => prev.filter((f) => f.value !== field.value))
   }
 
   useAsyncEffect(async () => {
@@ -114,7 +161,10 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
           htmlType: 'submit',
           loading,
         }}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false)
+          setSelectedFields([])
+        }}
         destroyOnClose
         modalRender={(dom) => (
           <Form onFinish={handleSubmit} layout="vertical" {...formProps}>
@@ -133,7 +183,11 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
         </Form.Item>
 
         <Form.Item label="Cột hiển thị">
-          <Input.Search placeholder="Nhận tên cột" />
+          <Input.Search
+            placeholder="Nhập tên cột"
+            allowClear
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
         </Form.Item>
 
         <div className="flex items-start gap-[16px]">
@@ -141,7 +195,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
             <div className="text-[14px] leading-[22px]">Chọn cột</div>
 
             <div className="no-scroll relative h-[346px] overflow-y-auto rounded-[8px] border border-[#D9D9D9] bg-[#0000000A]">
-              {viewFields.map((field: any) => (
+              {filteredViewFields.map((field: any) => (
                 <>
                   <div className="top-0 mb-[4px] flex h-[40px] items-center justify-between gap-[12px] pt-[4px] pl-[16px]">
                     <div className="flex items-center gap-[8px] text-[14px] leading-[22px] font-[600]">
@@ -197,19 +251,28 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
               </span>
             </div>
 
-            <div className="no-scroll h-[346px] overflow-y-auto rounded-[8px] border">
+            <div
+              className="no-scroll h-[346px] overflow-y-auto rounded-[8px] border"
+              ref={selectedFieldsRef}
+            >
               {selectedFields.length > 0 ? (
                 selectedFields.map((field, index) => (
                   <div
-                    className="flex h-[40px] items-center gap-[8px] border-b bg-[#00000005] pl-[12px]"
+                    className="drag-item flex h-[40px] items-center justify-between gap-[8px] border-b bg-[#00000005] pl-[12px]"
                     key={field.value}
                   >
-                    <MenuOutlined />
-                    <span className="inline-block w-[20px] font-[600] text-[#1677FF]">
-                      {index > 8 ? index + 1 : `0${index + 1}`}
-                    </span>
-                    <Divider className="mx-0! h-[27px]" type="vertical" />
-                    <span className="font-[600]">{field.label}</span>
+                    <div className="flex items-center gap-[8px]">
+                      <MenuOutlined className="drag-handle cursor-grab active:cursor-grabbing" />
+                      <span className="inline-block w-[20px] font-[600] text-[#1677FF]">
+                        {index > 8 ? index + 1 : `0${index + 1}`}
+                      </span>
+                      <Divider className="mx-0! h-[27px]" type="vertical" />
+                      <span className="font-[600]">{field.label}</span>
+                    </div>
+                    <CloseOutlined
+                      className="cursor-pointer pr-[12px] text-[#1677FF]"
+                      onClick={() => handleDelete(field)}
+                    />
                   </div>
                 ))
               ) : (

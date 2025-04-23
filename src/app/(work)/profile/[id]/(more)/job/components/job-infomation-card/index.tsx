@@ -17,7 +17,6 @@ const JobInfomationCard: React.FC<JobInfomationCardProps> = ({
   data: externalData,
   extra,
 }) => {
-  console.log('externalData', externalData)
   const data: ListProps<any>['dataSource'] = [
     {
       label: 'Phòng ban',

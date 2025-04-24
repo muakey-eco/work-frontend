@@ -375,7 +375,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           {/* Bảng công thống kê */}
           <CheckInStatistics items={checkInStatisticsItems} />
 
-          <div className="space-y-[24px] rounded-[16px] bg-[#fff] p-[16px]">
+          <div className="h-[70vh] space-y-[24px] overflow-y-auto rounded-[16px] bg-[#fff] p-[16px]">
             <div className="flex items-center justify-between">
               <span className="text-[16px] font-[500]">Chi tiết ngày công</span>
               <CheckInTableExplanation

@@ -22,19 +22,33 @@ import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import Sortable from 'sortablejs'
-import { createViewAction, getViewFieldsAction } from '../action'
+import {
+  createViewAction,
+  getViewFieldsAction,
+  getViewFieldsByIdAction,
+  updateViewAction,
+} from '../action'
 
 export type ViewModalFormProps = ModalProps & {
   formProps?: FormProps
   children?: React.ReactNode
+  viewId?: string
+  action?: 'create' | 'update'
+  onOpen?: (open: boolean) => void
+  open?: boolean
 }
 
 const ViewModalForm: React.FC<ViewModalFormProps> = ({
   formProps,
   children,
+  viewId,
+  action,
+  onOpen,
+  open,
   ...rest
 }) => {
-  const [open, setOpen] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false)
+
   const [loading, setLoading] = useState(false)
   const [viewFields, setViewFields] = useState<any[]>([])
   const [selectedFields, setSelectedFields] = useState<any[]>([])
@@ -44,7 +58,12 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
 
   useEffect(() => {
     const el = selectedFieldsRef.current
-    if (!el) return
+    if (!el || selectedFields.length === 0) return
+
+    // Hủy mọi Sortable cũ trước khi tạo mới
+    if ((el as any)._sortable) {
+      ;(el as any)._sortable.destroy()
+    }
 
     const sortable = Sortable.create(el, {
       animation: 150,
@@ -62,8 +81,14 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       },
     })
 
-    return () => sortable.destroy()
-  }, [selectedFields])
+    // Lưu reference để có thể destroy sau
+    ;(el as any)._sortable = sortable
+
+    return () => {
+      sortable.destroy()
+      delete (el as any)._sortable
+    }
+  }, [selectedFields.length])
 
   //Lọc viewFields theo tên cột
   const filteredViewFields = viewFields
@@ -89,15 +114,25 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
         type,
         selectedFields
           .filter((field) => field.type === type)
-          .map((field) => field.value),
+          .map((field, index) => {
+            return {
+              value: field.value,
+              index,
+            }
+          }),
       ]),
     )
 
     try {
-      const { message: msg, errors } = await createViewAction({
-        ...values,
-        field_name: fieldNames,
-      })
+      const { message: msg, errors } = await (action === 'create'
+        ? createViewAction({
+            ...values,
+            field_name: fieldNames,
+          })
+        : updateViewAction(viewId || '', {
+            ...values,
+            field_name: fieldNames,
+          }))
 
       if (errors) {
         message.error(msg)
@@ -105,8 +140,12 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
         return
       }
 
-      message.success('Tạo views thành công')
-      setOpen(false)
+      message.success(
+        action === 'create'
+          ? 'Tạo views thành công'
+          : 'Cập nhật views thành công',
+      )
+      action === 'create' ? setOpenAdd(false) : onOpen?.(false)
       setLoading(false)
       setSelectedFields([])
       router.refresh()
@@ -141,33 +180,68 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   }
 
   useAsyncEffect(async () => {
-    if (!open) return
+    if (!open && !openAdd) return
 
     const res = await getViewFieldsAction()
     setViewFields(res)
-  }, [open])
+  }, [open, openAdd])
+
+  useEffect(() => {
+    if (action === 'update' && viewId) {
+      const getViewFieldsById = async () => {
+        const res = await getViewFieldsByIdAction(viewId)
+        setSelectedFields([...res.field_name])
+        form.setFieldsValue({ name: res.name })
+      }
+      getViewFieldsById()
+    }
+  }, [viewId, action])
+  const [form] = Form.useForm()
+
+  //Chọn tất cả các cột
+  const handleSelectAllInGroup = (fieldGroup: any) => {
+    const groupType = fieldGroup.name
+    const groupChildren = fieldGroup.children
+
+    setSelectedFields((prev) => {
+      const existingValues = new Set(prev.map((f) => f.value))
+      const newFields = groupChildren
+        .filter((child: any) => !existingValues.has(child.value))
+        .map((child: any) => ({
+          ...child,
+          type: groupType,
+        }))
+
+      return [...prev, ...newFields]
+    })
+  }
 
   return (
     <>
-      <div className="cursor-pointer" onClick={() => setOpen(true)}>
+      <div className="cursor-pointer" onClick={() => setOpenAdd(true)}>
         {children}
       </div>
       <Modal
-        title="Tạo views mới"
-        open={open}
-        okText="Thêm"
+        title={action === 'create' ? 'Tạo views mới' : 'Chỉnh sửa views'}
+        open={action === 'create' ? openAdd : open}
+        okText={action === 'create' ? 'Thêm' : 'Cập nhật'}
         cancelText="Hủy"
         okButtonProps={{
           htmlType: 'submit',
           loading,
         }}
         onCancel={() => {
-          setOpen(false)
+          setOpenAdd(false)
           setSelectedFields([])
         }}
         destroyOnClose
         modalRender={(dom) => (
-          <Form onFinish={handleSubmit} layout="vertical" {...formProps}>
+          <Form
+            onFinish={handleSubmit}
+            layout="vertical"
+            {...formProps}
+            form={form}
+          >
             {dom}
           </Form>
         )}
@@ -203,7 +277,10 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
                       <span>{field.name}</span>
                     </div>
                     <div className="border-l pr-[16px] pl-[12px]">
-                      <DoubleRightOutlined />
+                      <DoubleRightOutlined
+                        className="cursor-pointer"
+                        onClick={() => handleSelectAllInGroup(field)}
+                      />
                     </div>
                   </div>
 

@@ -59,3 +59,14 @@ export const updateQueryParams = (
 export const mapAsFile = (files: any[]) => {
   return files.map((file) => file.originFileObj || file)
 }
+
+export const convertToSlug = (text: string): string => {
+  return text
+    .normalize('NFD') // Tách dấu (é -> e + ́)
+    .replace(/[\u0300-\u036f]/g, '') // Xoá dấu
+    .toLowerCase() // Chuyển lowercase
+    .trim() // Xoá khoảng trắng đầu/cuối
+    .replace(/\s+/g, '-') // Thay khoảng trắng bằng gạch ngang
+    .replace(/[^\w\-]+/g, '') // Xoá ký tự đặc biệt (ngoại trừ gạch ngang)
+    .replace(/\-\-+/g, '-') // Gộp nhiều gạch thành một
+}

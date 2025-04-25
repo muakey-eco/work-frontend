@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button, Divider } from 'antd'
 import Link from 'next/link'
 import React from 'react'
 
@@ -27,6 +27,7 @@ const CheckInStatistics: React.FC<CheckInStatisticsProps> = ({
           </Link>
         </div>
       )}
+      <Divider />
 
       <div className="flex items-center justify-around gap-[12px]">
         {items &&

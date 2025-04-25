@@ -12,6 +12,7 @@ import { createStyles } from 'antd-style'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import Sortable from 'sortablejs'
+import { updateTabAction } from './action'
 import EmployeeModalForm from './employee-modal-form'
 import ViewModalForm from './view-modal-form'
 import ViewOption from './view-option'
@@ -64,19 +65,32 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
     router.push(`?${query.toString()}`)
   }
 
-  const [sortableTabs, setSortableTabs] = useState(
-    (tabs || []).map((tab) => ({
-      label: tab.name,
-      key: convertToSlug(String(tab.name)),
-    })),
-  )
+  const [sortableTabs, setSortableTabs] = useState<any[]>([])
+  useEffect(() => {
+    setSortableTabs(
+      (tabs || []).map((tab) => ({
+        id: tab.id,
+        label: tab.name,
+        key: convertToSlug(String(tab.name)),
+      })),
+    )
+  }, [tabs])
 
   const tabItems: TabsProps['items'] = [
     ...sortableTabs.map((tab, index) => ({
       label: (
         <ViewOption
-          name={index === 0 ? 'Tổng quan' : tab.label}
+          name={tab.label}
           activeTab={activeTab}
+          id={tab.id}
+          onDelete={(id) => {
+            setSortableTabs((prev) => {
+              const newTabs = prev.filter((tab) => tab.id !== id)
+              const newFirstSlug = convertToSlug(newTabs[0]?.label || '')
+              router.push(`?view=${newFirstSlug}`)
+              return newTabs
+            })
+          }}
         />
       ),
       key: tab.key,
@@ -110,10 +124,38 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
     }
   }, [dropdownOpen])
 
+  useEffect(() => {
+    const updateOrder = async () => {
+      const data = sortableTabs.map((tab) => ({
+        id: tab.id,
+        name: tab.label,
+      }))
+
+      const res = await updateTabAction(data)
+    }
+    updateOrder()
+  }, [sortableTabs])
+
   const contentStyle: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,
     borderRadius: token.borderRadiusLG,
     boxShadow: token.boxShadowSecondary,
+  }
+
+  const [filteredTabs, setFilteredTabs] = useState<any[]>([])
+  useEffect(() => {
+    setFilteredTabs(sortableTabs)
+  }, [sortableTabs])
+
+  const handleSearch = (value: string) => {
+    if (value) {
+      const lower = value.toLowerCase()
+      setFilteredTabs(
+        sortableTabs.filter((tab) => tab.label.toLowerCase().includes(lower)),
+      )
+    } else {
+      setFilteredTabs(sortableTabs)
+    }
   }
 
   return (
@@ -138,13 +180,17 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
               dropdownRender={() => (
                 <div style={contentStyle}>
                   <div className="px-[4px] pt-[4px]">
-                    <Input.Search placeholder="Tìm kiếm" />
+                    <Input.Search
+                      placeholder="Tìm kiếm"
+                      onSearch={handleSearch}
+                      allowClear
+                    />
                   </div>
                   <ul
                     ref={sortableRef}
                     className={`m-0 list-none p-0 ${styles.sortable}`}
                   >
-                    {sortableTabs.map((tab) => (
+                    {filteredTabs.map((tab) => (
                       <li
                         key={tab.key}
                         onClick={() => handleViewClick(tab.key)}
@@ -165,7 +211,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
                 </span>
               </div>
             </Dropdown>
-            <ViewModalForm>
+            <ViewModalForm action="create">
               <div className="flex cursor-pointer items-center gap-[8px]">
                 <PlusCircleOutlined className="text-[#00000073]" />
                 <span className="text-[14px] leading-[22px] text-nowrap">

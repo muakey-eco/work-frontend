@@ -43,6 +43,7 @@ const EmployeeFilter: React.FC<EmployeeFilterProps> = () => {
         defaultValue={search || ''}
         placeholder="Tìm kiếm nhân sự"
         onSearch={handleSearch}
+        allowClear
       />
       <Select options={statusOptions} defaultValue={statusOptions[0].value} />
     </div>

@@ -54,7 +54,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <span className="text-[20px] font-[500]">{title}</span>
           </div>
         </div>
-        <div className="flex items-center">
+        <div className="flex !w-full items-center">
           {tab?.items && (
             <Tabs
               className={tab?.className}

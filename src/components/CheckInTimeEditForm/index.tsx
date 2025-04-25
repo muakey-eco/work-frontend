@@ -4,10 +4,10 @@ import { App, Button, DatePicker, DatePickerProps, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { addProposeAction } from '../../app/(work)/check-in/components/checkin-form/action'
 import FormCard from './FormCard'
-
+import { getAttendancesAction } from './action'
 type CheckInTimeEditFormProps = {
   initialValues?: any
 }
@@ -114,7 +114,8 @@ const FormFields: React.FC<{
 const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   initialValues,
 }) => {
-  const { mode, attendances, ...restInitialVlues } = initialValues
+  const { mode, ...restInitialVlues } = initialValues
+  const [attendances, setAttendances] = useState([])
 
   const [loading, setLoading] = useState(false)
   const [dateVal, setDateVal] = useState(restInitialVlues?.date || undefined)
@@ -126,13 +127,25 @@ const CheckInTimeEditForm: React.FC<CheckInTimeEditFormProps> = ({
   const dateStr = dateVal
     ? String(dayjs(dateVal).format('YYYY-MM-DD'))
     : undefined
-  const dateTarget = attendances?.find((a: any) => {
-    const dateTargetStr = String(dayjs(a?.checkin).format('YYYY-MM-DD'))
 
-    return (
-      dateStr === dateTargetStr && restInitialVlues?.user?.id === a?.account_id
-    )
-  })
+  useEffect(() => {
+    const getAttendances = async () => {
+      const date = String(dayjs(dateVal).format('YYYY-MM'))
+      const attendancesPr = await getAttendancesAction(date)
+      setAttendances(attendancesPr?.attendances)
+    }
+    getAttendances()
+  }, [dateVal])
+
+  const dateTarget = Array.isArray(attendances)
+    ? attendances.find((a: any) => {
+        const dateTargetStr = String(dayjs(a?.checkin).format('YYYY-MM-DD'))
+        return (
+          dateStr === dateTargetStr &&
+          restInitialVlues?.user?.id === a?.account_id
+        )
+      })
+    : undefined
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)

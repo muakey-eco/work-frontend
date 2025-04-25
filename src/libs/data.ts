@@ -348,6 +348,10 @@ export const getAttendances = async (query?: any) =>
   requestWithAuthorized('attendances?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => null)
+export const getAttendanceByDate = async (date: string) =>
+  requestWithAuthorized(`attendances?date=${date}`)
+    .then((data) => data)
+    .catch(() => null)
 
 export const getCommentsByTaskId = async (query?: any) =>
   requestWithAuthorized(`comments?` + new URLSearchParams(query))

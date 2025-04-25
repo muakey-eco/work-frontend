@@ -38,6 +38,44 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
 }) => {
   const { message } = App.useApp()
 
+  //nén ảnh
+  const compressImage = (
+    file: File,
+    maxWidth = 1024,
+    quality = 0.7,
+  ): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = (event) => {
+        const img = new window.Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const scale = Math.min(1, maxWidth / img.width)
+          canvas.width = img.width * scale
+          canvas.height = img.height * scale
+
+          const ctx = canvas.getContext('2d')
+          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob)
+              else reject(new Error('Không thể nén ảnh'))
+            },
+            'image/jpeg',
+            quality,
+          )
+        }
+
+        img.onerror = reject
+        img.src = event.target?.result as string
+      }
+
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
   const editor = useEditor({
     extensions: [
       StarterKit.configure(),
@@ -78,9 +116,11 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         linkOnPaste: true,
         isAllowedUri: (url, ctx) => {
           try {
-            const parsedUrl = url.includes(':')
-              ? new URL(url)
-              : new URL(`${ctx.defaultProtocol}://${url}`)
+            const cleanUrl = url.replace(/\\/g, '');
+
+            const parsedUrl = cleanUrl.includes(':')
+              ? new URL(cleanUrl)
+              : new URL(`${ctx.defaultProtocol}://${cleanUrl}`)
 
             if (!ctx.defaultValidate(parsedUrl.href)) {
               return false
@@ -168,19 +208,27 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       e.preventDefault()
 
       const file = e.clipboardData?.files[0]
-
       if (!file) return
+
+      let imageToUpload: Blob = file
 
       const maxSize = 2 * 1024 * 1024
 
       if (file.size > maxSize) {
-        message.error('Kích thước file vượt quá 2MB')
-        return
+        message.info('Đang nén ảnh do vượt quá 2MB...')
+        try {
+          imageToUpload = await compressImage(file, 1024, 0.7)
+        } catch (err) {
+          message.error('Lỗi khi nén ảnh')
+          return
+        }
       }
 
       const formData = new FormData()
-
-      formData.append('image', file || '')
+      formData.append(
+        'image',
+        new File([imageToUpload], file.name, { type: 'image/jpeg' }),
+      )
 
       try {
         const { urlImage: url, error } = await uploadImageAction(formData)
@@ -207,7 +255,8 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
             .run()
         }
       } catch (error) {
-        throw new Error(String(error))
+        message.error('Lỗi khi tải ảnh lên')
+        console.error(error)
       }
     },
   })

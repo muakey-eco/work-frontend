@@ -1,7 +1,7 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { mapAsFile } from '@/lib/utils'
+import { handleUploadChange, mapAsFile } from '@/lib/utils'
 import { useAsyncEffect } from '@/libs/hook'
 import { UploadOutlined } from '@ant-design/icons'
 import {
@@ -47,7 +47,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [contractTypes, setContractTypes] = useState<any[]>([])
-  const [hasFileError, setHasFileError] = useState(false)
+  const [uploadErrors, setUploadErrors] = useState<string[]>([])
 
   const { message } = App.useApp()
   const router = useRouter()
@@ -165,11 +165,6 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
     setContractTypes(data)
   }, [open])
 
-  const handleFileChange = (info: any) => {
-    const hasError = info.fileList.some((file: any) => file.status === 'error')
-    setHasFileError(hasError)
-  }
-
   return (
     <>
       <div className="cursor-pointer" onClick={() => setOpen(true)}>
@@ -187,7 +182,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
         okButtonProps={{
           htmlType: 'submit',
           loading,
-          disabled: hasFileError,
+          disabled: uploadErrors.length > 0,
         }}
         modalRender={(dom) => (
           <Form
@@ -261,10 +256,20 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
-          <Upload multiple onChange={handleFileChange}>
+          <Upload
+            multiple
+            onChange={(info) => handleUploadChange(info, setUploadErrors)}
+          >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
+        {uploadErrors.length > 0 && (
+          <ul className="text-sm text-red-500">
+            {uploadErrors.map((err, idx) => (
+              <li key={idx}>{err}</li>
+            ))}
+          </ul>
+        )}
 
         <Form.Item
           className="mb-[16px]! flex-1"

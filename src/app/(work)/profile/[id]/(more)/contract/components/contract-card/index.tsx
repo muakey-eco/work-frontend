@@ -1,3 +1,4 @@
+import AddModalForm from '@/components/AddModalForm'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Card } from 'antd'
 import React from 'react'
@@ -12,7 +13,7 @@ export type ContractCardProps = {
 
 const ContractCard: React.FC<ContractCardProps> = ({ title, extra, items }) => {
   const { contracts, full_name, id } = items
-
+  console.log('extra', extra)
   return (
     <Card
       classNames={{
@@ -22,11 +23,18 @@ const ContractCard: React.FC<ContractCardProps> = ({ title, extra, items }) => {
       <div className="flex items-center justify-between">
         <div className="text-[20px] leading-[28px] font-[500]">{title}</div>
         {extra || (
-          <ContractModalForm initialValues={{ full_name, id }}>
-            <Button type="primary" icon={<PlusOutlined />}>
-              Tạo mới
-            </Button>
-          </ContractModalForm>
+          <div className="flex !items-center !gap-[16px]">
+            <AddModalForm>
+              <Button type="primary" icon={<PlusOutlined />}>
+                Tạo hợp đồng
+              </Button>
+            </AddModalForm>
+            <ContractModalForm initialValues={{ full_name, id }}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                Tạo mới
+              </Button>
+            </ContractModalForm>
+          </div>
         )}
       </div>
 

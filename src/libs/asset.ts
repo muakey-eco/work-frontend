@@ -18,7 +18,7 @@ export const getAssets = async () => {
 }
 export const filterAssets = async (query: string) => {
   return await requestWithAuthorized(`assets?${query}`)
-    .then(( data ) => data)
+    .then((data) => data)
     .catch(() => [])
 }
 export const getAssetsByPagnition = async (query: string) => {
@@ -58,8 +58,22 @@ export const addAsset = async (data: any) => {
   })
 }
 
-export const getAssetCount = async () => {
-  return await requestWithAuthorized('assets?count=status')
-    .then((data) => data)
-    .catch(() => [])
+export const addAssetCategory = async (data: any) => {
+  return await requestWithAuthorized('asset-categories', {
+    method: 'POST',
+    data,
+  })
+}
+
+export const deleteAssetCategory = async (id: number) => {
+  return await requestWithAuthorized(`asset-categories/${id}`, {
+    method: 'DELETE',
+  })
+}
+
+export const updateAssetCategory = async (id: number, data: any) => {
+  return await requestWithAuthorized(`asset-categories/${id}`, {
+    method: 'PUT',
+    data,
+  })
 }

@@ -52,7 +52,9 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
                   members,
                   initialValues: {
                     name: item?.name,
-                    members: item?.members?.map((mem: any) => mem?.username),
+                    members: item?.members
+                      ?.filter((mem: any) => mem?.quit_work !== 1)
+                      ?.map((mem: any) => mem?.username),
                   },
                 }}
               >
@@ -84,18 +86,20 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
         </Dropdown>
       </div>
       <Avatar.Group className="max-h-[32px] overflow-hidden">
-        {item?.members?.map((member: any) => (
-          <Tooltip key={member?.id} title={member?.full_name}>
-            <Avatar
-              src={member?.avatar}
-              style={{
-                backgroundColor: randomColor(String(member?.full_name)),
-              }}
-            >
-              {String(member?.full_name).charAt(0).toUpperCase()}
-            </Avatar>
-          </Tooltip>
-        ))}
+        {item?.members
+          ?.filter((mem: any) => mem?.quit_work !== 1)
+          ?.map((member: any) => (
+            <Tooltip key={member?.id} title={member?.full_name}>
+              <Avatar
+                src={member?.avatar}
+                style={{
+                  backgroundColor: randomColor(String(member?.full_name)),
+                }}
+              >
+                {String(member?.full_name).charAt(0).toUpperCase()}
+              </Avatar>
+            </Tooltip>
+          ))}
       </Avatar.Group>
     </div>
   )

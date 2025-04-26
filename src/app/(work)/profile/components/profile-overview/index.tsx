@@ -40,7 +40,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
     return basic_salary + travel_allowance + kpi + eat_allowance
   }, [basic_salary, travel_allowance, kpi, eat_allowance])
 
-  const seniority = useSeniority(user?.start_work_date)
+  const seniority = useSeniority(user?.start_trial_date)
 
   const items = [
     {

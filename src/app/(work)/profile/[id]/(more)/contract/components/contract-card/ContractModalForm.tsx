@@ -47,6 +47,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [contractTypes, setContractTypes] = useState<any[]>([])
+  const [hasFileError, setHasFileError] = useState(false)
 
   const { message } = App.useApp()
   const router = useRouter()
@@ -164,6 +165,11 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
     setContractTypes(data)
   }, [open])
 
+  const handleFileChange = (info: any) => {
+    const hasError = info.fileList.some((file: any) => file.status === 'error')
+    setHasFileError(hasError)
+  }
+
   return (
     <>
       <div className="cursor-pointer" onClick={() => setOpen(true)}>
@@ -181,6 +187,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
         okButtonProps={{
           htmlType: 'submit',
           loading,
+          disabled: hasFileError,
         }}
         modalRender={(dom) => (
           <Form
@@ -254,7 +261,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
-          <Upload multiple>
+          <Upload multiple onChange={handleFileChange}>
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>

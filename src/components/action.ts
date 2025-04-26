@@ -1,5 +1,11 @@
 'use server'
 
+import {
+  addAssetCategory,
+  deleteAssetCategory,
+  getAssetCategories,
+  updateAssetCategory,
+} from '@/libs/asset'
 import { changeLoggedInDate, logout } from '@/libs/auth'
 import {
   addAccount,
@@ -146,4 +152,19 @@ export const addAccountAction = async (account: any) => {
 
 export const editAccountAction = async (id: number, account: any) => {
   return await editAccount(id, account)
+}
+export const addAssetCategoryAction = async (data: any) => {
+  return await addAssetCategory(data)
+}
+
+export const getAssetCategoriesAction = async () => {
+  return await getAssetCategories()
+}
+
+export const deleteAssetCategoryAction = async (id: number) => {
+  return await deleteAssetCategory(id)
+}
+
+export const updateAssetCategoryAction = async (id: number, data: any) => {
+  return await updateAssetCategory(id, data)
 }

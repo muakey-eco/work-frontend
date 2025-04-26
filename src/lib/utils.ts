@@ -70,3 +70,23 @@ export const convertToSlug = (text: string): string => {
     .replace(/[^\w\-]+/g, '') // Xoá ký tự đặc biệt (ngoại trừ gạch ngang)
     .replace(/\-\-+/g, '-') // Gộp nhiều gạch thành một
 }
+
+export const handleUploadChange = (
+  info: any,
+  setUploadErrors: (errors: string[]) => void,
+) => {
+  const errors: string[] = []
+
+  info.fileList.forEach((file: any) => {
+    // Ví dụ: kiểm tra dung lượng quá lớn (>2MB)
+    if (file.size / 1024 / 1024 > 2) {
+      errors.push(`${file.name} - File too large (max 2MB)`)
+    }
+
+    if (file.status === 'error') {
+      errors.push(`${file.name} - Upload failed`)
+    }
+  })
+
+  setUploadErrors(errors)
+}

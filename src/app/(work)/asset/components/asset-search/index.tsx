@@ -1,17 +1,20 @@
 'use client'
 
+import ManageModalForm from '@/components/ManageModalForm'
 import { FilterOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Input } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import AssetDrawer from '../asset-drawer'
 import AssetModalForm from '../asset-modal-form'
+
 export type AssetFilterProps = {
   onAdd?: () => void
 }
 
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
   const router = useRouter()
 
   const handleAdd = () => {
@@ -52,6 +55,13 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
         <AssetDrawer>
           <Button icon={<FilterOutlined />}>Bộ lọc</Button>
         </AssetDrawer>
+
+        <ManageModalForm label="Loại tài sản" title="Quản lý loại tài sản">
+          <Button icon={<PlusOutlined />} type="primary">
+            Loại tài sản
+          </Button>
+        </ManageModalForm>
+
         <AssetModalForm
           title="Thêm mới tài sản"
           open={isModalOpen}

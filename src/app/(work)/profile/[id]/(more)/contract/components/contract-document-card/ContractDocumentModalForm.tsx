@@ -1,6 +1,6 @@
 'use client'
 
-import { mapAsFile } from '@/lib/utils'
+import { handleUploadChange, mapAsFile } from '@/lib/utils'
 import { UploadOutlined } from '@ant-design/icons'
 import { App, Button, Form, FormProps, Modal, ModalProps, Upload } from 'antd'
 import { useRouter } from 'next/navigation'
@@ -21,6 +21,7 @@ const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [uploadErrors, setUploadErrors] = useState<string[]>([])
 
   const { message } = App.useApp()
   const router = useRouter()
@@ -88,6 +89,13 @@ const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
         okButtonProps={{
           htmlType: 'submit',
           loading,
+          disabled: uploadErrors.length > 0,
+        }}
+        cancelButtonProps={{
+          onClick: () => {
+            setUploadErrors([])
+            setOpen(false)
+          },
         }}
         modalRender={(dom) => (
           <Form
@@ -110,10 +118,20 @@ const ContractDocumentModalForm: React.FC<ContractDocumentModalFormProps> = ({
           valuePropName="fileList"
           getValueFromEvent={normFile}
         >
-          <Upload multiple>
+          <Upload
+            multiple
+            onChange={(info) => handleUploadChange(info, setUploadErrors)}
+          >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>
+        {uploadErrors.length > 0 && (
+          <ul className="text-sm text-red-500">
+            {uploadErrors.map((err, idx) => (
+              <li key={idx}>{err}</li>
+            ))}
+          </ul>
+        )}
       </Modal>
     </>
   )

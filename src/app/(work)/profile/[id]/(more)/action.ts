@@ -4,6 +4,7 @@ import { getAccountById, updateAccount } from '@/libs/account'
 import { getLoginHistory } from '@/libs/auth'
 import {
   addContract,
+  addContractCategory,
   getContractCategories,
   updateContract,
 } from '@/libs/contract'
@@ -63,4 +64,8 @@ export const getPauseHistoryAction = async (
   type: string,
 ) => {
   return await getPauseHistory(accountId, type)
+}
+
+export const addContractCategoryAction = async (data: any) => {
+  return await addContractCategory(data)
 }

@@ -27,3 +27,10 @@ export const updateContract = async (id: number, data: any, options?: any) => {
     ...(body ? { body, headers: {} } : {}),
   })
 }
+
+export const addContractCategory = async (data: any) => {
+  return await requestWithAuthorized('contract-categories', {
+    method: 'POST',
+    data,
+  })
+}

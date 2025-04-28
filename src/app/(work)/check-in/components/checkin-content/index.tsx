@@ -19,8 +19,6 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
 
   const { attendances } = restOptions?.attendances
 
-
-  
   switch (type) {
     case 'form-request':
       return (

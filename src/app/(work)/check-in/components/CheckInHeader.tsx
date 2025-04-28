@@ -29,6 +29,10 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
       label: 'Đăng ký OT',
       key: 'dang-ky-ot',
     },
+    {
+      label: 'Đăng ký WFH',
+      key: 'dang-ky-wfh',
+    },
   ]
 
   const tableTabItems: TabsProps['items'] = [

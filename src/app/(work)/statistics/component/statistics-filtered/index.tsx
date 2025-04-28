@@ -14,7 +14,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
 import StatisticsColorGuide from './StatisticsColorGuide'
 
-type StatisticsFilteredProps = {}
+type StatisticsFilteredProps = {
+  myAccount: any
+}
 
 const addDate = (date: Date, days: number) => {
   let d = new Date(date)
@@ -23,11 +25,15 @@ const addDate = (date: Date, days: number) => {
   return String(dayjs(d).format('YYYY-MM-DD'))
 }
 
-const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
+const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
+  myAccount,
+}) => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const query = new URLSearchParams(searchParams)
   const filterBy = query.get('as')
+
+  const isAdmin = myAccount?.role === 'Quản trị cấp cao'
 
   const colorItems = [
     {
@@ -53,6 +59,14 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = () => {
       label: 'Quy trình',
       value: 'workflow',
     },
+    ...(isAdmin
+      ? [
+          {
+            label: 'Phòng ban',
+            value: 'department',
+          },
+        ]
+      : []),
   ]
 
   const handleDateChange: DatePickerProps['onChange'] = (date) => {

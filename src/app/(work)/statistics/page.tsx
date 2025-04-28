@@ -1,3 +1,5 @@
+import { getMyAccount } from '@/libs/data'
+import { getDepartments } from '@/libs/department'
 import {
   getScheduleAsWorkflows,
   getWorkScheduleAsMembers,
@@ -21,7 +23,13 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       'YYYY-MM-DD',
     ),
   )
-  const [schedule, scheduleAsMembers, scheduleAsWorkflows] = await Promise.all([
+  const [
+    schedule,
+    scheduleAsMembers,
+    scheduleAsWorkflows,
+    departments,
+    myAccount,
+  ] = await Promise.all([
     getSchedule({
       start: week[0].date,
       end: week[6].date,
@@ -30,17 +38,18 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
       date: currentDate,
     }),
     getScheduleAsWorkflows(),
+    getDepartments(),
+    getMyAccount(),
   ])
-
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
       <PageHeader />
-      
+
       {/* new */}
 
       <div className="p-[16px]">
         <div className="relative h-[calc(100vh-101px)] overflow-hidden rounded-[16px] border bg-[#fff]">
-          <StatisticsFiltered />
+          <StatisticsFiltered myAccount={myAccount} />
           <StatisticsSchedule
             options={{
               account_id: searchParams?.mid || '',
@@ -49,6 +58,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
               schedule,
               accounts: scheduleAsMembers,
               workflows: scheduleAsWorkflows,
+              departments,
               currentDate,
             }}
           />

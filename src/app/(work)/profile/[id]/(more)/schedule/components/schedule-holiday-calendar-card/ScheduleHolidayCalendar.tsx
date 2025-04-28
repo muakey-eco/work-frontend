@@ -83,7 +83,6 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
 
   const { user, workSchedule, attendances } = options
 
-
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
     ?.map((m: any) => {
@@ -97,6 +96,10 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
 
       const timeOffPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name_category === 'Đăng ký nghỉ')
+        .filter((p: any) => p?.account_id === user.id)
+
+      const wfhPropose = attendances?.ot_and_holiday
+        .filter((p: any) => p?.name === 'Đăng ký làm ở nhà')
         .filter((p: any) => p?.account_id === user.id)
 
       const fields = times(dateNumber, (num): any => {
@@ -130,6 +133,14 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
           ),
         )
 
+        const wfh = wfhPropose?.map((t: any) =>
+          generateTimestamp(
+            t?.start_date,
+            t?.end_date,
+            `${dateParams ? dateParams : dayjs(today).format('YYYY-MM')}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+          ),
+        )
+
         const hoursPerDay = checkIn?.reduce((total: number, curr: any) => {
           return total + (+curr?.hours || 0)
         }, 0)
@@ -144,6 +155,7 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
             checkInValue,
             timeOff,
             ot,
+            wfh,
             hoursPerDay,
             dayWorking,
             plan_time: checkIn?.[0]
@@ -162,6 +174,7 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
           avatar: m?.avatar,
           workDay: m?.workday,
           ot: m?.hours_over_time,
+          wfh: m?.work_from_home,
         },
         ...Object.fromEntries(fields),
       }

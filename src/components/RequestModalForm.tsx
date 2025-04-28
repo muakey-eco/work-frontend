@@ -15,7 +15,7 @@ type RequestModalFormProps = {
   options?: any
 }
 
-const GROUPS = ['Đăng ký OT', 'Đăng ký nghỉ', 'Sửa giờ vào ra']
+const GROUPS = ['Đăng ký OT', 'Đăng ký nghỉ', 'Sửa giờ vào ra', 'Đăng ký WFH']
 
 const RequestModalForm: React.FC<RequestModalFormProps> = ({
   children,

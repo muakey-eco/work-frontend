@@ -39,6 +39,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   const [notifications, setNotifications] = useState<any[]>()
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
+  const [hasShowCheckedIn, setHasShowCheckedIn] = useState(false)
 
   const router = useRouter()
   const { message, modal } = App.useApp()
@@ -106,7 +107,7 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   }
   // check điểm danh
   useEffect(() => {
-    if (!openCheckedIn) {
+    if (!openCheckedIn && hasShowCheckedIn) {
       modal.confirm({
         title: `Điểm danh`,
         content: <p>Điểm danh please!</p>,
@@ -117,11 +118,14 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           loading,
         },
         open: openCheckedIn,
-        onCancel: () => setOpenCheckedIn(false),
+        onCancel: () => {
+          setOpenCheckedIn(false)
+          setHasShowCheckedIn(true)
+        },
         onOk: handleCheckedIn,
       })
     }
-  }, [openCheckedIn])
+  }, [openCheckedIn, hasShowCheckedIn])
 
   // lấy thông báo
   useAsyncEffect(async () => {

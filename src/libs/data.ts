@@ -312,6 +312,11 @@ export const getMe = async (query?: any, options?: RequestOptions) =>
     .then((data) => data)
     .catch(() => [])
 
+export const getMyAccount = async () =>
+  requestWithAuthorized(`my-account`)
+    .then((data) => data)
+    .catch(() => [])
+
 export const getUserById = async (
   id: number,
   query?: any,

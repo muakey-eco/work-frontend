@@ -1,6 +1,6 @@
 'use server'
 
-import { getAccounts } from '@/libs/data'
+import { getAccounts, getMyAccount } from '@/libs/data'
 import { addTodo } from '@/libs/todos'
 
 export const addTodoAction = async (data: any) => {

@@ -123,8 +123,13 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       )
 
       const memberIds = members?.map((member: any) => member?.id)
+      console.log('memberIds', memberIds)
+      console.log('user', user)
 
-      if (!memberIds?.includes(user?.id)) {
+      if (
+        !memberIds?.includes(user?.id) &&
+        !user?.role?.toLocaleLowerCase()?.includes('quản trị cấp cao')
+      ) {
         message.error(' Bạn không phải thành viên trong quy trình này.')
         return
       }

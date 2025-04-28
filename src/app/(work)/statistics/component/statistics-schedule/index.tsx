@@ -13,7 +13,7 @@ import StatisticsColHeader from './statistics-col-header'
 const StatisticsRows = dynamic(() => import('./statistics-rows'), {
   ssr: false,
 })
- 
+
 type StatisticsScheduleProps = {
   options?: any
 }
@@ -24,10 +24,10 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
 
   const today = new Date()
   const week = getWeek(options?.dw ? new Date(options?.dw) : today)
-  const { schedule, accounts, account_id, workflows, as } = options
+  const { schedule, accounts, account_id, workflows, as, departments } = options
 
   const days = week?.map((w: any) => w?.date)
-  
+
   // Lọc task theo account
   const todosWithAccounts = accounts
     ?.filter(
@@ -103,6 +103,24 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
     }
   })
 
+  const todosWithDepartments = departments?.map((department: any) => {
+    const members = department?.members || []
+
+    const tasksForDepartment = members.reduce((tasks: any[], member: any) => {
+      const tasksForMember = schedule?.filter(
+        (task: any) => task?.account_id === member?.id,
+      )
+
+      tasks.push(...tasksForMember)
+      return tasks
+    }, [])
+
+    return {
+      departmentName: department?.name,
+      tasks: tasksForDepartment,
+    }
+  })
+
   useEffect(() => {
     if (colRef.current) {
       colRef.current.scrollIntoView({
@@ -140,12 +158,13 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
       </Row>
       <div className="no-scroll h-[calc(100vh-244px)] w-full divide-y">
         <StatisticsRows
-          type={as === 'workflow' ? 'workflow' : 'staff'}
+          type={as ? as : 'workflow'}
           options={{
             accounts,
             days,
             todosWithAccounts,
             todosWithWorkflows,
+            todosWithDepartments,
             currentDate: options?.currentDate,
           }}
         />

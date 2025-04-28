@@ -4,6 +4,7 @@ import {
   RegisterTimeOffForm,
 } from '@/components'
 import React from 'react'
+import RegisterWFHForm from './RegisterWFHForm'
 
 export type CheckInSwitchFormsProps = {
   params?: any
@@ -21,6 +22,9 @@ const CheckInSwitchForms: React.FC<CheckInSwitchFormsProps> = ({ params }) => {
 
     case 'dang-ky-ot':
       return <RegisterOTForm initialValues={initialValues} />
+
+    case 'dang-ky-wfh':
+      return <RegisterWFHForm initialValues={initialValues} />
 
     default:
       return <></>

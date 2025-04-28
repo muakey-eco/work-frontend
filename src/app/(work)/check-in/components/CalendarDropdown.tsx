@@ -65,6 +65,15 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
         >
           Đăng Ký OT
         </div>
+        <div
+          className="cursor-pointer rounded-[4px] bg-[#fff] px-[16px] py-[9px] text-center leading-none transition-all hover:bg-[#0000000a]"
+          onClick={() => {
+            onDateClick?.(current)
+            router.push('?form=dang-ky-wfh')
+          }}
+        >
+          Đăng Ký WFH
+        </div>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 import { RequestConfirmModalForm } from '@/components'
 import { getMe } from '@/libs/data'
 import { getProposeById } from '@/libs/propose'
-import { calculateDayOffTotal, formatLable } from '@/libs/utils'
+import { calculateDayOffTotal } from '@/libs/utils'
 import {
   CheckOutlined,
   CloseOutlined,
@@ -151,14 +151,8 @@ const page: React.FC<any> = async (props) => {
           Object.entries(propose?.new_value || {}).map(([key, value]) => {
             return {
               key: uniqueId(),
-              label: 'Thông tin cập nhật',
-              children: Object.entries(value as { [key: string]: string }).map(
-                ([subKey, subValue]) => (
-                  <div key={subKey}>
-                    {formatLable(subKey)}: {String(subValue)}
-                  </div>
-                ),
-              ),
+              label: key,
+              children: value,
             }
           }),
         ]

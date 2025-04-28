@@ -25,8 +25,8 @@ const AreaBasicChart: React.FC<AreaBasicChartProps> = ({ data }) => {
   const chartData = [
     ...data
       .map((item: any) => ({
-        month: item.created_at.slice(0, 7),
-        desktop: item.total_salary,
+        month: item?.created_at?.slice(0, 7),
+        desktop: item?.total_salary,
       }))
       .reverse(),
   ]

@@ -44,7 +44,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
     const currentPage = searchParams.get('page') || 1
     const [current, setCurrent] = useState<number>(Number(currentPage))
     const router = useRouter()
-    
+
     const perPage = searchParams.get('per_page') || 5
     const [pageSize, setPageSize] = useState<number>(Number(perPage))
 
@@ -112,6 +112,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                 backgroundColor: randomColor(
                   String(record?.account?.full_name),
                 ),
+                flexShrink: 0,
               }}
             >
               {String(record?.account?.full_name).charAt(0).toUpperCase()}

@@ -1,8 +1,10 @@
 'use client'
 
-import { Alert, Button, DatePicker, Form, Input } from 'antd'
+import { addProposeAction } from '@/app/(work)/check-in/components/checkin-form/action'
+import { Alert, App, Button, DatePicker, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 type RegisterWFHFormProps = {
@@ -27,7 +29,7 @@ const FormFields: React.FC<{
           />
         </div>
 
-        <Form.Item className="" name="description" label="Lý do đăng ký nghỉ">
+        <Form.Item name="description" label="Lý do đăng ký WFH">
           <Input.TextArea
             autoSize={{
               minRows: 3,
@@ -40,31 +42,63 @@ const FormFields: React.FC<{
 }
 
 const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
-  //   const { user } = initialValues
+  const { user } = initialValues
+
+  const { message } = App.useApp()
+  const router = useRouter()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
-  const [timestamps, setTimestamps] = useState<any>({})
+  const [dateWFH, setDateWFH] = useState<any>(new Date())
+
   const list = [
     {
       label: 'Ngày WFH chưa sử dụng',
-      value: 1,
-      //   user?.day_off - user?.day_off_used
+      value: user?.work_from_home - user?.WFM_this_month,
     },
     {
       label: 'Ngày WFH đã sử dụng',
-      value: 4,
-      //user?.day_off_used
+      value: user?.WFM_this_month,
     },
     {
       label: 'Tổng số ngày được WFH trong 1 tháng',
-      value: 5,
-      //user?.day_off
+      value: user?.work_from_home,
     },
   ]
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
+
+    const { dateWFH, description } = formData
+
+    if (user?.WFM_this_month > user?.work_from_home) {
+      message.error('Bạn đã sử dụng hết số ngày WFH cho tháng này')
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { message: msg, errors } = await addProposeAction({
+        name: 'Đăng ký WFH',
+        propose_category: 'Đăng ký làm ở nhà',
+        date_wfh: dayjs(dateWFH).format('YYYY-MM-DD HH:mm:ss'),
+        description,
+      })
+
+      if (errors) {
+        message.error(msg)
+        setLoading(false)
+        return
+      }
+
+      setLoading(false)
+      message.success('Gửi yêu cầu thành công')
+      form.resetFields()
+      router.refresh()
+    } catch (error) {
+      setLoading(false)
+      throw new Error(String(error))
+    }
   }
 
   return (
@@ -81,29 +115,8 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
       </div>
 
       <div className="mt-[16px] rounded-[16px] bg-[#fff] p-[16px]">
-        <Form
-          layout="vertical"
-          onFinish={handleSubmit}
-          onValuesChange={(_, { timestamps }) => {
-            setTimestamps(timestamps[0])
-          }}
-          form={form}
-          initialValues={{
-            type: 'Nghỉ không hưởng lương',
-            timestamps: [
-              {
-                isDefault: true,
-                startDate: dayjs(initialValues?.date),
-              },
-            ],
-          }}
-        >
-          <FormFields
-            initialValues={{
-              startDate: initialValues?.date,
-            }}
-          />
-
+        <Form layout="vertical" onFinish={handleSubmit} form={form}>
+          <FormFields />
           <Form.Item className="mt-[24px] mb-0!">
             <Button htmlType="submit" type="primary" loading={loading}>
               Gửi yêu cầu

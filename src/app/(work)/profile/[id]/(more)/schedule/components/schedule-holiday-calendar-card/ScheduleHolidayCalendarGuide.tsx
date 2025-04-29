@@ -26,12 +26,16 @@ const ScheduleHolidayCalendarGuide: React.FC<
       title: 'OT',
       color: '#722ED1',
     },
+    {
+      title: 'WFH',
+      color: '#8C8C8C',
+    },
   ]
 
   return (
     <div className="flex items-center gap-[24px]">
       {guideItems.map((item, index) => (
-        <div className="flex items-center gap-[8px]" key={index}>
+        <div className="flex flex-col items-center gap-[8px]" key={index}>
           <div
             className="h-[10px] w-[32px]"
             style={{ backgroundColor: item.color }}

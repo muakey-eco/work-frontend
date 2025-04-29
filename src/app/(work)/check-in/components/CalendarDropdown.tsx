@@ -185,21 +185,41 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                     )} */}
 
                   {/* thời gian vào ra */}
-                  {info?.checkInValue?.[0] &&
-                    info?.checkInValue?.map((c: any, index: number) => (
-                      <div
-                        className={clsx(
-                          'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
-                          {
-                            'bg-[#237804]': !!c?.[1],
-                            'bg-[#F5222D]': !c?.[1] || info?.dayWorking < 1,
-                          },
+                  {info?.wfh && info?.wfh?.[0] !== null ? (
+                    info?.wfh?.map(
+                      (w: any, index: number) =>
+                        w && (
+                          <div
+                            className="w-full rounded-full bg-[#8C8C8C] py-[3px] text-center text-[#fff]"
+                            key={index}
+                          >
+                            {w?.[0]} - {w?.[1] ? w?.[1] : '--:--'}
+                          </div>
+                        ),
+                    )
+                  ) : (
+                    <>
+                      {info?.checkInValue?.[0] &&
+                        info?.checkInValue?.map(
+                          (c: any, index: number) =>
+                            info?.wfh !== null && (
+                              <div
+                                className={clsx(
+                                  'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
+                                  {
+                                    'bg-[#237804]': !!c?.[1],
+                                    'bg-[#F5222D]':
+                                      !c?.[1] || info?.dayWorking < 1,
+                                  },
+                                )}
+                                key={index}
+                              >
+                                {c?.[0]} - {c?.[1] || '--:--'}
+                              </div>
+                            ),
                         )}
-                        key={index}
-                      >
-                        {c?.[0]} - {c?.[1] || '--:--'}
-                      </div>
-                    ))}
+                    </>
+                  )}
 
                   {/* thời gian ot */}
                   {info?.ot &&
@@ -229,6 +249,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                         ),
                     )}
                 </div>
+
                 {info?.checkInValue?.[0] && !isProfile && (
                   <div className="flex items-center justify-between gap-[8px] px-[4px]">
                     <div className="flex items-center gap-[4px]">

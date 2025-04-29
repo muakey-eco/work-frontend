@@ -5,6 +5,7 @@ import {
   checkOutAction,
   logoutAction,
 } from '@/components/action'
+import FloatButtonModal from '@/components/FloatButton'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   BellFilled,
@@ -24,7 +25,6 @@ import {
 } from './action'
 import CheckoutButton from './CheckoutButton'
 import NotificationsList from './NotificationsList'
-
 export type SubSideProps = {
   user?: any
   options?: any
@@ -229,6 +229,8 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
           <LogoutOutlined className="text-[14px]" />
         </div>
       </div>
+
+      <FloatButtonModal />
     </div>
   )
 }

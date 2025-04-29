@@ -60,7 +60,6 @@ const page: React.FC<any> = async (props) => {
 
   const user = await getMe()
   const propose = await getProposeById(id)
-
   const isAdmin = user?.role === 'Quản trị cấp cao'
 
   const oldTime = `${propose?.old_check_in ? dayjs(propose?.old_check_in).format('DD/MM/YYYY HH:mm') : dayjs(propose?.start_time).format('DD/MM/YYYY') + ' --:--'} - ${propose?.old_check_out ? dayjs(propose?.old_check_out).format('DD/MM/YYYY HH:mm') : '--:--'}`

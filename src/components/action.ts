@@ -20,6 +20,7 @@ import {
   getTaskHistories,
   uploadImage,
 } from '@/libs/data'
+import { getNotifications } from '@/libs/notifications'
 import {
   addPropose,
   addProposeCategory,
@@ -43,6 +44,7 @@ import {
   getTags,
   updateTagById,
 } from '@/libs/tag'
+import { getTodos } from '@/libs/todos'
 
 export const logoutAction = async () => {
   return await logout()
@@ -167,4 +169,11 @@ export const deleteAssetCategoryAction = async (id: number) => {
 
 export const updateAssetCategoryAction = async (id: number, data: any) => {
   return await updateAssetCategory(id, data)
+}
+export const getTodosAction = async (query?: any) => {
+  return await getTodos(query)
+}
+
+export const getNotificationsAction = async () => {
+  return await getNotifications()
 }

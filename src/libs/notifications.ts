@@ -5,3 +5,9 @@ export const seenNotifications = async () => {
     method: 'PUT',
   })
 }
+
+export const getNotifications = async () => {
+  return await requestWithAuthorized('notifications')
+    .then((res) => res.data)
+    .catch(() => [])
+}

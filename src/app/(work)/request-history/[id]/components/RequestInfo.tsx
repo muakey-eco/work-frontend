@@ -17,7 +17,7 @@ const RequestInfo: React.FC<RequestInfoProps> = ({ info }) => {
           <Row
             key={index}
             gutter={[24, 24]}
-            className="custom-scrollbar !max-h-[calc(100vh-490px)] overflow-y-auto"
+            className="custom-scrollbar overflow-y-auto"
           >
             {i?.map((child: any) => (
               <Col key={child?.key} span={12}>

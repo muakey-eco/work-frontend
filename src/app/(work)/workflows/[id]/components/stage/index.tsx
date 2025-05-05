@@ -123,8 +123,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       )
 
       const memberIds = members?.map((member: any) => member?.id)
-      console.log('memberIds', memberIds)
-      console.log('user', user)
 
       if (
         !memberIds?.includes(user?.id) &&

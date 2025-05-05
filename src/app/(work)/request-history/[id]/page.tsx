@@ -60,7 +60,6 @@ const page: React.FC<any> = async (props) => {
 
   const user = await getMe()
   const propose = await getProposeById(id)
-  console.log('propose', propose)
 
   const isAdmin = user?.role === 'Quản trị cấp cao'
 
@@ -153,8 +152,15 @@ const page: React.FC<any> = async (props) => {
           Object.entries(propose?.new_value || {}).map(([key, value]) => {
             return {
               key: uniqueId(),
-              label: key,
-              children: value,
+              label: value ? (
+                <span>
+                  <span style={{ color: 'red' }}>* </span>
+                  {key}
+                </span>
+              ) : (
+                key
+              ),
+              children: value || '--',
             }
           }),
         ]

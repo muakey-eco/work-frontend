@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { uniqueId } from 'lodash'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useState } from 'react'
+import React from 'react'
 import { NavigationMenuType } from '.'
 import { DownOutlined } from '../icons'
 import NavigationSubmenu from './NavigationSubmenu'
@@ -11,37 +11,37 @@ import NavigationSubmenu from './NavigationSubmenu'
 export type NavigationItemProps = {
   item?: NavigationMenuType
   active?: boolean
-  defaultOpen?: boolean
+  open?: boolean
   children?: React.ReactNode
   ghost?: boolean
   exact?: boolean
   matchType?: 'default' | 'prefix' | 'exact'
   className?: string
+  onClick?: () => void
 }
 
 const NavigationItem: React.FC<NavigationItemProps> = ({
   item,
   active: initActive,
-  defaultOpen,
+  open = false,
   children,
   ghost,
   exact,
   matchType = 'default',
   className: customClassName,
+  onClick,
 }) => {
-  const [show, setShow] = useState(true)
-
   const pathname = usePathname()
-
   const isActive = pathname === item?.href
+
   const layout = clsx({
     'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
-      item?.type === 'filled-rounded' && item.children?.length !== 0 && show,
+      item?.type === 'filled-rounded' && item.children?.length !== 0 && open,
     'mt-[16px]': item?.type === 'plain',
     'rounded-4xl bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
       isActive && item?.children?.length === 0,
     'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
-      (item?.type === 'filled-rounded' && !show) ||
+      (item?.type === 'filled-rounded' && !open) ||
       (item?.children?.length === 0 && item.type != 'plain'),
   })
 
@@ -53,13 +53,14 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     },
     customClassName,
   )
+
   const node = (
     <div
       className={clsx(
         'flex items-center justify-between gap-[10px]',
         item?.type === 'plain' ? 'h-[22px]' : 'h-[40px]',
         {
-          'pb-[12px]': item?.type === 'plain' && show,
+          'pb-[12px]': item?.type === 'plain' && open,
         },
       )}
     >
@@ -77,6 +78,9 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
           className={clsx(
             'w-full text-[14px]',
             item?.type === 'plain' ? 'text-[#FFFFFF99]' : 'text-white',
+            {
+              'text-white': isActive,
+            },
           )}
         >
           {item?.label}
@@ -86,8 +90,8 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
       {item?.children && item.children.length > 0 && (
         <DownOutlined
           className={clsx('text-white', {
-            'rotate-0 text-[#fff]': !show,
-            'rotate-180 text-[#ffffff4d]': show,
+            'rotate-0 text-[#fff]': !open,
+            'rotate-180 text-[#ffffff4d]': open,
             'text-[16px]': ghost,
           })}
         />
@@ -95,17 +99,12 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     </div>
   )
 
-  const handleClick = () => {
-    if (!item?.children) return
-    setShow(!show)
-  }
-
   return (
     <div className={layout}>
-      <li
+      <div
         key={item?.key}
         className={'cursor-pointer rounded-full text-[16px] leading-none'}
-        onClick={handleClick}
+        onClick={onClick}
       >
         {item?.children && item.children.length > 0 ? (
           <div className={className}>{node}</div>
@@ -114,24 +113,24 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
             {node}
           </Link>
         )}
-        {item?.children && (
+        {item?.children && open && (
           <div
             key={item?.key ?? uniqueId()}
             className={clsx('transition-all duration-300', {
               'mt-[12px] rounded-[16px] bg-[#FFFFFF0F] px-4 py-[4px]':
-                ghost && show,
+                ghost && open,
             })}
           >
             <NavigationSubmenu
               menu={item?.children}
-              defaultOpen={show}
+              defaultOpen={open}
               ghost={ghost}
               exact={exact}
               matchType={matchType}
             />
           </div>
         )}
-      </li>
+      </div>
     </div>
   )
 }

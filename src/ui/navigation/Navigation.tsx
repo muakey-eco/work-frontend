@@ -1,12 +1,11 @@
 'use client'
 
 import clsx from 'clsx'
-import { uniqueId } from 'lodash'
 import { LinkProps } from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import NavigationItem from './NavigationItem'
-import { activeNav, urlMatch } from './utils'
+import { activeNav } from './utils'
 
 export type NavigationMenuType = {
   key?: React.Key
@@ -52,10 +51,36 @@ const InternalNavigation: React.ForwardRefRenderFunction<
     searchParams,
   }
 
+  const [openMenus, setOpenMenus] = useState<Set<string>>(new Set())
+
+  // Load saved menu states from localStorage on mount
+  useEffect(() => {
+    const savedMenus = localStorage.getItem('openMenus')
+    if (savedMenus) {
+      setOpenMenus(new Set(JSON.parse(savedMenus)))
+    }
+  }, [])
+
+  // Save menu states to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('openMenus', JSON.stringify(Array.from(openMenus)))
+  }, [openMenus])
+
+  const handleMenuClick = (key: string) => {
+    setOpenMenus((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(key)) {
+        newSet.delete(key)
+      } else {
+        newSet.add(key)
+      }
+      return newSet
+    })
+  }
+
   const className = clsx(
     'space-y-[8px] text-[24px] text-[#fff]',
     {
-      // 'rounded-[24px]': !ghost,
       'space-y-[12px]': ghost,
     },
     customClassName,
@@ -67,34 +92,32 @@ const InternalNavigation: React.ForwardRefRenderFunction<
 
   return (
     <ul className={className} ref={ref} {...props}>
-      {items?.map((item) => {
+      {items?.map((item, index) => {
         const type = item.exact ? 'exact' : item.matchType
-        const active = activeNav(
+        const isActive = activeNav(
           url,
           item.href || '',
           exact,
           hash,
-          type || matchType,
+          item.matchType || matchType,
         )
+        const menuKey = item.key?.toString() || `menu-${index}`
+        const isOpen = openMenus.has(menuKey)
+
         return (
-          <div
-            key={item.key ?? uniqueId()}
-            className="overflow-hidden rounded-xl"
-          >
+          <li key={menuKey} className="overflow-hidden rounded-xl">
             <NavigationItem
-              key={item.key ?? uniqueId()}
+              key={menuKey}
               item={item}
-              active={active}
-              defaultOpen={
-                item.expand ||
-                urlMatch(item.children || [], pathName, searchParams, exact)
-              }
+              active={isActive}
+              open={isOpen}
               ghost={ghost}
               exact={exact}
               matchType={type || matchType}
               className={item.className}
+              onClick={() => handleMenuClick(menuKey)}
             />
-          </div>
+          </li>
         )
       })}
     </ul>

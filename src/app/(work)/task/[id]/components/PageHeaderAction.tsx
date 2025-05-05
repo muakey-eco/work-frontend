@@ -106,7 +106,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
         return
       }
 
-      message.success('Đã gỡ người thực thi.')
+      message.success('Đã hủy trạng thái bắt đầu.')
       setRemoveConfirmOpen(false)
       router.refresh()
     } catch (error: any) {
@@ -265,13 +265,27 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
             )
           : user?.id === options?.task?.account_id &&
             (options?.task?.started_at ? (
-              <Tag
-                className="mr-0! h-[32px]! rounded-[8px] px-[12px]! leading-[28px]!"
-                color="processing"
-                icon={<SyncOutlined />}
-              >
-                Đang làm
-              </Tag>
+              <>
+                <Tag
+                  className="mr-0! h-[32px]! rounded-[8px] px-[12px]! leading-[28px]!"
+                  color="processing"
+                  icon={<SyncOutlined />}
+                >
+                  Đang làm
+                </Tag>
+                <Button
+                  color="danger"
+                  variant="outlined"
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Bạn muốn hủy trạng thái bắt đầu?',
+                      onOk: () => handleRemoveExecutor(options?.task?.id),
+                    })
+                  }}
+                >
+                  Hủy trạng thái bắt đầu
+                </Button>
+              </>
             ) : (
               <Button
                 type="primary"

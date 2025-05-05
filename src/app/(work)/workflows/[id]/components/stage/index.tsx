@@ -16,7 +16,8 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { App, Row } from 'antd'
+import { App, DatePicker, DatePickerProps, Modal, Row } from 'antd'
+import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
@@ -58,6 +59,7 @@ export type StageListProps = {
 export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
+  const { modal } = App.useApp()
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
@@ -65,6 +67,16 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [doneOpen, setDoneOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newStartedAt, setNewStartedAt] = useState<any>()
+  const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
+  const [currentStartedAt, setCurrentStartedAt] = useState<dayjs.Dayjs>()
+
+  console.log('currentStartedAt: ', currentStartedAt)
+  console.log('newStartedAt: ', newStartedAt)
+
+  const onOk = (value: DatePickerProps['value']) => {}
+
   const activeRef = useRef<any>(null)
 
   const { message } = App.useApp()
@@ -100,6 +112,79 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
+  const moveTaskToNextStage = async (
+    activeTaskId: number,
+    stageId: number,
+    activeData: any,
+    overData: any,
+  ) => {
+    try {
+      // Move the task to the new stage
+      const { message: msg, errors } = await moveStageAction(
+        activeTaskId as number,
+        stageId,
+      )
+
+      if (errors) {
+        message.error(msg)
+        return
+      }
+
+      // Retrieve task history
+      const taskHistory = await getTaskHistoriesAction({
+        task_id: activeData.id,
+        stage_id: stageId,
+      })
+
+      // Update the stages
+      setStages((prevStages: any) => {
+        const newStages = cloneDeep(prevStages)
+
+        // Find active and over columns
+        const activeColumn = newStages.find(
+          (s: any) => s.id === `stage_${activeData.stage_id}`,
+        )
+        const overColumn = newStages.find(
+          (s: any) => s.id === `stage_${stageId}`,
+        )
+
+        // Remove the task from the current stage
+        if (activeColumn) {
+          activeColumn.tasks = activeColumn.tasks.filter(
+            (t: any) => t.id !== activeTaskId,
+          )
+        }
+
+        // Add the task to the new stage
+        if (overColumn) {
+          overColumn.tasks = [
+            {
+              ...activeData,
+              stage_id: stageId,
+              account_id: taskHistory?.worker || null,
+              expired: taskHistory?.worker
+                ? taskHistory?.expired_at
+                  ? taskHistory?.expired_at
+                  : overColumn.expired_after_hours
+                    ? new Date().setHours(
+                        new Date().getHours() + overColumn.expired_after_hours,
+                      )
+                    : null
+                : null,
+              started_at: taskHistory?.started_at || null,
+            },
+            ...overColumn.tasks,
+          ]
+        }
+
+        return newStages
+      })
+    } catch (error: any) {
+      message.error('Có lỗi xảy ra khi di chuyển task')
+      throw new Error(error)
+    }
+  }
+
   const handleDrag = async (event: DragEndEvent) => {
     const { active, over } = event
 
@@ -123,8 +208,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       )
 
       const memberIds = members?.map((member: any) => member?.id)
-      console.log('memberIds', memberIds)
-      console.log('user', user)
 
       if (
         !memberIds?.includes(user?.id) &&
@@ -142,65 +225,25 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
 
-      try {
-        const { message: msg, errors } = await moveStageAction(
-          activeTaskId as number,
-          stageId,
-        )
+      // Check the time difference between the current time and the task's started_at
+      const startedAt = dayjs(activeData?.started_at)
+      console.log('startedAt: ', startedAt)
+      if (!startedAt.isValid()) {
+        message.error('Nhiệm vụ chưa được bắt đầu.')
+        return
+      }
+      const currentTime = dayjs()
+      const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
 
-        if (errors) {
-          message.error(msg)
-          return
-        }
-
-        const taskHistory = await getTaskHistoriesAction({
-          task_id: activeData.id,
-          stage_id: stageId,
-        })
-
-        setStages((prevStages: any) => {
-          const newStages = cloneDeep(prevStages)
-
-          const activeColumn = newStages.find(
-            (s: any) => s.id === `stage_${activeData.stage_id}`,
-          )
-          const overColumn = newStages.find(
-            (s: any) => s.id === `stage_${stageId}`,
-          )
-
-          if (activeColumn) {
-            activeColumn.tasks = activeColumn.tasks.filter(
-              (t: any) => t.id !== activeTaskId,
-            )
-          }
-
-          if (overColumn) {
-            overColumn.tasks = [
-              {
-                ...activeData,
-                stage_id: stageId,
-                account_id: taskHistory?.worker || null,
-                expired: taskHistory?.worker
-                  ? taskHistory?.expired_at
-                    ? taskHistory?.expired_at
-                    : overColumn.expired_after_hours
-                      ? new Date().setHours(
-                          new Date().getHours() +
-                            overColumn.expired_after_hours,
-                        )
-                      : null
-                  : null,
-                started_at: taskHistory?.started_at || null,
-              },
-              ...overColumn.tasks,
-            ]
-          }
-
-          return newStages
-        })
-      } catch (error: any) {
-        message.error('Có lỗi xảy ra khi di chuyển task')
-        throw new Error(error)
+      // If the time difference is less than 5 minutes, show the confirmation modal
+      if (timeDifference < 5) {
+        setCurrentTimeDifference(timeDifference)
+        setCurrentStartedAt(startedAt)
+        setIsModalOpen(true)
+        return
+      } else {
+        // If time difference is greater than or equal to 5 minutes, move the task immediately
+        moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
       }
     }
   }
@@ -412,6 +455,34 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     [activeId, members, failedStageId],
   )
 
+  const handleOk = () => {
+    if (!newStartedAt) {
+      message.error('Vui lòng chọn thời gian bắt đầu')
+      return
+    }
+    setIsModalOpen(false)
+    if (dragEvent && dragEvent.over?.data.current) {
+      moveTaskToNextStage(
+        Number(dragEvent.active.id),
+        Number(
+          String(
+            dragEvent.over.data.current.stage_id ||
+              dragEvent.over.data.current.id,
+          )
+            .split('_')
+            .pop(),
+        ),
+        dragEvent.active.data.current,
+        dragEvent.over.data.current,
+      )
+    }
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+    setNewStartedAt(null)
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -450,6 +521,45 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           onOk={() => setDoneOpen(false)}
           initialValues={generateInitialValues()}
         />
+
+        <Modal
+          title="Xác nhận thời gian thực hiện"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={411}
+        >
+          <div className="flex flex-col gap-2 !text-[14px]">
+            <p>
+              Bạn đã thực hiện nhiệm vụ này trong{' '}
+              <strong>{Math.round(currentTimeDifference)} phút</strong>.
+            </p>
+            <p>Thời gian thực tế bạn bắt đầu công việc này là lúc nào?</p>
+
+            <p>Ngày/giờ bắt đầu</p>
+            <DatePicker
+              onChange={(value) => {
+                setNewStartedAt(value)
+              }}
+              placeholder="Chọn thời gian"
+              showTime
+              onOk={onOk}
+            />
+            <p>
+              Tổng thời gian thực hiện :{' '}
+              <span className="text-blue-500">
+                {newStartedAt
+                  ? (
+                      Math.round(
+                        dayjs(currentStartedAt).diff(newStartedAt, 'minutes'),
+                      ) / 60
+                    ).toFixed(2)
+                  : 0}
+                h
+              </span>
+            </p>
+          </div>
+        </Modal>
 
         <DragOverlay dropAnimation={dropAnimation}>
           {activeItem && activeItem?.id && (

@@ -178,6 +178,23 @@ const page: React.FC<any> = async (props) => {
           ],
         ]
       : []),
+    // Hiện thị thông tin đăng ký WFH
+    ...(propose?.name === 'Đăng ký WFH'
+      ? [
+          [
+            {
+              key: uniqueId(),
+              label: 'Ngày đăng ký WFH',
+              children: dayjs(propose?.date_wfh).format('DD/MM/YYYY HH:mm'),
+            },
+            {
+              key: uniqueId(),
+              label: 'Lý do đăng ký WFH',
+              children: propose?.description || 'Chưa có',
+            },
+          ],
+        ]
+      : []),
   ]
 
   return (

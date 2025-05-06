@@ -94,7 +94,7 @@ const InternalCard: React.ForwardRefRenderFunction<
               {a}
               {actions.indexOf(a) !== actions.length - 1 && (
                 <Divider
-                  className="absolute right-0 top-[50%] translate-y-[-50%]"
+                  className="absolute top-[50%] right-0 translate-y-[-50%]"
                   type="vertical"
                 />
               )}

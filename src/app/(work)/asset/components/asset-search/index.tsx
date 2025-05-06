@@ -56,7 +56,7 @@ const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
           <Button icon={<FilterOutlined />}>Bộ lọc</Button>
         </AssetDrawer>
 
-        <ManageModalForm label="Loại tài sản" title="Quản lý loại tài sản">
+        <ManageModalForm title="Quản lý loại tài sản">
           <Button icon={<PlusOutlined />} type="primary">
             Loại tài sản
           </Button>

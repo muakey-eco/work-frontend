@@ -29,6 +29,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
   const { isCurrentMonth, info } = options
 
+  console.log('info', info)
+
   const dropdownRender = () => {
     return (
       <div className="overflow-hidden rounded-[6px] bg-[#fff] p-[2px] shadow-[0_3px_6px_-4px_rgba(0,0,0,0.12),0_6px_16px_0_rgba(0,0,0,0.08),0_9px_28px_8px_rgba(0,0,0,0.05)]">
@@ -185,39 +187,37 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                     )} */}
 
                   {/* thời gian vào ra */}
-                  {info?.wfh && info?.wfh?.[0] !== null ? (
-                    info?.wfh?.map(
-                      (w: any, index: number) =>
-                        w && (
-                          <div
-                            className="w-full rounded-full bg-[#8C8C8C] py-[3px] text-center text-[#fff]"
-                            key={index}
-                          >
-                            {w?.[0]} - {w?.[1] ? w?.[1] : '--:--'}
-                          </div>
-                        ),
+                  {Array.isArray(info?.wfh) &&
+                  info.wfh.length > 0 &&
+                  info.wfh.some((w: any) => w !== null) ? (
+                    info.wfh.map((w: any, index: number) =>
+                      w ? (
+                        <div
+                          className="w-full rounded-full bg-[#8C8C8C] py-[3px] text-center text-[#fff]"
+                          key={index}
+                        >
+                          {w?.[0] || '--:--'} - {w?.[1] || '--:--'}
+                        </div>
+                      ) : null,
                     )
                   ) : (
                     <>
-                      {info?.checkInValue?.[0] &&
-                        info?.checkInValue?.map(
-                          (c: any, index: number) =>
-                            info?.wfh !== null && (
-                              <div
-                                className={clsx(
-                                  'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
-                                  {
-                                    'bg-[#237804]': !!c?.[1],
-                                    'bg-[#F5222D]':
-                                      !c?.[1] || info?.dayWorking < 1,
-                                  },
-                                )}
-                                key={index}
-                              >
-                                {c?.[0]} - {c?.[1] || '--:--'}
-                              </div>
-                            ),
-                        )}
+                      {Array.isArray(info?.checkInValue) &&
+                        info.checkInValue.length > 0 &&
+                        info.checkInValue.map((c: any, index: number) => (
+                          <div
+                            className={clsx(
+                              'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
+                              {
+                                'bg-[#237804]': !!c?.[1],
+                                'bg-[#F5222D]': !c?.[1] || info?.dayWorking < 1,
+                              },
+                            )}
+                            key={index}
+                          >
+                            {c?.[0] || '--:--'} - {c?.[1] || '--:--'}
+                          </div>
+                        ))}
                     </>
                   )}
 

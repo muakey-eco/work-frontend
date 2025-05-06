@@ -160,6 +160,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   ]
 
   const { user, workSchedule, attendances } = options
+  console.log('attendances', attendances)
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
@@ -177,7 +178,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         .filter((p: any) => p?.account_id === user.id)
 
       const wfhPropose = attendances?.ot_and_holiday
-        .filter((p: any) => p?.name === 'Đăng ký làm ở nhà')
+        .filter((p: any) => p?.name === 'Đăng ký WFH')
         .filter((p: any) => p?.account_id === user.id)
 
       const fields = times(dateNumber, (num): any => {

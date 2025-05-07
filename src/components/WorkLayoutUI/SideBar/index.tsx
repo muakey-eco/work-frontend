@@ -134,6 +134,16 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               shouldRound: false,
               href: '/employees',
             },
+            {
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>Thông báo quan trọng</span>
+                </div>
+              ),
+              shouldRound: false,
+              href: '/important-notifications',
+            },
             // {
             //   label: (
             //     <div className="flex items-center gap-[10px]">

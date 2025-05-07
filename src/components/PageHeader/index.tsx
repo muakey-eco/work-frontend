@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Divider, Tabs, TabsProps } from 'antd'
+import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
@@ -21,6 +22,7 @@ export type PageHeaderProps = {
   tab?: Tab
   activeKey?: string
   onBack?: boolean
+  onBackLink?: boolean
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -29,6 +31,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   headerExtra,
   tab,
   onBack,
+  onBackLink,
 }) => {
   const router = useRouter()
   const handleBack = () => {
@@ -37,21 +40,40 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex justify-between border-b bg-[#fff] px-[24px] pt-[12px]',
+        'flex items-center justify-between border-b bg-[#fff] px-[24px] pt-[12px]',
         tab?.items ? 'pb-0' : 'pb-[12px]',
       )}
     >
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
           {/* Tên header */}
-          <div className="flex gap-[16px]">
+          <div className="flex items-center gap-[16px]">
             {onBack && (
-              <ArrowLeftOutlined
-                onClick={handleBack}
-                className="cursor-pointer text-[16px]"
-              />
+              <>
+                <ArrowLeftOutlined
+                  onClick={handleBack}
+                  className="cursor-pointer text-[16px]"
+                />
+              </>
             )}
-            <span className="text-[20px] font-[500]">{title}</span>
+
+            {onBackLink && (
+              <div>
+                <ArrowLeftOutlined
+                  onClick={handleBack}
+                  className="!cursor-pointer !text-[#1677FF]"
+                />
+              </div>
+            )}
+            <span
+              className={clsx(
+                onBackLink
+                  ? 'text-[14px] font-[400] !text-[#1677FF]'
+                  : 'text-[20px] font-[500]',
+              )}
+            >
+              {title}
+            </span>
           </div>
         </div>
         <div className="flex !w-full items-center">

@@ -2,15 +2,15 @@
 
 import { useAsyncEffect } from '@/libs/hook'
 import { convertRelativeTime, randomColor } from '@/libs/utils'
-import { BellFilled } from '@ant-design/icons'
-import { Avatar, FloatButton, Popover, Tabs } from 'antd'
+import { BellFilled, CloseOutlined } from '@ant-design/icons'
+import { Avatar, Button, FloatButton, Popover, Tabs } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   getNotificationsAction,
+  seenNotificationsAction,
   updateNotificationAction,
 } from '../WorkLayoutUI/SideBar/action'
 
@@ -73,7 +73,7 @@ const NotificationItem = ({
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <h3
-          className={clsx('text-[16px]', {
+          className={clsx('text-[14px]', {
             'font-[600]': item.seen === 0,
           })}
         >
@@ -107,7 +107,9 @@ const ViewNotificationFB: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const router = useRouter()
+  const [notificationsWithNotRead, setNotificationsWithNotRead] =
+    useState<any[]>()
+  console.log('notifications', notifications)
 
   useAsyncEffect(async () => {
     try {
@@ -120,6 +122,23 @@ const ViewNotificationFB: React.FC = () => {
       setLoading(false)
     }
   }, [])
+  const handleSeeNotifications = async () => {
+    if (!(notificationsWithNotRead && notificationsWithNotRead?.length > 0))
+      return
+
+    try {
+      await seenNotificationsAction()
+
+      setNotificationsWithNotRead([])
+    } catch (error: any) {
+      throw new Error(error)
+    }
+  }
+  useEffect(() => {
+    setNotificationsWithNotRead(
+      notifications?.filter((notify: any) => notify?.new === 1),
+    )
+  }, [notifications])
 
   const groupedNotifications = useMemo(
     () => groupByDate(notifications),
@@ -139,15 +158,15 @@ const ViewNotificationFB: React.FC = () => {
   }
 
   const allList = (
-    <div className="max-h-[817px] overflow-y-auto">
+    <div className="!h-[664px] overflow-y-auto">
       {notifications.length === 0 ? (
-        <div className="py-4 text-center text-sm text-gray-400">
+        <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
           Không có thông báo nào
         </div>
       ) : (
         Object.entries(groupedNotifications).map(([date, items]) => (
           <div key={date}>
-            <div className="flex items-center py-2 text-sm text-gray-500">
+            <div className="flex items-center py-2 !text-[12px] text-gray-500">
               <span className="whitespace-nowrap">{date}</span>
               <div className="mx-2 h-[1px] flex-1 self-center bg-gray-300" />
               <span className="whitespace-nowrap">
@@ -168,22 +187,22 @@ const ViewNotificationFB: React.FC = () => {
   )
 
   const overdueList = (
-    <div className="max-h-[817px] overflow-y-auto py-4 text-center text-gray-400">
+    <div className="!h-[664px] overflow-y-auto py-4 text-center text-gray-400">
       Đang cập nhật...
     </div>
   )
 
   const popoverContent = (
-    <div className="w-[549px] !rounded-xl">
-      <div className="flex items-center justify-between px-6 py-2">
+    <div className="!h-[664x] !w-[501px] overflow-y-auto !rounded-2xl !pt-5">
+      <div className="flex items-center justify-between px-6">
         <span className="text-lg font-semibold">Thông báo</span>
-        <button
+        <Button
+          type="text"
           onClick={() => setOpen(false)}
-          className="cursor-pointer text-2xl text-gray-400 hover:text-gray-600"
+          className="cursor-pointer items-center text-2xl text-gray-400 hover:text-gray-600"
           style={{ lineHeight: 1 }}
-        >
-          ×
-        </button>
+          icon={<CloseOutlined />}
+        />
       </div>
 
       <Tabs
@@ -217,14 +236,19 @@ const ViewNotificationFB: React.FC = () => {
       content={popoverContent}
       open={open}
       onOpenChange={setOpen}
-      overlayInnerStyle={{ padding: 0 }}
+      overlayInnerStyle={{
+        padding: 0,
+        borderRadius: 24,
+        width: 501,
+        marginLeft: -7,
+      }}
     >
       <FloatButton
         icon={<BellFilled />}
         type="primary"
         style={{ bottom: 32, left: 90 }}
         badge={{
-          count: notifications.filter((n) => n.seen === 0).length,
+          count: notificationsWithNotRead?.length,
           color: 'red',
         }}
         shape="circle"

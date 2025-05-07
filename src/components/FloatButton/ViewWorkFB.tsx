@@ -1,6 +1,6 @@
 'use client'
-import { FileDoneOutlined } from '@ant-design/icons'
-import { FloatButton, Popover, Tabs } from 'antd'
+import { CloseOutlined, FileDoneOutlined } from '@ant-design/icons'
+import { Button, FloatButton, Popover, Tabs } from 'antd'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -29,36 +29,13 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   }
 
   const reminderList = (
-    <div className="max-h-[817px] overflow-y-auto">
-      {todos.map((todo: any, index: number) => (
-        <div
-          key={todo.id}
-          className={
-            index === 0
-              ? 'border-b border-gray-200 pb-2'
-              : 'border-b border-gray-200 py-2'
-          }
-        >
-          <div className="!text-[14px] font-bold">{todo?.name}</div>
-          <Link
-            href={`/workflow/${todo?.workflow_id}`}
-            className="!text-[12px]"
-          >
-            {todo?.workflow_name}
-          </Link>
-          <div className="!text-[12px] text-gray-400">
-            {dayjs(todo?.created_at).format('HH:mm - DD/MM/YYYY')}
-          </div>
+    <div className="!h-[664px] overflow-y-auto">
+      {todos.length === 0 ? (
+        <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
+          Không có việc nào
         </div>
-      ))}
-    </div>
-  )
-
-  const overdueList = (
-    <div className="max-h-[817px] overflow-y-auto">
-      {todos
-        .filter((todo: any) => todo?.status === 'overdue')
-        .map((todo: any, index: number) => (
+      ) : (
+        todos.map((todo: any, index: number) => (
           <div
             key={todo.id}
             className={
@@ -67,10 +44,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
                 : 'border-b border-gray-200 py-2'
             }
           >
-            <div className="flex items-center justify-between !text-[14px] font-bold">
-              {todo?.name}
-              <span className="text-2xl text-red-500">•</span>
-            </div>
+            <div className="!text-[14px] font-bold">{todo?.name}</div>
             <Link
               href={`/workflow/${todo?.workflow_id}`}
               className="!text-[12px]"
@@ -81,21 +55,59 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
               {dayjs(todo?.created_at).format('HH:mm - DD/MM/YYYY')}
             </div>
           </div>
-        ))}
+        ))
+      )}
+    </div>
+  )
+
+  const overdueList = (
+    <div className="!h-[664px] overflow-y-auto">
+      {todos.filter((todo: any) => todo?.status === 'overdue').length === 0 ? (
+        <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
+          Không có việc nào
+        </div>
+      ) : (
+        todos
+          .filter((todo: any) => todo?.status === 'overdue')
+          .map((todo: any, index: number) => (
+            <div
+              key={todo.id}
+              className={
+                index === 0
+                  ? 'border-b border-gray-200 pb-2'
+                  : 'border-b border-gray-200 py-2'
+              }
+            >
+              <div className="flex items-center justify-between !text-[14px] font-bold">
+                {todo?.name}
+                <span className="text-2xl text-red-500">•</span>
+              </div>
+              <Link
+                href={`/workflow/${todo?.workflow_id}`}
+                className="!text-[12px]"
+              >
+                {todo?.workflow_name}
+              </Link>
+              <div className="!text-[12px] text-gray-400">
+                {dayjs(todo?.created_at).format('HH:mm - DD/MM/YYYY')}
+              </div>
+            </div>
+          ))
+      )}
     </div>
   )
 
   const popoverContent = (
-    <div className="w-[489px] !rounded-xl">
-      <div className="flex items-center justify-between px-6 py-2">
+    <div className="!h-[664x] !w-[501px] overflow-y-auto !rounded-2xl !pt-5">
+      <div className="flex items-center justify-between px-6">
         <span className="text-lg font-semibold">Nhắc việc</span>
-        <button
+        <Button
+          type="text"
           onClick={handleClose}
           className="cursor-pointer text-2xl text-gray-400 hover:text-gray-600"
           style={{ lineHeight: 1 }}
-        >
-          ×
-        </button>
+          icon={<CloseOutlined />}
+        />
       </div>
 
       <Tabs
@@ -124,7 +136,12 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         content={popoverContent}
         open={open}
         onOpenChange={handleOpenChange}
-        overlayInnerStyle={{ padding: 0 }}
+        overlayInnerStyle={{
+          padding: 0,
+          borderRadius: 24,
+          width: 501,
+          marginLeft: -7,
+        }}
       >
         <FloatButton
           icon={<FileDoneOutlined />}

@@ -72,9 +72,6 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
                         className="block rounded-[8px] hover:text-[#000]"
                         key={`${task?.name_task}_${index}`}
                         href={`/task/${task?.task_id}`}
-                        onMouseDown={(e) => e.preventDefault()}
-                        onMouseUp={(e) => e.preventDefault()}
-                        onClick={(e) => e.preventDefault()}
                       >
                         <StatisticsCard
                           title={

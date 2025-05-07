@@ -7,6 +7,7 @@ import { Col, Row } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import StatisticsColHeader from './statistics-col-header'
 
@@ -21,6 +22,7 @@ type StatisticsScheduleProps = {
 const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   const [ref] = useDragScroll()
   const colRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const today = new Date()
   const week = getWeek(options?.dw ? new Date(options?.dw) : today)
@@ -140,13 +142,16 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
             <Col
               key={date.day}
               ref={date.date === options?.currentDate ? colRef : null}
-              className={clsx('w-[400px] border-t border-r', {
+              className={clsx('w-[400px] cursor-pointer border-t border-r', {
                 'text-[#1677ff]':
                   date.date === String(dayjs(today).format('YYYY-MM-DD')),
                 '!border-t-[#096DD9] bg-[#E6F4FF]':
                   date.date === options?.currentDate,
                 'bg-[#fff]': date.date !== options?.currentDate,
               })}
+              onClick={() => {
+                router.push(`/statistics?dw=${date.date}`)
+              }}
             >
               <StatisticsColHeader
                 title={date.day}

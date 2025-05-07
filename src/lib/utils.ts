@@ -90,3 +90,28 @@ export const handleUploadChange = (
 
   setUploadErrors(errors)
 }
+const convertViewFieldName = (viewName: string): string => {
+  switch (viewName) {
+    case 'Thông tin cá nhân':
+      return 'personal_info'
+    case 'Lương':
+      return 'salary'
+    case 'Hợp đồng':
+      return 'contract'
+    case 'Phòng ban':
+      return 'department'
+    case 'Học vấn':
+      return 'education'
+    default:
+      return viewName
+  }
+}
+
+export const renameKeys = (input: Record<string, any>) => {
+  return Object.fromEntries(
+    Object.entries(input).map(([key, value]) => [
+      convertViewFieldName(key),
+      value,
+    ]),
+  )
+}

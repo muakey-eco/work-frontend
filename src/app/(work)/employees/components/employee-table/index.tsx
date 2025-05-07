@@ -13,6 +13,7 @@ import EmployeePaginationTable from './employee-pagination-table'
 export type EmployeeTableProps = Omit<TableProps, 'columns'> & {
   views?: any[]
   columns: any[]
+  firstView: string
 }
 
 const useStyle = createStyles(({ css }) => ({
@@ -39,16 +40,19 @@ const useStyle = createStyles(({ css }) => ({
 
 const EmployeeTable: React.FC<EmployeeTableProps> = ({
   columns: externalColumns,
+  firstView,
   ...rest
 }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const query = new URLSearchParams(searchParams)
-  const view = searchParams.get('view')
+
+  const view = searchParams.get('view') || convertToSlug(firstView)
   const search = searchParams.get('search')
   const page = searchParams.get('page')
 
   const [viewColumns, setViewColumns] = useState([])
+
   const { styles } = useStyle()
   const [data, setData] = useState<any[]>()
   const [loading, setLoading] = useState(false)
@@ -188,7 +192,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
 
   useEffect(() => {
     const c = externalColumns?.find(
-      (column) => convertToSlug(column.name) === (view || 'tong-quan'),
+      (column) => convertToSlug(column.name) === view,
     )
 
     setViewColumns(c?.field_name || [])

@@ -5,11 +5,12 @@ import EmployeeTable from './components/employee-table'
 
 const EmployeesPage: React.FC = async () => {
   const views = await getViews()
+  console.log('views', views)
   return (
     <>
       <EmployeePageHeader tabs={views} />
       <div className="h-[calc(100vh-89px)] bg-[#F6F6F6] p-[16px]">
-        <EmployeeTable columns={views} />
+        <EmployeeTable columns={views} firstView={views[0]?.name} />
       </div>
     </>
   )

@@ -12,7 +12,6 @@ import { createStyles } from 'antd-style'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import Sortable from 'sortablejs'
-import { updateTabAction } from './action'
 import EmployeeModalForm from './employee-modal-form'
 import ViewModalForm from './view-modal-form'
 import ViewOption from './view-option'
@@ -51,7 +50,9 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
   const searchParams = useSearchParams()
   const query = new URLSearchParams(searchParams)
   const router = useRouter()
-  const activeTab = query.get('view') || 'tong-quan'
+  const [sortableTabs, setSortableTabs] = useState<any[]>([])
+
+  const activeTab = query.get('view') || sortableTabs[0]?.key
 
   const handleChangeTab = (key: string) => {
     query.set('view', key)
@@ -65,7 +66,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
     router.push(`?${query.toString()}`)
   }
 
-  const [sortableTabs, setSortableTabs] = useState<any[]>([])
+  console.log('sortableTabs', sortableTabs)
   useEffect(() => {
     setSortableTabs(
       (tabs || []).map((tab) => ({
@@ -82,6 +83,7 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
         <ViewOption
           name={tab.label}
           activeTab={activeTab}
+          key={index}
           id={tab.id}
           onDelete={(id) => {
             setSortableTabs((prev) => {
@@ -124,17 +126,18 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
     }
   }, [dropdownOpen])
 
-  useEffect(() => {
-    const updateOrder = async () => {
-      const data = sortableTabs.map((tab) => ({
-        id: tab.id,
-        name: tab.label,
-      }))
+  // useEffect(() => {
+  //   const updateOrder = async () => {
+  //     const data = sortableTabs.map((tab) => ({
+  //       id: tab.id,
+  //       name: tab.label,
+  //     }))
 
-      const res = await updateTabAction(data)
-    }
-    updateOrder()
-  }, [sortableTabs])
+  //     const res = await updateTabAction(data)
+  //     console.log('res', res)
+  //   }
+  //   updateOrder()
+  // }, [sortableTabs])
 
   const contentStyle: React.CSSProperties = {
     backgroundColor: token.colorBgElevated,

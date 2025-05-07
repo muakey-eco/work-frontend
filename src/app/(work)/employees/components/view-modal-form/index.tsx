@@ -1,5 +1,6 @@
 'use client'
 
+import { renameKeys } from '@/lib/utils'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   CheckOutlined,
@@ -28,7 +29,6 @@ import {
   getViewFieldsByIdAction,
   updateViewAction,
 } from '../action'
-
 export type ViewModalFormProps = ModalProps & {
   formProps?: FormProps
   children?: React.ReactNode
@@ -109,6 +109,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
     setLoading(true)
 
     const types = [...new Set(selectedFields.map((field) => field.type))]
+
     const fieldNames = Object.fromEntries(
       types.map((type) => [
         type,
@@ -122,16 +123,19 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
           }),
       ]),
     )
+    const convertFieldNames = renameKeys(fieldNames)
+    console.log('types', types)
+    console.log('fieldNames', fieldNames)
 
     try {
       const { message: msg, errors } = await (action === 'create'
         ? createViewAction({
             ...values,
-            field_name: fieldNames,
+            field_name: convertFieldNames,
           })
         : updateViewAction(viewId || '', {
             ...values,
-            field_name: fieldNames,
+            field_name: convertFieldNames,
           }))
 
       if (errors) {

@@ -19,7 +19,7 @@ const FormFields: React.FC<{
   onEndChange?: (time: any) => void
   form: any
 }> = ({ initialValues, onStartChange, onEndChange, form }) => {
-  const [startTime, setStartTime] = useState<any>(null)
+  const [startTime, setStartTime] = useState<any>(dayjs(initialValues?.date))
 
   const handleGetStartTime = (time: any, name: any) => {
     const timestamps = form.getFieldValue('timestamps')

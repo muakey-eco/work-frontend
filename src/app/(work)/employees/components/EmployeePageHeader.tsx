@@ -66,7 +66,6 @@ const EmployeePageHeader: React.FC<EmployeePageHeaderProps> = ({ tabs }) => {
     router.push(`?${query.toString()}`)
   }
 
-  console.log('sortableTabs', sortableTabs)
   useEffect(() => {
     setSortableTabs(
       (tabs || []).map((tab) => ({

@@ -151,7 +151,7 @@ const FormFields: React.FC<{
                     </Form.Item>
                   </div>
 
-                  <Divider type="vertical" className="h-[74px]" />
+                  <Divider type="vertical" className="!h-[74px]" />
 
                   <div className="flex flex-1 items-end gap-[24px]">
                     <Form.Item
@@ -253,6 +253,7 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
 
   const { message } = App.useApp()
   const [form] = Form.useForm()
+  console.log('user', user)
 
   const list = [
     {

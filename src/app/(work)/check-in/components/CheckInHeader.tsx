@@ -86,10 +86,10 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
             <div
               key={item.key}
               className={clsx(
-                'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 hover:text-[#1677ff]',
+                'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 ease-in-out hover:text-[#1677ff]',
                 activeKey === item?.key
-                  ? 'border-[#1677ff] text-[#1677ff]'
-                  : 'border-transparent text-[##00000E0]',
+                  ? '!border-[#1677ff] text-[#1677ff]'
+                  : 'border-transparent text-[#00000E]',
               )}
               onClick={() => {
                 router.push(

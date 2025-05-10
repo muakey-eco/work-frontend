@@ -124,8 +124,6 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       ]),
     )
     const convertFieldNames = renameKeys(fieldNames)
-    console.log('types', types)
-    console.log('fieldNames', fieldNames)
 
     try {
       const { message: msg, errors } = await (action === 'create'

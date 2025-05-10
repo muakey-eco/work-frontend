@@ -115,18 +115,18 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 key: 'table',
                 label: 'Dạng bảng',
               },
-              {
-                key: 'statistics',
-                label: 'Thống kê',
-              },
+              // {
+              //   key: 'statistics',
+              //   label: 'Thống kê',
+              // },
               {
                 key: 'docs',
                 label: 'Báo cáo',
               },
-              {
-                key: 'report-field',
-                label: 'Trường báo cáo',
-              },
+              // {
+              //   key: 'report-field',
+              //   label: 'Trường báo cáo',
+              // },
             ]}
           />
         </PageHeader>

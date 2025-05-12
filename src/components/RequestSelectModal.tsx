@@ -117,6 +117,7 @@ const RequestSelectModal: React.FC<RequestSelectModalProps> = ({
             }}
           >
             <RequestItem
+              isAdmin={isAdmin}
               item={item}
               onDelete={() => handleDeleteGroup(item?.id)}
               onEdit={(values) => handleUpdateGroup(item?.id, values)}

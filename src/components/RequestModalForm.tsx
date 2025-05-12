@@ -59,9 +59,14 @@ const RequestModalForm: React.FC<RequestModalFormProps> = ({
             }
           : {
               ...restFormData,
-              name: group?.name === 'Đăng ký nghỉ' ? type : 'Đăng ký OT',
-              propose_category_id: group?.name === 'Đăng ký nghỉ' ? 5 : 4,
-              holiday,
+              name: group?.name,
+              propose_category_id: group?.id,
+              holiday: {
+                start_time:
+                  `${String(dayjs(date).format('YYYY-MM-DD'))} ${check_in ? String(dayjs(check_in).format('HH:mm:ss')) : ''}`.trim(),
+                end_time:
+                  `${String(dayjs(date).format('YYYY-MM-DD'))} ${check_out ? String(dayjs(check_out).format('HH:mm:ss')) : ''}`.trim(),
+              },
             },
       )
 

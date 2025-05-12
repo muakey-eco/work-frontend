@@ -8,6 +8,7 @@ type RequestItemProps = {
   item?: any
   onDelete?: () => void
   onEdit?: (values: any) => void
+  isAdmin?: boolean
 }
 
 const ignoreProposeCategories = [
@@ -21,6 +22,7 @@ const RequestItem: React.FC<RequestItemProps> = ({
   item,
   onDelete,
   onEdit,
+  isAdmin,
 }) => {
   const [editable, setEditable] = useState(false)
   const [values, setValues] = useState<any>({
@@ -57,7 +59,7 @@ const RequestItem: React.FC<RequestItemProps> = ({
           className="flex items-start justify-between gap-[12px]"
           ref={nameRef}
         >
-          {editable ? (
+          {isAdmin && editable ? (
             <Input
               className="w-[400px]"
               defaultValue={values?.name}
@@ -93,7 +95,7 @@ const RequestItem: React.FC<RequestItemProps> = ({
                 <CloseOutlined className="visible p-[6px] opacity-0 transition-all group-hover:opacity-100" />
               </Popconfirm>
             )}
-            {!ignoreProposeCategories.includes(item?.name) ? (
+            {!ignoreProposeCategories.includes(item?.name) && isAdmin ? (
               !editable ? (
                 <EditOutlined
                   className="text-[#1677ff]"
@@ -116,7 +118,7 @@ const RequestItem: React.FC<RequestItemProps> = ({
       }
       description={
         <div ref={descriptionRef}>
-          {editable ? (
+          {isAdmin && editable ? (
             <Input
               className="w-[400px]"
               defaultValue={values?.description}

@@ -80,7 +80,7 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
     try {
       const { message: msg, errors } = await addProposeAction({
         name: 'Đăng ký WFH',
-        propose_category: 'Đăng ký làm ở nhà',
+        propose_category: 'Đăng ký WFH',
         date_wfh: dayjs(dateWFH).format('YYYY-MM-DD HH:mm:ss'),
         description,
       })

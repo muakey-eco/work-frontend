@@ -109,7 +109,6 @@ const ViewNotificationFB: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [notificationsWithNotRead, setNotificationsWithNotRead] =
     useState<any[]>()
-  console.log('notifications', notifications)
 
   useAsyncEffect(async () => {
     try {

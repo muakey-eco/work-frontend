@@ -1,10 +1,14 @@
-import pdf from '@/assets/images/pdf.png'
 import { DownloadOutlined, EyeOutlined } from '@ant-design/icons'
 import { Card, Spin } from 'antd'
 import dayjs from 'dayjs'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+
+import ImageWord from '@/assets/images/image-docs.png'
+import defaultImage from '@/assets/images/image-img.png'
+import ImageXLSX from '@/assets/images/image-xls.png'
+import ImagePDF from '@/assets/images/pdf.png'
 
 export type ContractDocumentItemCardProps = {
   item?: any
@@ -30,6 +34,16 @@ const ContractDocumentItemCard: React.FC<ContractDocumentItemCardProps> = ({
       setIsDownloading(false)
     }
   }
+  const ext = item?.file_name.split('.').pop()?.toLowerCase()
+
+  const src =
+    ext === 'pdf'
+      ? ImagePDF.src
+      : ['doc', 'docx', 'txt'].includes(ext)
+        ? ImageWord.src
+        : ['xls', 'xlsx', 'csv'].includes(ext)
+          ? ImageXLSX.src
+          : defaultImage.src
 
   return (
     <Card
@@ -39,9 +53,9 @@ const ContractDocumentItemCard: React.FC<ContractDocumentItemCardProps> = ({
     >
       <div className="flex items-center justify-between gap-[16px]">
         <div className="flex items-center gap-[8px]">
-          <Image
-            className="aspect-[39/48]"
-            src={pdf.src}
+          <NextImage
+            className="aspect-[39/48] !object-contain"
+            src={src}
             alt="pdf"
             width={39}
             height={48}

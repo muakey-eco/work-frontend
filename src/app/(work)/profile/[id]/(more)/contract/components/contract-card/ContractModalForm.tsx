@@ -129,7 +129,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
       router.refresh()
     } catch (error) {
       setLoading(false)
-      throw new Error(String(error))
+      message.error(error instanceof Error ? error.message : 'Có lỗi xảy ra')
     }
   }
 
@@ -226,6 +226,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
             className="mb-[16px]! flex-1"
             label="Loại hợp đồng"
             name="category__contract_id"
+            rules={[{ required: true, message: 'Vui lòng chọn loại hợp đồng' }]}
           >
             <Select options={typeOptions} placeholder="Chọn loại hợp đồng" />
           </Form.Item>
@@ -236,6 +237,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
             className="mb-[16px]! flex-1"
             label="Thời gian (Bắt đầu - kết thúc)"
             name="timestamps"
+            rules={[{ required: true, message: 'Vui lòng chọn thời gian' }]}
           >
             <DatePicker.RangePicker className="w-full" locale={locale} />
           </Form.Item>
@@ -255,6 +257,7 @@ const ContractModalForm: React.FC<ContractModalFormProps> = ({
           name="fileList"
           valuePropName="fileList"
           getValueFromEvent={normFile}
+          rules={[{ required: true, message: 'Vui lòng tải lên tệp đính kèm' }]}
         >
           <Upload
             multiple

@@ -38,7 +38,7 @@ const AddModalForm: React.FC<AddModalFormProps> = ({
         {children}
       </div>
       <Modal
-        title="Tạo hợp đồng mới"
+        title="Tạo loại hợp đồng mới"
         open={open}
         okText="Thêm"
         cancelText="Hủy"

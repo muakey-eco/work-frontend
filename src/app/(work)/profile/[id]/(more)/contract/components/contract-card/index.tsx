@@ -13,7 +13,12 @@ export type ContractCardProps = {
 
 const ContractCard: React.FC<ContractCardProps> = ({ title, extra, items }) => {
   const { contracts, full_name, id } = items
-  console.log('extra', extra)
+  
+  // phần hợp đồng nó sẽ cần full_name để hiển thị lúc cập nhật
+  const contract = contracts.map((contract: any) => ({
+    ...contract,
+    full_name,
+  }))
   return (
     <Card
       classNames={{
@@ -26,7 +31,7 @@ const ContractCard: React.FC<ContractCardProps> = ({ title, extra, items }) => {
           <div className="flex !items-center !gap-[16px]">
             <AddModalForm>
               <Button type="primary" icon={<PlusOutlined />}>
-                Tạo hợp đồng
+                Tạo loại hợp đồng
               </Button>
             </AddModalForm>
             <ContractModalForm initialValues={{ full_name, id }}>
@@ -38,7 +43,7 @@ const ContractCard: React.FC<ContractCardProps> = ({ title, extra, items }) => {
         )}
       </div>
 
-      <ContractList dataSource={contracts} />
+      <ContractList dataSource={contract} />
     </Card>
   )
 }

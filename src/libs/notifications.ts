@@ -11,3 +11,17 @@ export const getNotifications = async () => {
     .then((res) => res.data)
     .catch(() => [])
 }
+
+export const createNotification = async (data: any) => {
+  return await requestWithAuthorized('notices', {
+    method: 'POST',
+    data,
+  })
+}
+
+export const updateNotification = async (id: string, data: any) => {
+  return await requestWithAuthorized(`notices/${id}`, {
+    method: 'PUT',
+    data,
+  })
+}

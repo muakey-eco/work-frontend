@@ -2,7 +2,6 @@ import { Descriptions, DescriptionsProps } from 'antd'
 import React from 'react'
 
 const AssetDescription: React.FC<any> = ({ asset }) => {
-  console.log('asset', asset)
   const items: DescriptionsProps['items'] = [
     {
       key: '1',

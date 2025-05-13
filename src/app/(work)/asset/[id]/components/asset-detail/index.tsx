@@ -13,7 +13,6 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
-  console.log('asset', asset)
 
   return (
     <Card className="h-fit gap-4 p-6">

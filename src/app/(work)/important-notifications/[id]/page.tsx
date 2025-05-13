@@ -1,42 +1,51 @@
 import { PageHeader } from '@/components'
-import { Avatar, Card } from 'antd'
-import { cardData } from '../data'
+import { getImportantNotificationById } from '@/libs/data'
+import { Avatar, Card, Divider } from 'antd'
+import dayjs from 'dayjs'
 
-const ImportantNotificationDetail = ({
+const ImportantNotificationDetail = async ({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) => {
-  const { id } = params
-  const card = cardData.find((card) => card.id === Number(id))
+  const { id } = await params
+  const notice = await getImportantNotificationById(Number(id))
 
   return (
-    <>
-      <PageHeader title="Danh sách nhân sự" onBackLink={true} />
-      <div className="flex h-[calc(100vh)] justify-center bg-[#F6F6F6] p-[16px]">
-        <Card className="h-[856px] w-[1020px] items-center p-[24px]">
-          <img
-            alt="example"
-            src={card?.image}
-            className="h-[300px] w-full rounded-2xl object-cover"
-          />
-          <p className="mt-[12px] text-[20px] font-[500]">{card?.title}</p>
-          {card?.title === 'Nhân sự mới' && (
+    <div className="flex h-screen flex-col">
+      <PageHeader title="Thông báo quan trọng" onBackLink={true} />
+      <div className="flex-1 overflow-y-auto bg-[#F6F6F6] p-[16px]">
+        <div className="mx-auto max-w-[1020px]">
+          <Card className="w-full p-[24px]">
+            <img
+              alt="example"
+              src={notice?.thumbnail}
+              className="h-[300px] w-full rounded-2xl object-cover"
+            />
+            <p className="mt-[12px] text-[20px] font-[500]">{notice?.title}</p>
+
             <div className="my-[12px] flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Avatar src={card?.avatar} />
-                <p className="text-[16px] text-gray-500">{card?.name}</p>
+                <Avatar src={notice?.manager?.avatar || ''} />
+                <p className="text-[16px] text-gray-500">
+                  {notice?.manager?.full_name}
+                </p>
               </div>
               <span className="text-gray-500">•</span>
-              <p className="text-[16px] text-gray-500">{card?.time}</p>
+              <p className="text-[16px] text-gray-500">
+                {dayjs(notice?.created_at).format('HH:mm - DD/MM/YYYY')}
+              </p>
             </div>
-          )}
-          <p className="mt-3 mb-4 max-h-[400px] overflow-y-auto text-[16px] text-gray-500">
-            {card?.description}
-          </p>
-        </Card>
+
+            <Divider />
+            <p
+              className="overflow-hidden text-[16px] break-words whitespace-pre-line text-gray-500"
+              dangerouslySetInnerHTML={{ __html: notice?.message }}
+            />
+          </Card>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 

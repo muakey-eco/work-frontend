@@ -2,6 +2,7 @@
 
 import {
   deleteNotification,
+  getImportantNotificationNotHidden,
   getIpAddress,
   getNotifications,
   updateNotification,
@@ -31,4 +32,8 @@ export const seenNotificationsAction = async () => {
 
 export const getIpAddressRequest = async () => {
   return await getIpAddress()
+}
+
+export const getImportantNotificationsAction = async () => {
+  return await getImportantNotificationNotHidden()
 }

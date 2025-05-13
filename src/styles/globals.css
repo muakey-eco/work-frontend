@@ -212,3 +212,18 @@ html *::-webkit-scrollbar-track {
 .custom-scrollbar::-webkit-scrollbar {
   width: 1px; /* Độ rộng thanh cuộn */
 }
+
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.custom-pagination-left .ant-table-pagination {
+  justify-content: flex-start !important;
+}
+.ant-tabs-nav::before {
+  display: none !important;
+}

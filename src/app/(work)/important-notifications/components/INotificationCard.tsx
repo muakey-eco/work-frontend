@@ -5,35 +5,42 @@ import React from 'react'
 type INotificationCardProps = {
   id?: number
   title?: string
-  description?: string
-  image?: string
+  message?: string
+  thumbnail?: string
 }
 
 const INotificationCard: React.FC<INotificationCardProps> = ({
   id,
   title,
-  description,
-  image,
+  message,
+  thumbnail,
 }) => {
   const router = useRouter()
   return (
     <Card
-      key={id}
       hoverable
-      style={{ width: 252, height: 236 }}
+      className="flex h-full w-full flex-col"
+      // bodyStyle={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
       cover={
-        <img
-          alt="example"
-          src={image}
-          className="h-[120px] w-[252px] object-cover"
-        />
+        <div className="aspect-[252/120] w-full overflow-hidden">
+          <img
+            alt="notification banner"
+            src={thumbnail || 'https://picsum.photos/400/300'}
+            className="h-full w-full object-cover"
+          />
+        </div>
       }
       onClick={() => {
         router.push(`/important-notifications/${id}`)
       }}
     >
-      <p className="line-clamp-1 !text-[16px] font-bold">{title}</p>
-      <p className="line-clamp-2 !text-[14px] text-gray-500">{description}</p>
+      <div className="flex flex-grow flex-col">
+        <p className="line-clamp-1 !text-[16px] !font-[600]">{title}</p>
+        <p
+          className="mt-2 line-clamp-2 !text-[14px] !font-[400] !text-[#00000073]"
+          dangerouslySetInnerHTML={{ __html: message || '' }}
+        />
+      </div>
     </Card>
   )
 }

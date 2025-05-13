@@ -72,9 +72,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
   const [currentStartedAt, setCurrentStartedAt] = useState<dayjs.Dayjs>()
 
-  console.log('currentStartedAt: ', currentStartedAt)
-  console.log('newStartedAt: ', newStartedAt)
-
   const onOk = (value: DatePickerProps['value']) => {}
 
   const activeRef = useRef<any>(null)
@@ -227,7 +224,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
       // Check the time difference between the current time and the task's started_at
       const startedAt = dayjs(activeData?.started_at)
-      console.log('startedAt: ', startedAt)
+
       if (!startedAt.isValid()) {
         message.error('Nhiệm vụ chưa được bắt đầu.')
         return

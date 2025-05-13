@@ -217,6 +217,18 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
 
+      // Nếu là quản trị viên và task chưa được giao, cho phép kéo
+      if (
+        (String(user?.role).toLocaleLowerCase().includes('quản trị') ||
+          String(user?.role)
+            .toLocaleLowerCase()
+            .includes('quản trị cấp cao')) &&
+        !activeData?.account_id
+      ) {
+        moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
+        return
+      }
+
       if (
         !user?.role?.toLocaleLowerCase()?.includes('quản trị') &&
         !activeData?.started_at
@@ -227,7 +239,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
       // Check the time difference between the current time and the task's started_at
       const startedAt = dayjs(activeData?.started_at)
-      console.log('startedAt: ', startedAt)
+
       if (!startedAt.isValid()) {
         message.error('Nhiệm vụ chưa được bắt đầu.')
         return
@@ -304,16 +316,17 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       task_id: activeData.id,
     })
 
-    if (!activeData.account_id && [1].includes(overIndex)) {
-      toast.error('Nhiệm vụ chưa được giao.')
-      return
-    }
-
     if (!String(user?.role).toLocaleLowerCase().includes('quản trị')) {
       if (activeData.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
         )
+        return
+      }
+    } else {
+      // Nếu là quản trị viên và task chưa được giao, cho phép kéo
+      if (!activeData.account_id) {
+        await handleDrag(e)
         return
       }
     }

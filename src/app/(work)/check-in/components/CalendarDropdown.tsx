@@ -29,7 +29,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
   const { isCurrentMonth, info } = options
 
-  console.log('info', info)
 
   const dropdownRender = () => {
     return (

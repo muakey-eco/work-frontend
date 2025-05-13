@@ -2,6 +2,7 @@ import { Descriptions, DescriptionsProps } from 'antd'
 import React from 'react'
 
 const AssetDescription: React.FC<any> = ({ asset }) => {
+  console.log('asset', asset)
   const items: DescriptionsProps['items'] = [
     {
       key: '1',
@@ -40,7 +41,7 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
                   ) + 1
                 return `${days} ngày`
               })()
-            : 'Không xác định'}
+            : '--'}
         </span>
       ),
     },
@@ -52,7 +53,11 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     {
       key: '6',
       label: 'Giá mua',
-      children: <span className="font-bold">{asset?.price || '--'}</span>,
+      children: (
+        <span className="font-bold">
+          {asset?.price?.toLocaleString() || '--'}
+        </span>
+      ),
     },
     {
       key: '7',
@@ -80,8 +85,12 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     },
     {
       key: '11',
-      label: 'Giá thanh lí',
-      children: <span className="font-bold">{asset?.sell_price || '--'}</span>,
+      label: 'Giá thanh lý',
+      children: (
+        <span className="font-bold">
+          {asset?.sell_price?.toLocaleString() || '--'}
+        </span>
+      ),
     },
     {
       key: '12',
@@ -92,7 +101,7 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     },
     {
       key: '13',
-      label: 'Ghi chú',
+      label: 'Mô tả',
       children: (
         <span
           className="font-bold"

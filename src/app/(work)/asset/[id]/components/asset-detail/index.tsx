@@ -13,6 +13,7 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
+  console.log('asset', asset)
 
   return (
     <Card className="h-fit gap-4 p-6">
@@ -33,7 +34,7 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
               {asset?.name}
             </p>
             <div className="flex items-center gap-2">
-              <p>{asset?.brand || '--'}</p>
+              <p>{asset?.code || '--'}</p>
               <StatusTag
                 status={
                   asset?.status as

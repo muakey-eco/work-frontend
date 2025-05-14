@@ -1,7 +1,8 @@
 'use client'
 
-import { Form, FormInstance, FormProps, Modal, ModalProps } from 'antd'
+import { App, Form, FormInstance, FormProps, Modal, ModalProps } from 'antd'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { addDepartmentSalaryRequest } from '../../action'
 import JobProgressDecisionInformationFormCard from './components/job-progress-decision-information-form-card'
 import JobProgressInfomationFormCard from './components/job-progress-infomation-form-card'
 import JobProgressNewInfomationFormCard from './components/job-progress-new-infomation-form-card'
@@ -20,11 +21,13 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [basicSalary, setBasicSalary] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
   const [salaries, setSalaries] = useState({
     travel_allowance: 0,
     eat_allowance: 0,
     kpi: 0,
   })
+  const { message } = App.useApp()
 
   const formRef = useRef<FormInstance>(null)
 
@@ -42,15 +45,8 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
   }, [])
 
   useEffect(() => {
-    formRef.current?.setFieldsValue({
-      insurance: Number(basicSalary * 0.215),
-      insurance_employee: Number(basicSalary * 0.105),
-    })
-  }, [basicSalary])
-
-  useEffect(() => {
-    const insurance = Number(basicSalary * 0.215)
-    const insurance_employee = Number(basicSalary * 0.105)
+    const insurance = 1161000
+    const insurance_employee = 567000
     const total_salary =
       basicSalary +
       salaries.travel_allowance +
@@ -65,8 +61,27 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
     })
   }, [salaries, basicSalary])
 
-  const handleSubmit = (values: any) => {
-    console.log(values)
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true)
+      const values = await formRef.current?.validateFields()
+
+      const formData = {
+        ...values,
+        account_id: initialValues?.id,
+      }
+      const res = await addDepartmentSalaryRequest(formData)
+      if (res) {
+        message.success('Tạo mới quyết định bổ nhiệm, tăng lương thành công!')
+        setOpen(false)
+        formRef.current?.resetFields()
+      }
+    } catch (error: any) {
+      console.error('Form validation failed:', error)
+      message.error(error?.message || 'Có lỗi xảy ra, vui lòng thử lại')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -88,6 +103,7 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
         cancelText="Hủy"
         okButtonProps={{
           htmlType: 'submit',
+          loading: isLoading,
         }}
         destroyOnClose
         modalRender={(dom) => (
@@ -100,6 +116,7 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
             }}
             onValuesChange={handleSalariesChange}
             ref={formRef}
+            // onFinish={handleSubmit}
             {...formProps}
           >
             {dom}

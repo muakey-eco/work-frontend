@@ -13,7 +13,10 @@ const JobProgressNewInfomationFormCard: React.FC<
     formatter: formatCurrency,
     parser: (value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number,
   }
-
+  const DISABLED_SALARY_FIELDS = {
+    insurance: 1161000,
+    insurance_employee: 567000,
+  }
   return (
     <Card>
       <div className="mb-[16px] text-[14px] leading-[22px] font-[600]">
@@ -73,6 +76,7 @@ const JobProgressNewInfomationFormCard: React.FC<
           className="mb-0! flex-1"
           label="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
           name="insurance"
+          initialValue={DISABLED_SALARY_FIELDS.insurance}
         >
           <InputNumber
             className="w-full!"
@@ -86,6 +90,7 @@ const JobProgressNewInfomationFormCard: React.FC<
           className="mb-0! flex-1"
           label="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
           name="insurance_employee"
+          initialValue={DISABLED_SALARY_FIELDS.insurance_employee}
         >
           <InputNumber
             className="w-full!"

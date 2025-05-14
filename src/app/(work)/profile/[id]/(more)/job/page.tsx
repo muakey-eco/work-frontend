@@ -16,6 +16,7 @@ const JobPage: React.FC<{ params: { id: string } }> = async ({ params }) => {
       <JobProgressCard
         title="Lịch sử phát triển sự nghiệp"
         data={userAccount}
+        id={params.id}
       />
     </div>
   )

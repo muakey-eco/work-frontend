@@ -13,12 +13,14 @@ export type JobProgressCardProps = {
   title?: string
   data?: any
   extra?: React.ReactNode
+  id?: string
 }
 
 const JobProgressCard: React.FC<JobProgressCardProps> = ({
   title,
   data,
   extra,
+  id,
 }) => {
   const {
     job_position,
@@ -64,6 +66,7 @@ const JobProgressCard: React.FC<JobProgressCardProps> = ({
               position,
               personnel_class,
               department_name,
+              id,
             }}
           >
             <Button icon={<PlusOutlined />} type="primary">

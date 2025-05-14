@@ -6,15 +6,16 @@ import DepartmentItem from '../department-item'
 import DepartmentListSkeleton from './DepartmentListSkeleton'
 
 const DepartmentList: React.FC<{
+  me?: any
   options?: any
-}> = async ({ options }) => {
+}> = async ({ me, options }) => {
   const departments = await getDepartments()
 
   return (
     <Row className="flex items-center" gutter={[24, 24]}>
       {departments?.map((depart: any) => (
         <Col key={depart?.id} span={6}>
-          <DepartmentItem item={depart} options={options} />
+          <DepartmentItem item={depart} options={options} me={me} />
         </Col>
       ))}
     </Row>

@@ -109,6 +109,11 @@ export const getAccounts = async (query?: any) => {
     .then((data) => data)
     .catch(() => [])
 }
+export const getAccountsWithoutQuitWork = async () => {
+  return requestWithAuthorized('accounts?quit_work=true')
+    .then((data) => data)
+    .catch(() => [])
+}
 
 export const getAccountsAsAttendance = async (query?: any) => {
   return requestWithAuthorized(

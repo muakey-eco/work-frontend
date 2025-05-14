@@ -4,21 +4,24 @@ import { randomColor } from '@/libs/utils'
 import { App, Avatar, Dropdown, Tooltip } from 'antd'
 import { useRouter } from 'next/navigation'
 import React from 'react'
-import { deleteDepartmentAction } from '../department-list/action'
 import DepartmentModalForm from '../DepartmentModalForm'
-
+import { deleteDepartmentAction } from '../department-list/action'
 type DepartmentItemProps = {
   item?: any
   options?: any
+  me?: any
 }
 
-const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
-  const { message, modal } = App.useApp()
-  const router = useRouter()
-
+const DepartmentItem: React.FC<DepartmentItemProps> = ({
+  item,
+  options,
+  me,
+}) => {
   const members = options?.accounts?.filter(
     (acc: any) => acc?.type !== 'department',
   )
+  const { modal, message } = App.useApp()
+  const router = useRouter()
 
   const handleDelete = async (id: number) => {
     try {
@@ -40,50 +43,50 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({ item, options }) => {
     <div className="h-auto w-full space-y-[16px] overflow-hidden rounded-[4px] bg-[#fff] p-[16px]">
       <div className="flex items-center justify-between gap-[16px] leading-none">
         <span className="line-clamp-1 text-[16px]">{item?.name}</span>
-        <Dropdown
-          rootClassName="z-50!"
-          trigger={['click']}
-          dropdownRender={() => (
-            <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
-              <DepartmentModalForm
-                action="edit"
-                options={{
-                  id: item?.id,
-                  members,
-                  initialValues: {
-                    name: item?.name,
-                    members: item?.members
-                      ?.filter((mem: any) => mem?.quit_work !== 1)
-                      ?.map((mem: any) => mem?.username),
-                  },
-                }}
-              >
-                <div className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]">
-                  Chỉnh sửa phòng ban
-                </div>
-              </DepartmentModalForm>
-              <div
-                className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
-                onClick={() => {
-                  modal.confirm({
-                    title: 'Xóa phòng ban?',
-                    content: 'Xác nhận xóa phòng ban này?',
-                    onOk: async () => {
-                      await handleDelete(item?.id)
+        {me.role === 'Quản trị cấp cao' && (
+          <Dropdown
+            rootClassName="z-50!"
+            trigger={['click']}
+            dropdownRender={() => (
+              <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
+                <DepartmentModalForm
+                  action="edit"
+                  options={{
+                    id: item?.id,
+                    members,
+                    initialValues: {
+                      name: item?.name,
+                      members: item?.members,
                     },
-                    okText: 'Xóa',
-                  })
-                }}
-              >
-                Xóa phòng ban
+                  }}
+                >
+                  <div className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]">
+                    Chỉnh sửa phòng ban
+                  </div>
+                </DepartmentModalForm>
+                <div
+                  className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Xóa phòng ban?',
+                      content: 'Xác nhận xóa phòng ban này?',
+                      onOk: async () => {
+                        await handleDelete(item?.id)
+                      },
+                      okText: 'Xóa',
+                    })
+                  }}
+                >
+                  Xóa phòng ban
+                </div>
               </div>
+            )}
+          >
+            <div className="cursor-pointer px-[6px] py-[2px] text-[20px] text-[#000]">
+              ··
             </div>
-          )}
-        >
-          <div className="cursor-pointer px-[6px] py-[2px] text-[20px] text-[#000]">
-            ··
-          </div>
-        </Dropdown>
+          </Dropdown>
+        )}
       </div>
       <Avatar.Group className="max-h-[32px] overflow-hidden">
         {item?.members

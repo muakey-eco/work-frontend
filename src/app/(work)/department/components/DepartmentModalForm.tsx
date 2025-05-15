@@ -55,6 +55,7 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
       throw new Error(String(error))
     }
   }
+  console.log('options', options)
 
   return (
     <>
@@ -75,7 +76,12 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
           <Form
             onFinish={handleSubmit}
             layout="vertical"
-            initialValues={options?.initialValues}
+            initialValues={{
+              ...options?.initialValues,
+              members: options?.initialValues?.members?.map(
+                (member: any) => member?.full_name,
+              ),
+            }}
           >
             {dom}
           </Form>
@@ -91,8 +97,8 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
             placeholder="Chọn thành viên"
             mode="multiple"
             options={options?.members?.map((member: any) => ({
+              value: member?.id,
               label: member?.full_name,
-              value: member?.username,
             }))}
             allowClear
           />

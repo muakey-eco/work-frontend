@@ -253,7 +253,6 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
 
   const { message } = App.useApp()
   const [form] = Form.useForm()
-  console.log('user', user)
 
   const list = [
     {

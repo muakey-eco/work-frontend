@@ -5,7 +5,7 @@ import EmployeeTable from './components/employee-table'
 
 const EmployeesPage: React.FC = async () => {
   const views = await getViews()
-  console.log('views', views)
+
   return (
     <>
       <EmployeePageHeader tabs={views} />

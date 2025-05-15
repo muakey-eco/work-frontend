@@ -4,7 +4,7 @@ import { PageHeader } from '@/components'
 import { SettingOutlined } from '@ant-design/icons'
 import { Button, Input } from 'antd'
 import { SearchProps } from 'antd/es/input'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 const { Search } = Input
 type ImportantNotificationHeaderProps = {
   user: any
@@ -13,10 +13,22 @@ type ImportantNotificationHeaderProps = {
 const ImportantNotificationHeader = ({
   user,
 }: ImportantNotificationHeaderProps) => {
-  const onSearch: SearchProps['onSearch'] = (value, _e, info) =>
-    console.log(info?.source, value)
-
+  const searchParams = useSearchParams()
   const router = useRouter()
+
+  const onSearch: SearchProps['onSearch'] = (value, _e, info) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (value) {
+      params.set('search', value)
+    } else {
+      params.delete('search')
+    }
+
+    router.push(`/important-notifications?${params.toString()}`, {
+      scroll: false,
+    })
+  }
 
   return (
     <PageHeader

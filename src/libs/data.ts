@@ -338,6 +338,35 @@ export const getNotifications = async (query?: any) =>
     .then((data) => data)
     .catch(() => [])
 
+export const getImportantNotification = async (query?: any) =>
+  requestWithAuthorized('notices?include=' + new URLSearchParams(query))
+    .then((data) => data)
+    .catch(() => [])
+
+export const getImportantNotificationNotHidden = async (query?: any) =>
+  requestWithAuthorized('notices?' + new URLSearchParams(query))
+    .then((data) => data)
+    .catch(() => [])
+
+export const deleteImportantNotification = async (id: string) =>
+  requestWithAuthorized(`notices/${id}`, {
+    method: 'DELETE',
+  }).then((data) => data)
+
+export const hideImportantNotification = async (id: number, data: any) =>
+  requestWithAuthorized(`notices/${id}`, {
+    method: 'PUT',
+    data: {
+      ...data,
+      is_hidden: true,
+    },
+  }).then((data) => data)
+
+export const getImportantNotificationById = async (id: number) =>
+  requestWithAuthorized(`notices/${id}`)
+    .then((data) => data)
+    .catch(() => [])
+
 export const updateNotification = async (id: number, data: any) =>
   requestWithAuthorized(`notifications/${id}`, {
     method: 'PUT',

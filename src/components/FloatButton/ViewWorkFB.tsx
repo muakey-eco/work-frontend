@@ -83,7 +83,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
                 <span className="text-2xl text-red-500">•</span>
               </div>
               <Link
-                href={`/workflow/${todo?.workflow_id}`}
+                href={`/workflows/${todo?.workflow_id}`}
                 className="!text-[12px]"
               >
                 {todo?.workflow_name}
@@ -98,7 +98,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   )
 
   const popoverContent = (
-    <div className="!h-[664x] !w-[501px] overflow-y-auto !rounded-2xl !pt-5">
+    <div className="!h-[664x] !w-[549px] overflow-y-auto !rounded-2xl !pt-5">
       <div className="flex items-center justify-between px-6">
         <span className="text-lg font-semibold">Nhắc việc</span>
         <Button
@@ -139,17 +139,22 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         overlayInnerStyle={{
           padding: 0,
           borderRadius: 24,
-          width: 501,
+          width: 549,
           marginLeft: -7,
         }}
       >
         <FloatButton
-          icon={<FileDoneOutlined />}
+          icon={<FileDoneOutlined size={24} />}
           type="primary"
-          className="!bottom-8 !left-8"
+          style={{ bottom: 32, left: 35, width: 52, height: 52, margin: 8 }}
           badge={{
             count: todos?.length,
             color: 'red',
+            style: {
+              fontSize: 14,
+              border: 'none',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+            },
           }}
           shape="circle"
         />

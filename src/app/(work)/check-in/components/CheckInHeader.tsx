@@ -72,7 +72,7 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
         </span>
         {type !== 'none' ? (
           type === 'form-request' && (
-            <Link href="?table=request-history">
+            <Link href="request">
               <Button type="primary">Lịch sử yêu cầu</Button>
             </Link>
           )
@@ -89,7 +89,7 @@ const CheckInHeader: React.FC<CheckInHeaderProps> = ({ params, activeKey }) => {
                 'cursor-pointer border-b-[2px] pb-[8px] text-[13px] leading-[17px] transition-all duration-300 ease-in-out hover:text-[#1677ff]',
                 activeKey === item?.key
                   ? '!border-[#1677ff] text-[#1677ff]'
-                  : 'border-transparent text-[#00000E]',
+                  : '!border-[#fff] text-[#00000E]',
               )}
               onClick={() => {
                 router.push(

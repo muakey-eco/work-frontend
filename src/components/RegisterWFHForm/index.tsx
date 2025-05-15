@@ -49,8 +49,6 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
-  const [dateWFH, setDateWFH] = useState<any>(new Date())
-
   const list = [
     {
       label: 'Ngày WFH chưa sử dụng',
@@ -99,6 +97,13 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
       setLoading(false)
       throw new Error(String(error))
     }
+  }
+  if (initialValues?.mode === 'modal') {
+    return (
+      <Form layout="vertical" onFinish={handleSubmit} form={form}>
+        <FormFields />
+      </Form>
+    )
   }
 
   return (

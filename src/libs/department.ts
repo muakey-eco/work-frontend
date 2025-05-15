@@ -28,3 +28,9 @@ export const deleteDepartment = async (id: number) =>
   requestWithAuthorized(`departments/${id}`, {
     method: 'DELETE',
   }).then((data) => data)
+
+export const addDepartmentSalary = async (data: any) =>
+  requestWithAuthorized(`job-positions`, {
+    method: 'POST',
+    data,
+  }).then((data) => data)

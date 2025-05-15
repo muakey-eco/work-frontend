@@ -58,13 +58,14 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
 
   useEffect(() => {
     const el = selectedFieldsRef.current
-    if (!el || selectedFields.length === 0) return
+    if (!el) return
 
-    // Hủy mọi Sortable cũ trước khi tạo mới
+    // Destroy existing Sortable instance if it exists
     if ((el as any)._sortable) {
       ;(el as any)._sortable.destroy()
     }
 
+    // Create new Sortable instance
     const sortable = Sortable.create(el, {
       animation: 150,
       handle: '.drag-handle',
@@ -81,14 +82,14 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       },
     })
 
-    // Lưu reference để có thể destroy sau
+    // Save reference for cleanup
     ;(el as any)._sortable = sortable
 
     return () => {
       sortable.destroy()
       delete (el as any)._sortable
     }
-  }, [selectedFields.length])
+  }, [selectedFields])
 
   //Lọc viewFields theo tên cột
   const filteredViewFields = viewFields
@@ -189,7 +190,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
   }, [open, openAdd])
 
   useEffect(() => {
-    if (action === 'update' && viewId) {
+    if (action === 'update' && viewId && open) {
       const getViewFieldsById = async () => {
         const res = await getViewFieldsByIdAction(viewId)
         setSelectedFields([...res.field_name])
@@ -197,7 +198,8 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       }
       getViewFieldsById()
     }
-  }, [viewId, action])
+  }, [viewId, action, open])
+
   const [form] = Form.useForm()
 
   //Chọn tất cả các cột
@@ -217,6 +219,14 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       return [...prev, ...newFields]
     })
   }
+
+  // Reset form and selected fields when modal closes
+  useEffect(() => {
+    if (!open && !openAdd) {
+      form.resetFields()
+      setSelectedFields([])
+    }
+  }, [open, openAdd])
 
   return (
     <>

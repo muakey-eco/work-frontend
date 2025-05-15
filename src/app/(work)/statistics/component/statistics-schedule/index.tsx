@@ -150,7 +150,9 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
                 'bg-[#fff]': date.date !== options?.currentDate,
               })}
               onClick={() => {
-                router.push(`/statistics?dw=${date.date}`)
+                const searchParams = new URLSearchParams(window.location.search)
+                searchParams.set('dw', date.date)
+                router.push(`/statistics?${searchParams.toString()}`)
               }}
             >
               <StatisticsColHeader

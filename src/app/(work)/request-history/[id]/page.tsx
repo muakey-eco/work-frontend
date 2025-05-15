@@ -103,6 +103,14 @@ const page: React.FC<any> = async (props) => {
           },
         ]
 
+  const updateValue = Object.fromEntries(
+    Object.entries(propose?.new_value || {}).filter(
+      ([_, value]) => value !== null,
+    ),
+  )
+  console.log('propose', propose)
+  console.log('updateValue', updateValue)
+
   const items: any[] = [
     [
       {
@@ -147,9 +155,10 @@ const page: React.FC<any> = async (props) => {
         ]
       : []),
     // Thông tin chỉnh tài khoản
-    ...(propose?.new_value
+
+    ...(updateValue
       ? [
-          Object.entries(propose?.new_value || {}).map(([key, value]) => {
+          Object.entries(updateValue).map(([key, value]) => {
             return {
               key: uniqueId(),
               label: value ? (

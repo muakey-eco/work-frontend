@@ -285,6 +285,12 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     }
 
     const handleAssign = async (id: number) => {
+      const memberIds = members?.map((member: any) => member?.id)
+      if (!memberIds?.includes(id)) {
+        message.error('Người dùng không phải thành viên trong quy trình này.')
+        return
+      }
+
       try {
         const { message: msg, errors } = await editTaskAction(task?.id, {
           account_id: id,
@@ -333,6 +339,12 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     }
 
     const handleAssignWithoutWork = async (id: number) => {
+      const memberIds = members?.map((member: any) => member?.id)
+      if (!memberIds?.includes(id)) {
+        message.error('Người dùng không phải thành viên trong quy trình này.')
+        return
+      }
+
       try {
         const { message: msg, errors } = await assignTaskWithoutWorkAction(
           task?.id,

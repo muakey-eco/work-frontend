@@ -15,6 +15,7 @@ const ignoreProposeCategories = [
   'Đăng ký OT',
   'Đăng ký nghỉ',
   'Sửa giờ vào ra',
+  'Đăng ký WFH',
   'Khác',
 ]
 

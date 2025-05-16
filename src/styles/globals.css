@@ -45,7 +45,7 @@
 
   &::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background-color: rgba(22, 24, 35, 0.06);
+    background-color: #c5c5c5;
   }
 
   &::-webkit-scrollbar-track {
@@ -62,7 +62,7 @@ html *::-webkit-scrollbar {
 
 html *::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background-color: rgba(22, 24, 35, 0.06);
+  background-color: #c5c5c5;
 }
 
 .ql-editor {

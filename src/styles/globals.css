@@ -227,3 +227,14 @@ html *::-webkit-scrollbar-track {
 .ant-tabs-nav::before {
   display: none !important;
 }
+.mention-popup {
+  z-index: 100;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.mention-item {
+  padding: 6px 10px;
+}

@@ -7,6 +7,7 @@ import CodeBlock from '@tiptap/extension-code-block'
 import FontFamily from '@tiptap/extension-font-family'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
+import Mention from '@tiptap/extension-mention'
 import OrderedList from '@tiptap/extension-ordered-list'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
@@ -19,15 +20,22 @@ import {
   useEditor,
 } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { SuggestionKeyDownProps, SuggestionProps } from '@tiptap/suggestion'
 import { App } from 'antd'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import ImageResize from 'tiptap-extension-resize-image'
+import { getAccountsWithoutQuitWorkAction } from '../action'
 import TiptapToolbars from './TiptapToolbars'
 
 type TiptapEditorProps = Omit<EditorContentProps, 'editor' | 'ref'> & {
   content?: Content
   onChange?: (content: string) => void
   showToolbar?: boolean
+}
+
+type MentionUser = {
+  id: string
+  label: string
 }
 
 const TiptapEditor: React.FC<TiptapEditorProps> = ({
@@ -37,6 +45,25 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   ...rest
 }) => {
   const { message } = App.useApp()
+
+  const userCacheRef = useRef<MentionUser[] | null>(null)
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await getAccountsWithoutQuitWorkAction()
+        const userTag = res.map((user: any) => ({
+          id: user.id,
+          label: user.full_name,
+        }))
+        userCacheRef.current = userTag
+      } catch (err) {
+        console.error('Lỗi khi tải danh sách users:', err)
+      }
+    }
+
+    fetchUsers()
+  }, [])
 
   //nén ảnh
   const compressImage = (
@@ -76,8 +103,84 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       reader.readAsDataURL(file)
     })
   }
+
+  const CustomMention = Mention.configure({
+    HTMLAttributes: {
+      class: 'mention bg-blue-100 text-blue-700 px-1 rounded',
+    },
+    suggestion: {
+      char: '@',
+      items: () => {
+        if (!userCacheRef.current) return []
+
+        return userCacheRef.current.filter((user) => user.label.toLowerCase())
+      },
+      render: () => {
+        let popup: HTMLElement
+
+        return {
+          onStart: (props: SuggestionProps) => {
+            popup = document.createElement('div')
+            popup.classList.add('mention-popup')
+            document.body.appendChild(popup)
+            update(props)
+          },
+          onUpdate: (props: SuggestionProps) => {
+            update(props)
+          },
+          onKeyDown: ({ event }: SuggestionKeyDownProps) => {
+            if (event.key === 'Escape') {
+              popup?.remove()
+              return true
+            }
+            return false
+          },
+          onExit: () => {
+            popup?.remove()
+          },
+        }
+
+        function update(props: SuggestionProps) {
+          const { items, command, clientRect } = props
+          const rect = clientRect?.()
+          if (!rect) return
+
+          popup.style.position = 'absolute'
+          popup.style.top = `${rect.top + window.scrollY + 20}px`
+          popup.style.left = `${rect.left + window.scrollX}px`
+          popup.style.zIndex = '50'
+          popup.style.maxHeight = '200px'
+          popup.style.overflowY = 'auto'
+          popup.style.backgroundColor = 'white'
+          popup.style.border = '1px solid #e5e7eb'
+          popup.style.borderRadius = '16px'
+          popup.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)'
+          popup.style.minWidth = '200px'
+          popup.innerHTML = ''
+
+          if (!items.length) {
+            const el = document.createElement('div')
+            el.className = 'mention-item p-1 text-gray-500'
+            el.innerText = 'Không tìm thấy người dùng'
+            popup.appendChild(el)
+            return
+          }
+
+          items.forEach((item: MentionUser) => {
+            const el = document.createElement('div')
+            el.className = 'mention-item p-1 hover:bg-gray-200 cursor-pointer'
+            el.innerText = item.label
+            el.onclick = () => command(item)
+            popup.appendChild(el)
+          })
+        }
+      },
+    },
+  })
+
   const editor = useEditor({
     extensions: [
+      CustomMention,
       StarterKit.configure(),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -116,7 +219,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         linkOnPaste: true,
         isAllowedUri: (url, ctx) => {
           try {
-            const cleanUrl = url.replace(/\\/g, '');
+            const cleanUrl = url.replace(/\\/g, '')
 
             const parsedUrl = cleanUrl.includes(':')
               ? new URL(cleanUrl)
@@ -260,7 +363,6 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       }
     },
   })
-
   return (
     <div>
       {showToolbar && <TiptapToolbars editor={editor} />}

@@ -15,6 +15,7 @@ import {
   Space,
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -328,40 +329,14 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
     setTimeOff(total)
   }, [timestamps])
 
-  if (initMode === 'modal') {
-    return (
-      <Form
-        layout="vertical"
-        onFinish={handleSubmit}
-        onValuesChange={(_, { timestamps }) => {
-          setTimestamps(timestamps[0])
-        }}
-        form={form}
-        initialValues={{
-          type: 'Nghỉ không hưởng lương',
-          timestamps: [
-            {
-              isDefault: true,
-              startDate: dayjs(restInitialValues?.date),
-            },
-          ],
-        }}
-      >
-        <FormFields
-          mode={mode}
-          timeOff={timeOff}
-          onModeChange={setMode}
-          initialValues={{
-            startDate: restInitialValues?.date,
-          }}
-        />
-      </Form>
-    )
-  }
-
   return (
     <>
-      <div className="flex items-center rounded-[16px] bg-[#fff] p-[24px]">
+      <div
+        className={clsx(
+          'flex items-center rounded-[16px] bg-[#fff] p-[24px]',
+          initialValues?.mode === 'modal' && 'border border-[#E0E0E0]',
+        )}
+      >
         {list.map((l: any, index) => (
           <div key={index} className="flex-1 text-center">
             <div className="mb-[4px] text-[14px] leading-[22px] text-[#00000073]">
@@ -372,7 +347,12 @@ const RegisterTimeOffForm: React.FC<RegisterTimeOffFormProps> = ({
         ))}
       </div>
 
-      <div className="mt-[16px] rounded-[16px] bg-[#fff] p-[16px]">
+      <div
+        className={clsx(
+          'mt-[16px] rounded-[16px] bg-[#fff]',
+          initialValues?.mode !== 'modal' && 'p-[16px]',
+        )}
+      >
         <Form
           layout="vertical"
           onFinish={handleSubmit}

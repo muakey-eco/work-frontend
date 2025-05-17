@@ -1,7 +1,7 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { Button, Form } from 'antd'
+import { Button, Form, Modal } from 'antd'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -19,6 +19,8 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const [value, setValue] = useState(defaultValue || '')
   const [isEdit, setIsEdit] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -41,6 +43,14 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)
+    }
+  }
+
+  const handleImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+    if (target.tagName === 'IMG') {
+      setPreviewImage(target.getAttribute('src') || '')
+      setPreviewOpen(true)
     }
   }
 
@@ -88,8 +98,25 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
             value ? 'text-[#333]' : 'text-[#999]',
           )}
           dangerouslySetInnerHTML={{ __html: value || 'Không có mô tả' }}
+          onClick={handleImageClick}
         />
       )}
+
+      <Modal
+        open={previewOpen}
+        footer={null}
+        onCancel={() => setPreviewOpen(false)}
+        width="95%"
+        height="90%"
+        centered
+        closable={false}
+      >
+        <img
+          alt="preview"
+          style={{ maxWidth: '100%', borderRadius: '8px' }}
+          src={previewImage}
+        />
+      </Modal>
     </div>
   )
 }

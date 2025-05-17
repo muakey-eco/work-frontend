@@ -222,7 +222,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
           pageSizeOptions: [5, 10, 15, 20],
           position: ['bottomLeft'],
           current: current,
-          total: hasStatusQuery ? requests?.length : proposes?.total,
+          total: proposes?.total,
           showTotal: (total) => `Total ${total} items`,
           showSizeChanger: true,
           showQuickJumper: true,

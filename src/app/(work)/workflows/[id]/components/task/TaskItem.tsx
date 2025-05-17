@@ -668,7 +668,8 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 )}
               </div>
             ) : (
-              isCompleted && (
+              isCompleted &&
+              task?.link_youtube !== null && (
                 <TaskItemStatistics
                   view={abbreviateNumber(task?.view_count)}
                   like={abbreviateNumber(task?.like_count)}

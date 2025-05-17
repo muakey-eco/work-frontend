@@ -1,6 +1,6 @@
 'use client'
 
-import { renameKeys } from '@/lib/utils'
+import { convertToSlug, renameKeys } from '@/lib/utils'
 import { useAsyncEffect } from '@/libs/hook'
 import {
   CheckOutlined,
@@ -127,7 +127,7 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
     const convertFieldNames = renameKeys(fieldNames)
 
     try {
-      const { message: msg, errors } = await (action === 'create'
+      const response = await (action === 'create'
         ? createViewAction({
             ...values,
             field_name: convertFieldNames,
@@ -137,8 +137,8 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
             field_name: convertFieldNames,
           }))
 
-      if (errors) {
-        message.error(msg)
+      if (response.errors) {
+        message.error(response.message)
         setLoading(false)
         return
       }
@@ -152,6 +152,11 @@ const ViewModalForm: React.FC<ViewModalFormProps> = ({
       setLoading(false)
       setSelectedFields([])
       router.refresh()
+
+      // chuyển hướng đến view vừa tạo
+      if (action === 'create') {
+        router.push(`/employees?view=${convertToSlug(values.name)}`)
+      }
     } catch (error) {
       setLoading(false)
       throw new Error(String(error))

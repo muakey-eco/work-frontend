@@ -77,3 +77,8 @@ export const updateAssetCategory = async (id: number, data: any) => {
     data,
   })
 }
+export const deleteAsset = async (id: number) => {
+  return await requestWithAuthorized(`assets/${id}`, {
+    method: 'DELETE',
+  })
+}

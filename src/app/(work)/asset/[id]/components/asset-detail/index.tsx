@@ -1,17 +1,21 @@
 'use client'
 
-import { EditOutlined } from '@ant-design/icons'
-import { Button, Card } from 'antd'
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { App, Button, Card } from 'antd'
 import React, { useState } from 'react'
 import AssetModalForm from '../../../components/asset-modal-form'
+import { deleteAssetAction } from '../../action'
 import StatusTag from '../status-tag'
 import AssetDescription from './AssetDescription'
-
 const AssetDetail: React.FC<any> = ({ asset }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { modal } = App.useApp()
 
   const handleModalClose = () => {
     setIsModalOpen(false)
+  }
+  const handleDeleteAsset = async () => {
+    await deleteAssetAction(asset.id)
   }
 
   return (
@@ -47,18 +51,44 @@ const AssetDetail: React.FC<any> = ({ asset }) => {
             </div>
           </div>
         </div>
-        <AssetModalForm
-          title="Chỉnh sửa tài sản"
-          open={isModalOpen}
-          onSuccess={handleModalClose}
-          onCancel={handleModalClose}
-          initialValues={asset}
-          action="edit"
-        >
-          <Button onClick={() => setIsModalOpen(true)}>
-            <EditOutlined /> Chỉnh sửa
+        <div className="flex gap-2">
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              modal.confirm({
+                okText: 'Xóa',
+                cancelText: 'Huỷ',
+                closable: true,
+                title: 'Xóa tài sản',
+                cancelButtonProps: {
+                  danger: true,
+                },
+                content: (
+                  <p>
+                    Bạn có chắc chắn muốn xóa tài sản <b>{asset?.name}</b>{' '}
+                    không?
+                  </p>
+                ),
+                onOk: handleDeleteAsset,
+              })
+            }}
+          >
+            Xóa tài sản
           </Button>
-        </AssetModalForm>
+          <AssetModalForm
+            title="Chỉnh sửa tài sản"
+            open={isModalOpen}
+            onSuccess={handleModalClose}
+            onCancel={handleModalClose}
+            initialValues={asset}
+            action="edit"
+          >
+            <Button onClick={() => setIsModalOpen(true)}>
+              <EditOutlined /> Chỉnh sửa
+            </Button>
+          </AssetModalForm>
+        </div>
       </div>
       <AssetDescription asset={asset} />
     </Card>

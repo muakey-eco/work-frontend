@@ -16,6 +16,7 @@ import {
   editAccount,
   editTask,
   getAccounts,
+  getAccountsWithoutQuitWork,
   getMe,
   getTaskHistories,
   uploadImage,
@@ -176,4 +177,7 @@ export const getTodosAction = async (query?: any) => {
 
 export const getNotificationsAction = async () => {
   return await getNotifications()
+}
+export const getAccountsWithoutQuitWorkAction = async () => {
+  return await getAccountsWithoutQuitWork()
 }

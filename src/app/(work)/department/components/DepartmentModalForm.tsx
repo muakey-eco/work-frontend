@@ -55,7 +55,6 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
       throw new Error(String(error))
     }
   }
-  console.log('options', options)
 
   return (
     <>

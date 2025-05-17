@@ -108,8 +108,6 @@ const page: React.FC<any> = async (props) => {
       ([_, value]) => value !== null,
     ),
   )
-  console.log('propose', propose)
-  console.log('updateValue', updateValue)
 
   const items: any[] = [
     [

@@ -103,7 +103,6 @@ const NotificationItem = ({
 const ViewNotificationFB: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [importantNotifications, setImportantNotifications] = useState<any>([])
-  console.log('importantNotifications', importantNotifications)
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [notificationsWithNotRead, setNotificationsWithNotRead] =

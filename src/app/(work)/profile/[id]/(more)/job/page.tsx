@@ -1,11 +1,18 @@
 import { getUserAccount } from '@/libs/data'
-import React from 'react'
 import JobInfomationCard from './components/job-infomation-card'
 import JobProgressCard from './components/job-progress-card'
 import JobSalaryCard from './components/job-salary-card'
 
-const JobPage: React.FC<{ params: { id: string } }> = async ({ params }) => {
-  const userAccount = await getUserAccount(Number(params.id))
+type Props = {
+  params: Promise<{
+    id: string
+  }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+const JobPage = async ({ params }: Props) => {
+  const resolvedParams = await params
+  const userAccount = await getUserAccount(Number(resolvedParams.id))
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
@@ -16,7 +23,7 @@ const JobPage: React.FC<{ params: { id: string } }> = async ({ params }) => {
       <JobProgressCard
         title="Lịch sử phát triển sự nghiệp"
         data={userAccount}
-        id={params.id}
+        id={resolvedParams.id}
       />
     </div>
   )

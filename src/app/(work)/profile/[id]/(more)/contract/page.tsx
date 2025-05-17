@@ -3,10 +3,11 @@ import React from 'react'
 import ContractCard from './components/contract-card'
 import ContractDocumentCard from './components/contract-document-card'
 
-const ContractPage: React.FC<{ params: { id: string } }> = async ({
+const ContractPage: React.FC<{ params: Promise<{ id: string }> }> = async ({
   params,
 }) => {
-  const user = await getUserAccount(Number(params.id))
+  const { id } = await params
+  const user = await getUserAccount(Number(id))
 
   return (
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">

@@ -8,12 +8,14 @@ import ProfileWorkHistoryCard from '../components/profile-work-history-card'
 import ProfileMoreLayout from '../components/ProfileLayout'
 import { getAccountByIdAction } from './(more)/action'
 
-export default async function ProfilePage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const { id } = params
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function ProfilePage({ params }: Props) {
+  const resolvedParams = await params
+  const { id } = resolvedParams
 
   let user = await getMe({ include: 'profile' })
 

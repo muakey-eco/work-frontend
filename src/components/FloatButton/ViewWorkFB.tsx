@@ -29,7 +29,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   }
 
   const reminderList = (
-    <div className="!h-[664px] overflow-y-auto">
+    <div className="scrollbar-hide !h-[664px] overflow-y-auto">
       {todos.length === 0 ? (
         <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
           Không có việc nào
@@ -38,21 +38,25 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         todos.map((todo: any, index: number) => (
           <div
             key={todo.id}
-            className={
-              index === 0
-                ? 'border-b border-gray-200 pb-2'
-                : 'border-b border-gray-200 py-2'
-            }
+            className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"
           >
-            <div className="!text-[14px] font-bold">{todo?.name}</div>
-            <Link
-              href={`/workflow/${todo?.workflow_id}`}
-              className="!text-[12px]"
-            >
-              {todo?.workflow_name}
-            </Link>
-            <div className="!text-[12px] text-gray-400">
-              {dayjs(todo?.created_at).format('HH:mm - DD/MM/YYYY')}
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <p className="!line-clamp-1 text-[14px] font-[600]">
+                  {todo?.name}
+                </p>
+              </div>
+              <Link
+                href={`/workflow/${todo?.workflow_id}`}
+                className="!line-clamp-1 text-[12px] text-[#555]"
+              >
+                {todo?.workflow_name}
+              </Link>
+              <div className="flex items-center justify-between !text-[12px] text-[#555]">
+                <span>
+                  {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
+                </span>
+              </div>
             </div>
           </div>
         ))
@@ -61,7 +65,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   )
 
   const overdueList = (
-    <div className="!h-[664px] overflow-y-auto">
+    <div className="scrollbar-hide !h-[664px] overflow-y-auto">
       {todos.filter((todo: any) => todo?.status === 'overdue').length === 0 ? (
         <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
           Không có việc nào
@@ -69,27 +73,29 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
       ) : (
         todos
           .filter((todo: any) => todo?.status === 'overdue')
-          .map((todo: any, index: number) => (
+          .map((todo: any) => (
             <div
               key={todo.id}
-              className={
-                index === 0
-                  ? 'border-b border-gray-200 pb-2'
-                  : 'border-b border-gray-200 py-2'
-              }
+              className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"
             >
-              <div className="flex items-center justify-between !text-[14px] font-bold">
-                {todo?.name}
-                <span className="text-2xl text-red-500">•</span>
-              </div>
-              <Link
-                href={`/workflows/${todo?.workflow_id}`}
-                className="!text-[12px]"
-              >
-                {todo?.workflow_name}
-              </Link>
-              <div className="!text-[12px] text-gray-400">
-                {dayjs(todo?.created_at).format('HH:mm - DD/MM/YYYY')}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="!line-clamp-1 text-[14px] font-[600]">
+                    {todo?.name}
+                  </p>
+                  <div className="size-[10px] rounded-full bg-[#ff4d4f]" />
+                </div>
+                <Link
+                  href={`/workflows/${todo?.workflow_id}`}
+                  className="!line-clamp-1 text-[12px] text-[#555]"
+                >
+                  {todo?.workflow_name}
+                </Link>
+                <div className="flex items-center justify-between !text-[12px] text-[#555]">
+                  <span>
+                    {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
+                  </span>
+                </div>
               </div>
             </div>
           ))
@@ -98,21 +104,31 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   )
 
   const popoverContent = (
-    <div className="!h-[664x] !w-[549px] overflow-y-auto !rounded-2xl !pt-5">
+    <div className="!z-1000 !h-[664x] !w-[549px] overflow-y-auto !rounded-3xl !pt-5">
       <div className="flex items-center justify-between px-6">
         <span className="text-lg font-semibold">Nhắc việc</span>
         <Button
           type="text"
           onClick={handleClose}
-          className="cursor-pointer text-2xl text-gray-400 hover:text-gray-600"
+          className="cursor-pointer items-center text-2xl text-gray-400 hover:text-gray-600"
           style={{ lineHeight: 1 }}
           icon={<CloseOutlined />}
         />
       </div>
 
       <Tabs
-        style={{ paddingLeft: '24px', paddingRight: '24px' }}
         defaultActiveKey="1"
+        tabBarStyle={{
+          paddingLeft: 24,
+          paddingRight: 24,
+          marginBottom: 0,
+          fontSize: 14,
+        }}
+        tabBarExtraContent={{
+          right: (
+            <div className="absolute bottom-0 left-0 h-[1px] w-full bg-[#f0f0f0]" />
+          ),
+        }}
         items={[
           {
             key: '1',

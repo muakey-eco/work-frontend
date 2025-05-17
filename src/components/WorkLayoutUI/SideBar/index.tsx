@@ -279,7 +279,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           <Search />
         </div>
         <Navigation
-          className="no-scroll mt-[24px] h-[calc(100vh-96px)] overflow-auto pb-[40px]"
+          className="no-scroll mt-[24px] h-[calc(100vh-215px)] overflow-auto pb-[40px]"
           items={navigationItems}
         />
       </div>

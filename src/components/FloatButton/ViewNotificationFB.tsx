@@ -28,10 +28,10 @@ type Notification = {
   }
 }
 
-const groupByDate = (notifications: Notification[]) => {
+const groupByDate = (notifications: Notification[] = []) => {
   const groups: Record<string, Notification[]> = {}
 
-  notifications.forEach((item) => {
+  notifications?.forEach((item) => {
     const dateKey = dayjs(item.created_at).format('DD/MM/YYYY')
     if (!groups[dateKey]) groups[dateKey] = []
     groups[dateKey].push(item)
@@ -215,23 +215,28 @@ const ViewNotificationFB: React.FC = () => {
     </div>
   )
 
-  const allListData = {
+  const allListData = Object.entries({
     ...groupedNotifications,
     ...groupedImportantNotifications,
-  }
-  const groupedAllNotifications = useMemo(
-    () => groupByDate(Object.values(allListData).flat()),
-    [allListData],
+  }).reduce(
+    (acc, [date]) => {
+      acc[date] = [
+        ...(groupedNotifications[date] || []),
+        ...(groupedImportantNotifications[date] || []),
+      ]
+      return acc
+    },
+    {} as Record<string, Notification[]>,
   )
 
   const allList = (
     <div className="scrollbar-hide z-100 !h-[664px] overflow-y-auto">
-      {Object.keys(groupedAllNotifications).length === 0 ? (
+      {Object.keys(allListData).length === 0 ? (
         <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
           Không có thông báo nào
         </div>
       ) : (
-        Object.entries(groupedAllNotifications).map(([date, items]) => (
+        Object.entries(allListData).map(([date, items]) => (
           <div key={date}>
             <div className="flex items-center py-2 ps-7 pe-6 !text-[12px] text-gray-500">
               <span className="whitespace-nowrap">{date}</span>
@@ -273,6 +278,11 @@ const ViewNotificationFB: React.FC = () => {
           paddingRight: 24,
           marginBottom: 0,
           fontSize: 14,
+        }}
+        tabBarExtraContent={{
+          right: (
+            <div className="absolute bottom-0 left-0 h-[1px] w-full bg-[#f0f0f0]" />
+          ),
         }}
         items={[
           {

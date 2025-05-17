@@ -3,6 +3,7 @@
 import { addProposeAction } from '@/app/(work)/check-in/components/checkin-form/action'
 import { Alert, App, Button, DatePicker, Form, Input } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -98,17 +99,15 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
       throw new Error(String(error))
     }
   }
-  if (initialValues?.mode === 'modal') {
-    return (
-      <Form layout="vertical" onFinish={handleSubmit} form={form}>
-        <FormFields />
-      </Form>
-    )
-  }
 
   return (
     <>
-      <div className="flex items-center rounded-[16px] bg-[#fff] p-[24px]">
+      <div
+        className={clsx(
+          'flex items-center rounded-[16px] bg-[#fff] p-[24px]',
+          initialValues?.mode === 'modal' && 'border border-[#E0E0E0]',
+        )}
+      >
         {list.map((l: any, index) => (
           <div key={index} className="flex-1 text-center">
             <div className="mb-[4px] text-[14px] leading-[22px] text-[#00000073]">
@@ -119,7 +118,12 @@ const RegisterWFHForm: React.FC<RegisterWFHFormProps> = ({ initialValues }) => {
         ))}
       </div>
 
-      <div className="mt-[16px] rounded-[16px] bg-[#fff] p-[16px]">
+      <div
+        className={clsx(
+          'mt-[16px] rounded-[16px] bg-[#fff]',
+          initialValues?.mode !== 'modal' && 'p-[16px]',
+        )}
+      >
         <Form layout="vertical" onFinish={handleSubmit} form={form}>
           <FormFields />
           <Form.Item className="mt-[24px] mb-0!">

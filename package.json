@@ -41,6 +41,7 @@
     "@tiptap/react": "^2.11.2",
     "@tiptap/starter-kit": "^2.11.2",
     "antd": "^5.22.6",
+    "antd-img-crop": "^4.25.0",
     "antd-style": "^3.7.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -52,7 +52,7 @@ const NavigationSubmenu: React.FC<{
               key={child?.key ?? uniqueId()}
               item={child}
               active={active}
-              defaultOpen={
+              open={
                 child.expand ||
                 urlMatch(
                   child.children || [],

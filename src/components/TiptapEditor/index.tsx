@@ -219,11 +219,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         linkOnPaste: true,
         isAllowedUri: (url, ctx) => {
           try {
-            const cleanUrl = url.replace(/\\/g, '')
-
-            const parsedUrl = cleanUrl.includes(':')
-              ? new URL(cleanUrl)
-              : new URL(`${ctx.defaultProtocol}://${cleanUrl}`)
+            const parsedUrl = url.includes(':')
+              ? new URL(url)
+              : new URL(`${ctx.defaultProtocol}://${url}`)
 
             if (!ctx.defaultValidate(parsedUrl.href)) {
               return false
@@ -294,7 +292,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML())
+      let input = editor.getHTML()
+      const result = input.replace(/(https?:\/\/[^\s<>"']*?)\\(?=[&=?])/g, '$1')
+      onChange?.(result)
     },
     immediatelyRender: false,
     editorProps: {

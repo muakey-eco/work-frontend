@@ -13,6 +13,7 @@ import { Avatar, Badge, Card, message, Progress } from 'antd'
 import React, { useMemo, useRef, useState } from 'react'
 import animation from './lotties/gold-coin-animation.json'
 
+import AvatarConfig from '@/components/AvatarConfig'
 import { uploadFiles } from '@/libs/data'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
@@ -106,39 +107,31 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
       }}
     >
       <div className="flex justify-center">
-        <Badge
-          count={
-            <EditOutlined
-              className="!rounded-full !border-2 !border-white !bg-[#1677FF] !p-[6px] !text-[14px] !text-[#fff]"
-              onClick={handleIconClick}
-            />
-          }
-          offset={[-15, 85]} // điều chỉnh vị trí icon
-          style={{ cursor: 'pointer' }}
-        >
-          <Avatar
-            className="rounded-full! text-[16px]!"
-            size={98}
-            shape="circle"
-            src={avatar}
-            style={{
-              backgroundColor: randomColor(String(user?.full_name)),
-              fontSize: 30,
-            }}
-            alt={user?.full_name}
+        <AvatarConfig user={user}>
+          <Badge
+            count={
+              <EditOutlined className="!rounded-full !border-2 !border-white !bg-[#1677FF] !p-[6px] !text-[14px] !text-[#fff]" />
+            }
+            offset={[-15, 85]} // điều chỉnh vị trí icon
+            style={{ cursor: 'pointer' }}
           >
-            <p className="text-3xl">
-              {String(user?.full_name).charAt(0).toLocaleUpperCase()}
-            </p>
-          </Avatar>{' '}
-        </Badge>
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          style={{ display: 'none' }}
-        />
+            <Avatar
+              className="rounded-full! text-[16px]!"
+              size={98}
+              shape="circle"
+              src={user?.avatar}
+              style={{
+                backgroundColor: randomColor(String(user?.full_name)),
+                fontSize: 30,
+                pointerEvents: 'none',
+              }}
+            >
+              <p className="text-3xl">
+                {String(user?.full_name).charAt(0).toLocaleUpperCase()}
+              </p>
+            </Avatar>{' '}
+          </Badge>
+        </AvatarConfig>
       </div>
 
       <div className="text-center">

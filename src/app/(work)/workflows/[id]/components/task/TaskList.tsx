@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable'
-import { ConfigProvider, List, ListProps } from 'antd'
-import { cloneDeep } from 'lodash'
-import React, { useCallback, useContext } from 'react'
+import { List, ListProps } from 'antd'
+import React, { memo, useCallback, useContext } from 'react'
 import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
 import { StageContext } from '../stage'
@@ -18,90 +13,58 @@ type TaskListProps = ListProps<any> & {
   userId?: number
   options?: any
   tasks?: any[]
+  loading?: boolean
 }
 
-const TaskList: React.FC<TaskListProps> = ({
-  stageId,
-  userId,
-  options,
-  tasks,
-  ...rest
-}) => {
-  const { members } = useContext(StageContext)
-  const { stages, setStages } = useContext(WorkflowContext)
+const TaskList: React.FC<TaskListProps> = memo(
+  ({ tasks, stageId, loading, userId, options }) => {
+    const { members, failedStageId } = useContext(StageContext)
+    const { stages, setStages } = useContext(WorkflowContext)
 
-  const currentStage = stages?.find((s: any) => s?.id === stageId)
+    const currentStage = stages?.find((s: any) => s?.id === stageId)
 
-  const sortItems = tasks ? tasks.map((t: any) => t.id) : []
+    const sortItems = tasks ? tasks.map((t: any) => t.id) : []
 
-  const handleDelete = useCallback(
-    async (id: number) => {
+    const handleDelete = useCallback(async (id: number) => {
       try {
-        const { error, success } = await deleteTaskAction(id || 0)
+        const { message, errors } = await deleteTaskAction(id)
 
-        if (error) {
-          toast.error(error)
-
+        if (errors) {
+          toast.error(message)
           return
         }
 
-        setStages((prevStages: any[]) => {
-          const newStages = cloneDeep(prevStages)
-
-          return newStages?.map((s: any) => {
-            if (String(s?.id).includes(String(stageId))) {
-              return {
-                ...s,
-                tasks: s?.tasks?.filter((task: any) => task?.id !== id),
-              }
-            }
-
-            return s
-          })
-        })
-        toast.success(success)
-      } catch (error: any) {
-        throw new Error(error)
+        toast.success('Đã xóa nhiệm vụ.')
+      } catch (error) {
+        throw new Error()
       }
-    },
-    [setStages, stageId],
-  )
+    }, [])
 
-  return (
-    <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
-      <ConfigProvider
-        theme={{
-          components: {
-            List: {
-              emptyTextPadding: 0,
-            },
-          },
+    return (
+      <List
+        className="space-y-[8px]"
+        dataSource={tasks}
+        loading={loading}
+        renderItem={(task) => (
+          <div key={task?.id} className="relative">
+            <TaskItem
+              task={task}
+              isCompleted={currentStage?.index === 1}
+              isFailed={currentStage?.index === 0}
+              members={members}
+              expired={currentStage?.expired_after_hours}
+              userId={userId}
+              options={options}
+              onDelete={() => handleDelete(task?.id)}
+            />
+          </div>
+        )}
+        locale={{
+          emptyText: <></>,
         }}
-      >
-        <List
-          dataSource={tasks}
-          renderItem={(task: any) => (
-            <>
-              <TaskItem
-                task={task}
-                isCompleted={currentStage?.index === 1}
-                isFailed={currentStage?.index === 0}
-                members={members}
-                expired={currentStage?.expired_after_hours}
-                onDelete={() => handleDelete(task?.id)}
-                userId={userId}
-                options={options}
-              />
-            </>
-          )}
-          locale={{
-            emptyText: <></>,
-          }}
-          {...rest}
-        />
-      </ConfigProvider>
-    </SortableContext>
-  )
-}
+      />
+    )
+  },
+)
 
 export default TaskList

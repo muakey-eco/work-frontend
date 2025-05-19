@@ -49,17 +49,21 @@ const StageColumn: React.FC<StageColumnProps> = memo(
     const { setStages } = useContext(WorkflowStageContext)
 
     const params = useParams()
-    const { attributes, setNodeRef, transform, transition } = useSortable({
-      id: stage?.id,
-      data: stage,
-    })
+    const { attributes, setNodeRef, transform, transition, isOver, over } =
+      useSortable({
+        id: stage?.id,
+        data: stage,
+      })
 
     const StageColumnStyle: React.CSSProperties = useMemo(
       () => ({
         transform: CSS.Translate.toString(transform),
-        transition,
+        transition: transition || 'all 150ms ease',
+        border: isOver ? '2px dashed #1890ff' : '1px solid #eee',
+        background: isOver ? 'rgba(24, 144, 255, 0.05)' : undefined,
+        willChange: 'transform, border, background',
       }),
-      [transform, transition],
+      [transform, transition, isOver],
     )
 
     const handleRefresh = useCallback(async () => {

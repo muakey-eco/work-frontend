@@ -8,6 +8,7 @@ import {
   randomColor,
 } from '@/libs/utils'
 import { EllipsisOutlined, ExclamationCircleFilled } from '@ant-design/icons'
+import { DragOverlay } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
@@ -67,6 +68,15 @@ const useStyle = createStyles(({ css }) => ({
       }
     }
   `,
+  dragOverlay: css`
+    opacity: 0.5;
+    background: #f0f0f0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1000;
+    transform: rotate(2deg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  `,
 }))
 
 const TaskItem: React.FC<TaskItemProps> = memo(
@@ -98,7 +108,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
     const now = new Date()
     const daysFromNow = Math.abs(dayjs(task?.date_posted).diff(now, 'day'))
-    const { stages, role } = options
+    const { stages, role } = options || {}
 
     const isNotAchieved = task?.view_count < 1000 && daysFromNow > 7
 
@@ -109,18 +119,39 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       transform,
       transition,
       isDragging,
-    } = useSortable({ id: task?.id, data: task })
+      over,
+    } = useSortable({
+      id: task?.id || '',
+      data: task,
+    })
 
     const style: React.CSSProperties = {
       transform: CSS.Transform.toString(transform),
-      transition,
+      transition: transition || 'transform 150ms ease, opacity 150ms ease',
       opacity: isDragging ? 0.5 : 1,
+      cursor: 'grab',
+      touchAction: 'none',
+      userSelect: 'none',
+      position: 'relative',
+      zIndex: isDragging ? 1 : 0,
+      boxShadow: isDragging ? '0 5px 15px rgba(0,0,0,0.15)' : 'none',
+      transformOrigin: '0 0',
+      willChange: 'transform, opacity',
+    }
+
+    const dragOverlayStyle: React.CSSProperties = {
+      opacity: 0.5,
+      background: '#f0f0f0',
+      pointerEvents: 'none',
+      position: 'absolute',
+      zIndex: 1000,
+      boxShadow: '0 5px 15px rgba(0,0,0,0.15)',
     }
 
     const user = members?.find((u: any) => u?.id === task?.account_id)
 
     const handleRemoveExecutor = async (id: number) => {
-      if (!String(options?.role).toLowerCase().includes('quản trị')) {
+      if (!String(role).toLowerCase().includes('quản trị')) {
         if (userId !== task.account_id) {
           toast.error('Không thể gỡ nhiệm vụ của người khác.')
           return
@@ -547,137 +578,181 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         : []),
     ]
 
-    return (
-      <div
-        className="relative"
-        style={{
-          ...externalStyle,
-          ...style,
-        }}
-        ref={setNodeRef}
-        {...attributes}
-      >
+    // If this is a placeholder, render a different style
+    if (task?.isPlaceholder) {
+      return (
         <div
-          className={clsx(
-            '-z-10 border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none transition-all!',
-            isCompleted
-              ? isNotAchieved
-                ? 'bg-yellow-400 text-[#fff]!'
-                : 'bg-[#2bbf3d] text-[#fff]!'
-              : isFailed
-                ? 'bg-[#c34343] text-[#fff]!'
-                : 'bg-[#fff] hover:bg-[#f8f8f8]',
-            className,
-          )}
-          {...listeners}
+          className="relative p-1 pb-0"
+          style={{
+            ...externalStyle,
+            ...style,
+          }}
         >
-          <Link
+          <div className="h-[100px] rounded-md border-2 border-dashed border-blue-500 bg-blue-50" />
+        </div>
+      )
+    }
+
+    return (
+      <>
+        <div
+          className={clsx('relative p-1 pb-0')}
+          style={{
+            ...externalStyle,
+            ...style,
+          }}
+          ref={setNodeRef}
+          {...attributes}
+        >
+          <div
             className={clsx(
-              'pointer-events-auto! space-y-[8px]',
-              isCompleted || isFailed
-                ? 'hover:text-[#fff]'
-                : 'hover:text-[#000]',
+              'rounded-md border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none transition-all!',
+              isCompleted
+                ? isNotAchieved
+                  ? 'bg-yellow-400 text-[#fff]!'
+                  : 'bg-[#2bbf3d] text-[#fff]!'
+                : isFailed
+                  ? 'bg-[#c34343] text-[#fff]!'
+                  : 'bg-[#fff] hover:bg-[#f8f8f8]',
+              className,
+              isDragging && 'shadow-lg',
+              over && 'border-2 border-blue-500 bg-blue-50',
             )}
-            key={task?.id}
-            href={`/task/${task?.id}`}
-            prefetch={false}
+            {...listeners}
           >
-            <div
+            <Link
               className={clsx(
-                'line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] leading-[18px] font-[600] !text-[#000000D9]',
-                isCompleted || isFailed ? 'text-[#fff]!' : 'text-[#000000D9]!',
+                'pointer-events-auto! space-y-[8px]',
+                isCompleted || isFailed
+                  ? 'hover:text-[#fff]'
+                  : 'hover:text-[#000]',
               )}
-              title={task?.name}
+              key={task?.id}
+              href={`/task/${task?.id}`}
+              prefetch={false}
             >
-              {task?.name}
-            </div>
-            <div className="flex items-center">
-              {/* Tag name or sticker */}
-              {task.sticker
-                ? task?.sticker?.map((s: any) => (
-                    <Tooltip key={s?.id} title={s?.title}>
-                      <Tag
-                        className="w-max max-w-[100px]"
-                        style={{ marginInlineEnd: 4 }}
-                        color={s?.color || '#888'}
-                      >
-                        <span className="line-clamp-1">{s?.name}</span>
-                      </Tag>
-                    </Tooltip>
-                  ))
-                : task?.tags?.map((s: any) => (
-                    <Tooltip key={s?.id} title={s?.title}>
-                      <Tag
-                        className="w-max max-w-[100px]"
-                        style={{ marginInlineEnd: 4 }}
-                        color={s?.code_color || '#888'}
-                      >
-                        <span className="line-clamp-1">{s?.title}</span>
-                      </Tag>
-                    </Tooltip>
-                  ))}
-            </div>
-            <div
-              className="line-clamp-2 leading-[17px] !text-[#000000D9]"
-              dangerouslySetInnerHTML={{
-                __html: task?.description || 'Không có mô tả',
-              }}
-            />
-            {!isCompleted && !isFailed ? (
-              <div>
-                {user || task?.started_at ? (
-                  <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
-                    <div className="flex items-center gap-[4px]">
-                      <Avatar
-                        src={user?.avatar}
-                        style={{
-                          backgroundColor: randomColor(String(user?.full_name)),
-                        }}
-                        shape="circle"
-                        size="small"
-                        alt={user?.full_name}
-                      >
-                        {String(user?.full_name)?.charAt(0).toUpperCase()}
-                      </Avatar>
-                      <span className="text-[#000000D9]">
-                        {user?.full_name}
-                      </span>
-                    </div>
-                    {task?.started_at &&
-                      (task?.expired ? (
-                        <div
-                          className={clsx({
-                            'text-[#42b814]': timeStatus === 'inprogress',
-                            'text-[#D96C6C]': timeStatus === 'overdue',
-                          })}
-                        >
-                          {timeStatus === 'inprogress'
-                            ? 'Đến hạn trong'
-                            : 'Quá hạn'}{' '}
-                          {convertTime(time.asSeconds())}
-                        </div>
-                      ) : (
-                        <div className="text-[#999]">Không thời hạn</div>
-                      ))}
-                  </div>
-                ) : (
-                  <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">
-                    <ExclamationCircleFilled className="text-[16px]" />
-                    Chưa được giao
-                  </span>
+              <div
+                className={clsx(
+                  'line-clamp-2 flex items-center justify-between pr-[24px] text-[14px] leading-[18px] font-[600] !text-[#000000D9]',
+                  isCompleted || isFailed
+                    ? 'text-[#fff]!'
+                    : 'text-[#000000D9]!',
                 )}
+                title={task?.name}
+              >
+                {task?.name}
               </div>
-            ) : (
-              isCompleted && (
-                <TaskItemStatistics
-                  view={abbreviateNumber(task?.view_count)}
-                  like={abbreviateNumber(task?.like_count)}
-                  comment={abbreviateNumber(task?.comment_count)}
-                  date={convertRelativeTime(task?.date_posted)}
-                />
-              )
-            )}
-          </Link>
+              <div className="flex items-center">
+                {/* Tag name or sticker */}
+                {task.sticker
+                  ? task?.sticker?.map((s: any) => (
+                      <Tooltip key={s?.id} title={s?.title}>
+                        <Tag
+                          className="w-max max-w-[100px]"
+                          style={{ marginInlineEnd: 4 }}
+                          color={s?.color || '#888'}
+                        >
+                          <span className="line-clamp-1">{s?.name}</span>
+                        </Tag>
+                      </Tooltip>
+                    ))
+                  : task?.tags?.map((s: any) => (
+                      <Tooltip key={s?.id} title={s?.title}>
+                        <Tag
+                          className="w-max max-w-[100px]"
+                          style={{ marginInlineEnd: 4 }}
+                          color={s?.code_color || '#888'}
+                        >
+                          <span className="line-clamp-1">{s?.title}</span>
+                        </Tag>
+                      </Tooltip>
+                    ))}
+              </div>
+              <div
+                className="line-clamp-2 leading-[17px] !text-[#000000D9]"
+                dangerouslySetInnerHTML={{
+                  __html: task?.description || 'Không có mô tả',
+                }}
+              />
+              {!isCompleted && !isFailed ? (
+                <div>
+                  {user || task?.started_at ? (
+                    <div className="flex min-h-[28px] items-center justify-between gap-[8px]">
+                      <div className="flex items-center gap-[4px]">
+                        <Avatar
+                          src={user?.avatar}
+                          style={{
+                            backgroundColor: randomColor(
+                              String(user?.full_name),
+                            ),
+                          }}
+                          shape="circle"
+                          size="small"
+                          alt={user?.full_name}
+                        >
+                          {String(user?.full_name)?.charAt(0).toUpperCase()}
+                        </Avatar>
+                        <span className="text-[#000000D9]">
+                          {user?.full_name}
+                        </span>
+                      </div>
+                      {task?.started_at &&
+                        (task?.expired ? (
+                          <div
+                            className={clsx({
+                              'text-[#42b814]': timeStatus === 'inprogress',
+                              'text-[#D96C6C]': timeStatus === 'overdue',
+                            })}
+                          >
+                            {timeStatus === 'inprogress'
+                              ? 'Đến hạn trong'
+                              : 'Quá hạn'}{' '}
+                            {convertTime(time.asSeconds())}
+                          </div>
+                        ) : (
+                          <div className="text-[#999]">Không thời hạn</div>
+                        ))}
+                    </div>
+                  ) : (
+                    <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">
+                      <ExclamationCircleFilled className="text-[16px]" />
+                      Chưa được giao
+                    </span>
+                  )}
+                </div>
+              ) : (
+                isCompleted && (
+                  <TaskItemStatistics
+                    view={abbreviateNumber(task?.view_count)}
+                    like={abbreviateNumber(task?.like_count)}
+                    comment={abbreviateNumber(task?.comment_count)}
+                    date={convertRelativeTime(task?.date_posted)}
+                  />
+                )
+              )}
+            </Link>
+          </div>
+        </div>
+
+        <div className="absolute top-[12px] right-[16px] z-[1]">
+          <Dropdown
+            trigger={['click']}
+            rootClassName={clsx('z-auto!', styles.menu)}
+            placement="bottomRight"
+            menu={{
+              items: taskDropdownItems,
+              style: { width: 200 },
+            }}
+          >
+            <EllipsisOutlined
+              className={clsx(
+                'cursor-pointer p-[2px] text-[16px] leading-[20px]',
+                {
+                  'text-[#fff]!': isCompleted || isFailed,
+                },
+              )}
+            />
+          </Dropdown>
         </div>
 
         {!isCompleted && !isFailed && (
@@ -715,24 +790,6 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                 )}
           </>
         )}
-
-        <div className="absolute top-[12px] right-[16px] flex items-center">
-          <Dropdown
-            trigger={['click']}
-            rootClassName={clsx('z-auto!', styles.menu)}
-            placement="bottomRight"
-            menu={{
-              items: taskDropdownItems,
-              style: { width: 200 },
-            }}
-          >
-            <EllipsisOutlined
-              className={clsx('p-[2px] text-[16px] leading-[20px]', {
-                'text-[#fff]!': isCompleted || isFailed,
-              })}
-            />
-          </Dropdown>
-        </div>
 
         <Modal
           open={assignConfirmOpen}
@@ -773,7 +830,30 @@ const TaskItem: React.FC<TaskItemProps> = memo(
             link_youtube: task?.link_youtube,
           }}
         />
-      </div>
+
+        {isDragging && (
+          <DragOverlay>
+            <div style={dragOverlayStyle}>
+              <div
+                className={clsx(
+                  'rounded-xl border-b border-[#eee] px-[16px] py-[12px] text-[12px] leading-none',
+                  isCompleted
+                    ? isNotAchieved
+                      ? 'bg-yellow-400 text-[#fff]!'
+                      : 'bg-[#2bbf3d] text-[#fff]!'
+                    : isFailed
+                      ? 'bg-[#c34343] text-[#fff]!'
+                      : 'bg-[#fff]',
+                )}
+              >
+                <div className="line-clamp-2 text-[14px] leading-[18px] font-[600]">
+                  {task?.name}
+                </div>
+              </div>
+            </div>
+          </DragOverlay>
+        )}
+      </>
     )
   },
 )

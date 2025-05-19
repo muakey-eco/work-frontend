@@ -97,13 +97,14 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      distance: 5,
+      distance: 3,
+      delay: 0,
     },
   })
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: 250,
-      tolerance: 5,
+      delay: 100,
+      tolerance: 3,
     },
   })
 
@@ -116,24 +117,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     overData: any,
   ) => {
     try {
-      // Move the task to the new stage
-      const { message: msg, errors } = await moveStageAction(
-        activeTaskId as number,
-        stageId,
-      )
-
-      if (errors) {
-        message.error(msg)
-        return
-      }
-
-      // Retrieve task history
-      const taskHistory = await getTaskHistoriesAction({
-        task_id: activeData.id,
-        stage_id: stageId,
-      })
-
-      // Update the stages
+      // Update UI first
       setStages((prevStages: any) => {
         const newStages = cloneDeep(prevStages)
 
@@ -158,20 +142,97 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
             {
               ...activeData,
               stage_id: stageId,
-              account_id: taskHistory?.worker || null,
-              expired: taskHistory?.worker
-                ? taskHistory?.expired_at
-                  ? taskHistory?.expired_at
-                  : overColumn.expired_after_hours
-                    ? new Date().setHours(
-                        new Date().getHours() + overColumn.expired_after_hours,
-                      )
-                    : null
+              account_id: activeData.account_id,
+              expired: overColumn.expired_after_hours
+                ? new Date().setHours(
+                    new Date().getHours() + overColumn.expired_after_hours,
+                  )
                 : null,
-              started_at: taskHistory?.started_at || null,
+              started_at: activeData.started_at,
             },
             ...overColumn.tasks,
           ]
+        }
+
+        return newStages
+      })
+
+      // Then call API
+      const { message: msg, errors } = await moveStageAction(
+        activeTaskId as number,
+        stageId,
+      )
+
+      if (errors) {
+        // Revert UI changes if API call fails
+        setStages((prevStages: any) => {
+          const newStages = cloneDeep(prevStages)
+          const activeColumn = newStages.find(
+            (s: any) => s.id === `stage_${activeData.stage_id}`,
+          )
+          const overColumn = newStages.find(
+            (s: any) => s.id === `stage_${stageId}`,
+          )
+
+          if (overColumn) {
+            overColumn.tasks = overColumn.tasks.filter(
+              (t: any) => t.id !== activeTaskId,
+            )
+          }
+
+          if (activeColumn) {
+            activeColumn.tasks = [
+              {
+                ...activeData,
+                stage_id: activeData.stage_id,
+                account_id: activeData.account_id,
+                expired: activeData.expired,
+                started_at: activeData.started_at,
+              },
+              ...activeColumn.tasks,
+            ]
+          }
+
+          return newStages
+        })
+        message.error(msg)
+        return
+      }
+
+      // Retrieve task history after successful move
+      const taskHistory = await getTaskHistoriesAction({
+        task_id: activeData.id,
+        stage_id: stageId,
+      })
+
+      // Update with actual data from server
+      setStages((prevStages: any) => {
+        const newStages = cloneDeep(prevStages)
+        const overColumn = newStages.find(
+          (s: any) => s.id === `stage_${stageId}`,
+        )
+
+        if (overColumn) {
+          overColumn.tasks = overColumn.tasks.map((t: any) => {
+            if (t.id === activeTaskId) {
+              return {
+                ...t,
+                account_id: taskHistory?.worker || null,
+                expired: taskHistory?.worker
+                  ? taskHistory?.expired_at
+                    ? taskHistory?.expired_at
+                    : overColumn.expired_after_hours
+                      ? new Date().setHours(
+                          new Date().getHours() +
+                            overColumn.expired_after_hours,
+                        )
+                      : null
+                  : null,
+                started_at: taskHistory?.started_at || null,
+              }
+            }
+            return t
+          })
         }
 
         return newStages

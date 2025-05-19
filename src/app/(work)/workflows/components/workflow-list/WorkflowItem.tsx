@@ -17,7 +17,7 @@ type WorkflowItemProps = {
 }
 
 const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
-  const { cateIds, departments, user } = options
+  const { cateIds, departments, user, workflowCategories } = options
 
   const [expand, setExpand] = useState(true)
   const [ids, setIds] = useState(cateIds || [])
@@ -107,9 +107,11 @@ const WorkflowItem: React.FC<WorkflowItemProps> = ({ cate, options }) => {
       {ids.includes(cate.id) && (
         <WorkflowCardList
           items={cate?.workflows}
+          cate={cate}
           options={{
             members: cate.members,
             departments,
+            workflowCategories,
           }}
         />
       )}

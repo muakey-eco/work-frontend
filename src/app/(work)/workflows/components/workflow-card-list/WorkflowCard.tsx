@@ -5,22 +5,28 @@ import { Card, Progress } from '@/ui'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { App, Avatar, Dropdown, Tooltip } from 'antd'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { deleteWorkflowAction } from '../../action'
 import WorkflowModalForm from '../workflow-list/WorkflowModalForm'
+import WorkflowMoveModalForm from './WorkflowMoveModalForm'
 
 type WorkflowCardProps = {
   workflow?: any
   total?: any
   members?: any[]
   options?: any
+  cate?: any
+  workflowCategories?: any[]
 }
 
 const WorkflowCard: React.FC<WorkflowCardProps> = ({
   workflow,
   total,
   options,
+  cate,
+  workflowCategories,
 }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const completedPercent = (total?.successTask / total?.task) * 100
   const failedPercent = (total?.failedTask / total?.task) * 100
   const { message, modal } = App.useApp()
@@ -113,6 +119,8 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
         <Dropdown
           rootClassName="z-50!"
           trigger={['click']}
+          open={dropdownOpen}
+          onOpenChange={setDropdownOpen}
           dropdownRender={() => (
             <div className="mt-[4px] rounded-[4px] bg-[#fff] p-[2px] shadow-[0_2px_6px_0_rgba(0,0,0,0.1)]">
               <WorkflowModalForm
@@ -129,6 +137,16 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
                   Chỉnh sửa quy trình
                 </div>
               </WorkflowModalForm>
+              <WorkflowMoveModalForm
+                workflow={workflow}
+                cate={cate}
+                workflowCategories={workflowCategories}
+                onSuccess={() => setDropdownOpen(false)}
+              >
+                <div className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none transition-all hover:bg-[#f8f8f8]">
+                  Di chuyển
+                </div>
+              </WorkflowMoveModalForm>
               <div
                 className="cursor-pointer bg-transparent px-[16px] py-[12px] text-[14px] leading-none text-[#cc1111] transition-all hover:bg-[#f8f8f8]"
                 onClick={handleDelete}

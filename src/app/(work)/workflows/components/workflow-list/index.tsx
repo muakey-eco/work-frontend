@@ -1,5 +1,5 @@
 import { withSuspense } from '@/hoc'
-import { getMe, getWorkflowCategories, getWorkflows } from '@/libs/data'
+import { getMe, getWorkflows } from '@/libs/data'
 import { List } from '@/ui'
 import React from 'react'
 import WorkflowItem from './WorkflowItem'
@@ -10,10 +10,9 @@ export type WorkflowListProps = {
 }
 
 const WorkflowList: React.FC<WorkflowListProps> = async ({ query }) => {
-  const { type, searchParams, departments } = query
+  const { type, searchParams, departments, workflowCategories } = query
 
-  const [workflowCategories, workflows, user] = await Promise.all([
-    getWorkflowCategories(),
+  const [workflows, user] = await Promise.all([
     getWorkflows({
       type: !type || type === 'all' ? '' : type || 'open',
       search: searchParams?.q || '',
@@ -47,6 +46,7 @@ const WorkflowList: React.FC<WorkflowListProps> = async ({ query }) => {
               cateIds,
               user,
               departments,
+              workflowCategories,
             }}
           />
         )

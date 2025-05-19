@@ -18,7 +18,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
     getWorkflowCategories(),
     getDepartments(),
   ])
-
+  console.log('workflowCategories', workflowCategories)
   return (
     <PageProvider>
       <div className="flex h-full flex-col">
@@ -72,6 +72,7 @@ const page: React.FC<any> = async (prop: { searchParams?: any }) => {
               type,
               searchParams,
               departments,
+              workflowCategories,
             }}
             suspense
           />

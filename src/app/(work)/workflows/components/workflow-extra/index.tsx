@@ -64,7 +64,7 @@ const WorkflowExtra: React.FC<{
   }
 
   const isAuth =
-    String(initialValues?.user?.role).toLowerCase().includes('quản trị') ||
+    String(initialValues?.user?.role).toLowerCase().includes('quản lí') ||
     initialValues?.members
       ?.map((mem: any) => mem?.id)
       .includes(initialValues?.user?.id)

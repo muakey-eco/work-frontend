@@ -140,7 +140,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
           <div className="flex items-center gap-[8px]">
             {record?.status === 'pending' && (
               <>
-                {user?.role === 'Quản trị cấp cao' && (
+                {user?.role === 'Admin' && (
                   <>
                     <RequestConfirmModalForm
                       initialValues={{
@@ -165,7 +165,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
                   </>
                 )}
 
-                {(user?.role === 'Quản trị cấp cao' ||
+                {(user?.role === 'Admin' ||
                   user?.id === record?.account?.id) && (
                   <div
                     onClick={() => {
@@ -201,7 +201,7 @@ const RequestTable: React.FC<RequestTableProps> = memo(
       setRequests(() =>
         dataSource
           ?.filter((data: any) =>
-            role !== 'Quản trị cấp cao' ? data?.account?.id === id : true,
+            role !== 'Admin' ? data?.account?.id === id : true,
           )
           ?.filter((data: any) => data.status.includes(query?.status)),
       )

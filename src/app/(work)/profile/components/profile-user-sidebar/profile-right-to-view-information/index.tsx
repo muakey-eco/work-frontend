@@ -12,7 +12,7 @@ const rightToViewInformationOptions: SelectProps['options'] = [
   },
   {
     label:
-      'Riêng tư (Chỉ hiển thị thông tin cho người quản lý, quản trị cấp cao và cấp cao hơn)',
+      'Riêng tư (Chỉ hiển thị thông tin cho người quản lý, Admin và cấp cao hơn)',
     value: 'private',
   },
 ]

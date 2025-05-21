@@ -17,6 +17,7 @@ export type NavigationItemProps = {
   exact?: boolean
   matchType?: 'default' | 'prefix' | 'exact'
   className?: string
+  isSubMenu?: boolean
   onClick?: () => void
 }
 
@@ -29,6 +30,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
   exact,
   matchType = 'default',
   className: customClassName,
+  isSubMenu = false,
   onClick,
 }) => {
   const pathname = usePathname()
@@ -46,7 +48,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
   })
 
   const className = cn(
-    'inline-block w-full transition-all duration-300 px-[16px]',
+    'inline-block w-full transition-all duration-300 px-[16px] ',
     item?.type === 'plain' ? 'h-[22px]' : 'h-[40px]',
     {
       'py-[12px]': ghost,
@@ -76,22 +78,24 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
         {item?.icon}
         <div
           className={clsx(
-            'w-full text-[14px]',
+            'flex items-center',
             item?.type === 'plain' ? 'text-[#FFFFFF99]' : 'text-white',
             {
               'text-white': isActive,
             },
           )}
         >
-          {item?.label}
+          <span className="w-full text-[14px]">{item?.label}</span>
         </div>
       </div>
 
       {item?.children && item.children.length > 0 && (
         <DownOutlined
           className={clsx('text-white', {
-            'rotate-0 text-[#fff]': !open,
-            'rotate-180 text-[#ffffff4d]': open,
+            'rotate-0 text-[#fff] transition-all duration-300 ease-in-out':
+              !open,
+            'rotate-180 text-[#ffffff4d] transition-all duration-300 ease-in-out':
+              open,
             'text-[16px]': ghost,
           })}
         />
@@ -103,7 +107,10 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     <div className={layout}>
       <div
         key={item?.key}
-        className={'cursor-pointer rounded-full text-[16px] leading-none'}
+        className={clsx(
+          'cursor-pointer rounded-full text-[14px] leading-none',
+          isSubMenu && 'pb-1',
+        )}
         onClick={onClick}
       >
         {item?.children && item.children.length > 0 ? (
@@ -117,7 +124,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
           <div
             key={item?.key ?? uniqueId()}
             className={clsx('transition-all duration-300', {
-              'mt-[12px] rounded-[16px] bg-[#FFFFFF0F] px-4 py-[4px]':
+              'mt-[12px] rounded-[16px] bg-[#FFFFFF0F] py-[4px] ps-4 pe-2':
                 ghost && open,
             })}
           >
@@ -127,6 +134,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
               ghost={ghost}
               exact={exact}
               matchType={matchType}
+              isSubMenu={isSubMenu}
             />
           </div>
         )}

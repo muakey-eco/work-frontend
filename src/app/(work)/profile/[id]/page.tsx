@@ -19,7 +19,7 @@ export default async function ProfilePage({ params }: Props) {
 
   let user = await getMe({ include: 'profile' })
 
-  if (user.role === 'Quản trị cấp cao') {
+  if (user.role === 'Admin') {
     if (id) {
       user = await getAccountByIdAction(Number(id), {
         include: 'profile',

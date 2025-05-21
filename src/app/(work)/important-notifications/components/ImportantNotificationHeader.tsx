@@ -35,7 +35,7 @@ const ImportantNotificationHeader = ({
       title="Thông báo quan trọng"
       extra={
         <div className="flex items-center gap-[24px]">
-          {user.role === 'Quản trị cấp cao' && (
+          {user.role === 'Admin' && (
             <Button
               icon={<SettingOutlined />}
               type="primary"

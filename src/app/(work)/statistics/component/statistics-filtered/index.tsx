@@ -33,7 +33,7 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
   const query = new URLSearchParams(searchParams)
   const filterBy = query.get('as')
 
-  const isAdmin = myAccount?.role === 'Quản trị cấp cao'
+  const isAdmin = myAccount?.role === 'Admin'
 
   const colorItems = [
     {

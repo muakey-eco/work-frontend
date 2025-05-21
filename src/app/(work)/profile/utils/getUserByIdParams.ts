@@ -11,7 +11,7 @@ export default async function getUserByIdParams(searchParams: any) {
 
   if (!id) {
     return user
-  } else if (id && user.role === 'Quản trị cấp cao') {
+  } else if (id && user.role === 'Admin') {
     user = await getAccountByIdAction(id, {
       include: 'profile',
     })

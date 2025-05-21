@@ -1,14 +1,16 @@
-import { getAttendances, getWorkflowCategories } from '@/libs/data'
+import WorkflowModalForm from '@/app/(work)/workflows/components/workflow-list/WorkflowModalForm'
+import { getAttendances, getProjects, getWorkflowCategories } from '@/libs/data'
 import { getSession } from '@/libs/session'
 import { getTodos } from '@/libs/todos'
 import { Navigation, NavigationMenuType } from '@/ui'
 import { Layout, SideProps } from '@/ui/layout'
 import {
   CalendarFilled,
+  DashboardFilled,
   DatabaseFilled,
-  FolderOpenFilled,
+  PlusCircleFilled,
+  ProjectFilled,
 } from '@ant-design/icons'
-import { Tooltip } from 'antd'
 import React from 'react'
 import LeftSideBar from './LeftSideBar'
 import Search from './Search'
@@ -36,7 +38,7 @@ const IconUserFilled = () => (
 
 const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const today = new Date().getDate()
-  const [workflowCategories, session, attendances, todosCount] =
+  const [workflowCategories, session, attendances, todosCount, myProjects] =
     await Promise.all([
       getWorkflowCategories(),
       getSession(),
@@ -46,6 +48,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       getTodos({
         include: 'number',
       }),
+      getProjects(),
     ])
 
   const lastAttendance = attendances ? attendances[attendances?.length - 1] : {}
@@ -57,29 +60,11 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
   const navigationItems: NavigationMenuType[] = [
     {
       label: 'Quản lý công việc',
-      icon: <FolderOpenFilled className="text-[14px]" />,
+      icon: <DashboardFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
+      key: 'work-management',
       children: [
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[12px]" />
-              <span>Quản lý quy trình</span>
-            </div>
-          ),
-          shouldRound: false,
-          href: '/workflows',
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[12px]">
-              <div className="h-[14px] w-[12px]" />
-              <span>Quản lý phòng ban</span>
-            </div>
-          ),
-          href: '/department',
-        },
         {
           label: (
             <div className="flex items-center gap-[10px]">
@@ -93,26 +78,124 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             </div>
           ),
           shouldRound: false,
+          key: 'my-todos',
           href: '/todos',
         },
+        ...(myProjects && myProjects.length > 0
+          ? myProjects?.map((p: any) => ({
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>{p?.name}</span>
+                </div>
+              ),
+              shouldRound: false,
+              key: `project-${p?.id}`,
+              href: `/workflows/${p?.id}`,
+            }))
+          : []),
+      ],
+    },
+    ...(workflowCategories && workflowCategories.length > 0
+      ? workflowCategories?.map((w: any) => ({
+          label: w?.name,
+          icon: <DashboardFilled className="text-[14px]" />,
+          expand: true,
+          type: 'filled-rounded',
+          key: `team-${w?.id}`,
+          children: [
+            {
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>Tổng quan</span>
+                </div>
+              ),
+              shouldRound: false,
+              key: `overview-${w?.id}`,
+              href: `#`,
+            },
+            {
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>Thành viên</span>
+                </div>
+              ),
+              shouldRound: false,
+              key: `members-${w?.id}`,
+              href: `#`,
+            },
+            ...(w.workflows?.length
+              ? [
+                  {
+                    label: (
+                      <div className="group flex items-center gap-[10px]">
+                        <div className="h-[14px] w-[12px]" />
+                        <div className="flex items-center gap-[10px]">
+                          Danh sách quy trình
+                          <WorkflowModalForm
+                            action="create"
+                            initialValues={{
+                              members: w?.members,
+                              workflow_category_id: w?.id,
+                              departments: workflowCategories,
+                            }}
+                          >
+                            <div className="opacity-0 transition group-hover:opacity-100">
+                              <PlusCircleFilled />
+                            </div>
+                          </WorkflowModalForm>
+                        </div>
+                      </div>
+                    ),
+                    shouldRound: false,
+                    key: `workflow-list-${w?.id}`,
+                    children: [
+                      ...(w?.workflows?.map((i: any) => ({
+                        label: (
+                          <div className="ml-4 flex items-center gap-[10px]">
+                            <div className="h-[14px] w-[12px]" />
+                            <span>{i?.name}</span>
+                          </div>
+                        ),
+                        key: `workflow-${w?.id}-${i?.id}`,
+                        href: `/workflows/${i?.id}`,
+                      })) || []),
+                    ],
+                  },
+                ]
+              : []),
+          ],
+        }))
+      : []),
+    {
+      label: 'Quản lý danh mục',
+      icon: <ProjectFilled className="text-[14px]" />,
+      expand: true,
+      type: 'filled-rounded',
+      key: 'category-management',
+      children: [
         {
           label: (
             <div className="flex items-center gap-[10px]">
               <div className="h-[14px] w-[12px]" />
-              <span>Thống kê</span>
+              <span>Quản lý quy trình</span>
             </div>
           ),
           shouldRound: false,
-          href: '/statistics',
+          key: 'workflow-management',
+          href: '/workflows',
         },
       ],
     },
-    user?.role === 'Quản trị cấp cao'
+    user?.role === 'Admin'
       ? {
           label: 'Quản lý nhân sự',
           icon: <IconUserFilled />,
           expand: true,
           type: 'filled-rounded',
+          key: 'hr-management',
           children: [
             {
               label: (
@@ -122,6 +205,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 </div>
               ),
               shouldRound: false,
+              key: 'account-list',
               href: '/accounts',
             },
             {
@@ -132,7 +216,18 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 </div>
               ),
               shouldRound: false,
+              key: 'employee-list',
               href: '/employees',
+            },
+            {
+              label: (
+                <div className="flex items-center gap-[10px]">
+                  <div className="h-[14px] w-[12px]" />
+                  <span>Phòng ban</span>
+                </div>
+              ),
+              shouldRound: false,
+              key: 'departments',
             },
             {
               label: (
@@ -142,17 +237,9 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
                 </div>
               ),
               shouldRound: false,
+              key: 'important-notifications',
               href: '/important-notifications',
             },
-            // {
-            //   label: (
-            //     <div className="flex items-center gap-[10px]">
-            //       <div className="h-[14px] w-[12px]" />
-            //       <span>Phòng ban</span>
-            //     </div>
-            //   ),
-            //   shouldRound: false,
-            // },
           ],
         }
       : undefined,
@@ -161,6 +248,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       icon: <CalendarFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
+      key: 'attendance-management',
       children: [
         {
           label: (
@@ -170,6 +258,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             </div>
           ),
           shouldRound: false,
+          key: 'check-in',
           href: '/check-in',
         },
         {
@@ -180,6 +269,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
             </div>
           ),
           shouldRound: false,
+          key: 'request',
           href: '/request',
         },
       ],
@@ -191,6 +281,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       ),
       expand: true,
       type: 'filled-rounded',
+      key: 'resources',
       children: [],
       href: '/resources',
     },
@@ -201,62 +292,10 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       ),
       type: 'filled-rounded',
       expand: true,
+      key: 'company-assets',
       children: [],
       href: '/asset',
     },
-    {
-      label: 'Marketing',
-      icon: <CalendarFilled className="text-[14px]" />,
-      expand: true,
-      type: 'filled-rounded',
-      children: [
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[12px]" />
-              <span>Tổng quan</span>
-            </div>
-          ),
-          shouldRound: false,
-          href: '/marketing',
-        },
-        {
-          label: (
-            <div className="flex items-center gap-[10px]">
-              <div className="h-[14px] w-[12px]" />
-              <span>So sánh dữ liệu</span>
-            </div>
-          ),
-          shouldRound: false,
-          href: '/compare-data',
-        },
-      ],
-    },
-
-    ...(workflowCategories && workflowCategories.length > 0
-      ? workflowCategories?.map((w: any) => ({
-          label: w?.name,
-          children: w?.workflows
-            ? w?.workflows.map((i: any) => ({
-                label: (
-                  <Tooltip title={i?.name}>
-                    <div className="flex items-center gap-[10px]">
-                      <FolderOpenFilled
-                        className="text-[14px]"
-                        style={{ color: 'white' }}
-                      />
-                      <span className="line-clamp-1">{i?.name}</span>
-                    </div>
-                  </Tooltip>
-                ),
-                shouldRound: true,
-                href: `/workflows/${i?.id}`,
-              }))
-            : [],
-          expand: true,
-          type: 'plain',
-        }))
-      : []),
   ].filter(Boolean) as NavigationMenuType[]
 
   return (
@@ -273,7 +312,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
       }
       {...props}
     >
-      <div className="flex-1 pr-[4px]">
+      <div className="flex-1">
         <div className="flex w-[207px] flex-col justify-center px-[13px]">
           <User user={user} />
           <Search />

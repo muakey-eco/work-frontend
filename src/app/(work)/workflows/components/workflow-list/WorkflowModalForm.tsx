@@ -19,7 +19,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   action = 'create',
   children,
 }) => {
-  const [open, setOpen] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [manager, setManager] = useState<any[]>()
   const formRef = useRef<FormInstance>(null)
@@ -29,11 +29,12 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
   const {
     members: initMembers,
     departments: initDepartments,
+    workflow_category_id: initWorkflowCategoryId,
     ...restInitialValues
   } = initialValues
 
   useAsyncEffect(async () => {
-    if (!open) return
+    if (!openModal) return
 
     const accounts = await getAccountsRequest()
 
@@ -53,7 +54,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         }
       }),
     ])
-  }, [open])
+  }, [openModal])
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -84,8 +85,12 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           errors,
         } = await addWorkflowAction({
           ...formData,
+          workflow_category_id: initWorkflowCategoryId,
           manager: newManager.join(' '),
         })
+        const id = workflowId ? workflowId : initWorkflowCategoryId
+
+        if (action === 'create') router.push(`/workflows/${id}`)
       }
 
       if (errors) {
@@ -106,14 +111,12 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         return
       }
 
-      if (action === 'create') router.push(`/workflows/${workflowId}`)
-
       message.success(
         action === 'create'
           ? 'Đã thêm 1 quy trình mới.'
           : 'Cập nhật thành công.',
       )
-      setOpen(false)
+      setOpenModal(false)
       setLoading(false)
 
       if (typeof window !== 'undefined' && action === 'edit') {
@@ -127,15 +130,17 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children || 'Tạo mới workflow'}</div>
+      <div onClick={() => setOpenModal(true)}>
+        {children || 'Tạo mới workflow'}
+      </div>
       <Modal
         title={
           action === 'create'
             ? 'Tạo luồng công việc mới'
             : 'Cập nhật luồng công việc'
         }
-        open={open}
-        onCancel={() => setOpen(false)}
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
         width={760}
         okText={action === 'create' ? 'Tạo mới' : 'Cập nhật'}
         cancelText="Bỏ qua"
@@ -159,7 +164,9 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
           </Form>
         )}
       >
-        <FormFields manager={manager} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <FormFields manager={manager} />
+        </div>
       </Modal>
     </>
   )

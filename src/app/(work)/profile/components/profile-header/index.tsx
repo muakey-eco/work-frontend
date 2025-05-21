@@ -8,7 +8,7 @@ const ProfileHeader = ({ account }: { account: any }) => {
 
   return (
     <PageHeader
-      onBack={account.role === 'Quản trị cấp cao'}
+      onBack={account.role === 'Admin'}
       title={
         <div className="flex items-center gap-[8px]">
           <span>

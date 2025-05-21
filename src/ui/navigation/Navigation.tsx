@@ -16,6 +16,7 @@ export type NavigationMenuType = {
   type?: 'filled-rounded' | 'plain'
   taskCount?: number
   shouldRound?: boolean
+  shouldRoundChild?: boolean
   children?: NavigationMenuType[]
   exact?: boolean
   matchType?: 'default' | 'prefix' | 'exact'
@@ -79,7 +80,7 @@ const InternalNavigation: React.ForwardRefRenderFunction<
   }
 
   const className = clsx(
-    'space-y-[8px] text-[24px] text-[#fff]',
+    'space-y-[8px] text-[24px] text-[#fff] transition-all duration-300',
     {
       'space-y-[12px]': ghost,
     },
@@ -105,7 +106,7 @@ const InternalNavigation: React.ForwardRefRenderFunction<
         const isOpen = openMenus.has(menuKey)
 
         return (
-          <li key={menuKey} className="overflow-hidden rounded-xl">
+          <li key={menuKey} className="me-1 overflow-hidden rounded-2xl">
             <NavigationItem
               key={menuKey}
               item={item}

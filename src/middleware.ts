@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   const session = await getSession()
   const today = new Date().getDate()
 
-  const isAdmin = user?.role === 'Quản trị cấp cao'
+  const isAdmin = user?.role === 'Admin'
 
   if (isAdmin && path === '/admin') {
     return NextResponse.redirect(new URL('/admin/accounts', request.url))

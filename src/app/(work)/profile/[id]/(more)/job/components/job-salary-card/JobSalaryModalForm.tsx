@@ -112,8 +112,8 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   }, [basicSalary])
 
   useEffect(() => {
-    const insurance = Number(basicSalary * 0.215)
-    const insurance_employee = Number(basicSalary * 0.105)
+    const insurance = 1161000
+    const insurance_employee = 567000
     const total_salary =
       basicSalary +
       salaries.travel_allowance +

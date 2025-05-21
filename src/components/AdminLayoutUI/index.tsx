@@ -11,7 +11,7 @@ type AdminLayoutUIProps = {
 const AdminLayoutUI: React.FC<AdminLayoutUIProps> = async ({ children }) => {
   const user = await getMe()
 
-  if (user?.role !== 'Quản trị cấp cao') {
+  if (user?.role !== 'Admin') {
     return (
       <Result
         status="403"

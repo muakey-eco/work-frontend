@@ -19,21 +19,21 @@ export type AccountTableProps = TableProps & {
 
 const generateRole = (role: string) => {
   switch (role) {
-    case 'Quản trị cấp cao':
+    case 'Admin':
       return (
         <Badge
           color="#F5222D"
           text={<span className="font-[500] text-[#F5222D]">{role}</span>}
         />
       )
-    case 'Quản trị':
+    case 'Quản lí':
       return (
         <Badge
           color="#FAAD14"
           text={<span className="font-[500] text-[#FAAD14]">{role}</span>}
         />
       )
-    case 'Thành viên thông thường':
+    case 'Nhân viên':
       return (
         <Badge
           color="#389E0D"

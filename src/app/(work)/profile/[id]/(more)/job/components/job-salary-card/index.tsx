@@ -17,9 +17,10 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
   data: externalData,
 }) => {
   const { salary } = externalData
-
-  const insurance = Number(salary?.basic_salary * 0.215)
-  const insuranceEmployee = Number(salary?.basic_salary * 0.105)
+  const DISABLED_SALARY_FIELDS = {
+    insurance: 1161000,
+    insurance_employee: 567000,
+  }
 
   const netSalary =
     salary?.basic_salary +
@@ -27,12 +28,10 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
     salary?.eat_allowance +
     salary?.kpi
 
-  const grossSalary = netSalary + insurance + insuranceEmployee
-
-  const DISABLED_SALARY_FIELDS = {
-    insurance: 1161000,
-    insurance_employee: 567000,
-  }
+  const grossSalary =
+    netSalary +
+    DISABLED_SALARY_FIELDS.insurance +
+    DISABLED_SALARY_FIELDS.insurance_employee
 
   const data: ListProps<any>['dataSource'] = [
     {

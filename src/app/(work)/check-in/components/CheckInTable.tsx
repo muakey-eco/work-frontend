@@ -294,7 +294,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
   return (
     <div>
-      {user?.role === 'Quản trị cấp cao' ? (
+      {user?.role === 'Admin' ? (
         <div className="rounded-sm bg-[#fff]">
           <Tabs
             tabBarExtraContent={

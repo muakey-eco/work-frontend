@@ -40,6 +40,11 @@ export const getWorkflowCategories = async () => {
     .then((data) => data)
     .catch(() => [])
 }
+export const getProjects = async () => {
+  return await requestWithAuthorized('my-projects')
+    .then((data) => data)
+    .catch(() => [])
+}
 
 export const getWorkflowCategoryById = async (id: number) => {
   return await requestWithAuthorized(`workflow-categories/${id}`)

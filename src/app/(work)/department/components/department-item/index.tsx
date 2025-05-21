@@ -43,7 +43,7 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({
     <div className="h-auto w-full space-y-[16px] overflow-hidden rounded-[4px] bg-[#fff] p-[16px]">
       <div className="flex items-center justify-between gap-[16px] leading-none">
         <span className="line-clamp-1 text-[16px]">{item?.name}</span>
-        {me.role === 'Quản trị cấp cao' && (
+        {me.role === 'Admin' && (
           <Dropdown
             rootClassName="z-50!"
             trigger={['click']}

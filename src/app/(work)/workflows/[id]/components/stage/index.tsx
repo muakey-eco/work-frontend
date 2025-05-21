@@ -208,18 +208,18 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
       if (
         !memberIds?.includes(user?.id) &&
-        !user?.role?.toLocaleLowerCase()?.includes('quản trị cấp cao')
+        !user?.role?.toLocaleLowerCase()?.includes('Admin')
       ) {
         message.error(' Bạn không phải thành viên trong quy trình này.')
         return
       }
 
-      // Nếu là quản trị viên và task chưa được giao, cho phép kéo
+      // Nếu là quản lí viên và task chưa được giao, cho phép kéo
       if (
-        (String(user?.role).toLocaleLowerCase().includes('quản trị') ||
+        (String(user?.role).toLocaleLowerCase().includes('quản lí') ||
           String(user?.role)
             .toLocaleLowerCase()
-            .includes('quản trị cấp cao')) &&
+            .includes('Admin')) &&
         !activeData?.account_id
       ) {
         moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
@@ -227,7 +227,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       }
 
       if (
-        !user?.role?.toLocaleLowerCase()?.includes('quản trị') &&
+        !user?.role?.toLocaleLowerCase()?.includes('quản lí') &&
         !activeData?.started_at
       ) {
         message.error('Nhiệm vụ chưa được bắt đầu.')
@@ -313,7 +313,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       task_id: activeData.id,
     })
 
-    if (!String(user?.role).toLocaleLowerCase().includes('quản trị')) {
+    if (!String(user?.role).toLocaleLowerCase().includes('quản lí')) {
       if (activeData.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
@@ -321,7 +321,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
     } else {
-      // Nếu là quản trị viên và task chưa được giao, cho phép kéo
+      // Nếu là quản lí viên và task chưa được giao, cho phép kéo
       if (!activeData.account_id) {
         await handleDrag(e)
         return

@@ -36,7 +36,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
 
   const isAuth =
     workflow?.members?.map((mem: any) => mem?.id).includes(options?.user.id) ||
-    options?.user?.role === 'Quản trị cấp cao'
+    options?.user?.role === 'Admin'
 
   const { date, tag, user } = options
 

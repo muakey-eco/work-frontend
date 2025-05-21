@@ -37,7 +37,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
       return
     }
 
-    if (!String(user?.role).toLocaleLowerCase().includes('quản lí')) {
+    if (!String(user?.role).toLocaleLowerCase().includes('quản lý')) {
       if (rest?.task.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
@@ -88,7 +88,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   }
 
   const handleRemoveExecutor = async (id: number) => {
-    if (!String(options?.role).toLowerCase().includes('quản lí')) {
+    if (!String(options?.role).toLowerCase().includes('quản lý')) {
       if (options?.user?.id !== options?.task.account_id) {
         message.error('Không thể gỡ nhiệm vụ của người khác.')
         return

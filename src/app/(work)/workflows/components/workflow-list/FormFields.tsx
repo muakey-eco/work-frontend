@@ -34,12 +34,12 @@ const FormFields: React.FC<{
       <Form.Item
         name="manager"
         label={
-          <span className="inline-block w-[160px]">Thành viên quản lí</span>
+          <span className="inline-block w-[160px]">Thành viên quản lý</span>
         }
         rules={[
           {
             required: true,
-            message: 'Nhập thành viên quản lí',
+            message: 'Nhập thành viên quản lý',
           },
         ]}
       >

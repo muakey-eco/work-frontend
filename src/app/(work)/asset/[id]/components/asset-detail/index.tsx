@@ -2,20 +2,29 @@
 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { App, Button, Card } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import AssetModalForm from '../../../components/asset-modal-form'
 import { deleteAssetAction } from '../../action'
 import StatusTag from '../status-tag'
 import AssetDescription from './AssetDescription'
+
 const AssetDetail: React.FC<any> = ({ asset }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { modal } = App.useApp()
+  const { modal, message } = App.useApp()
+  const router = useRouter()
 
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
   const handleDeleteAsset = async () => {
-    await deleteAssetAction(asset.id)
+    const res = await deleteAssetAction(asset.id)
+    if (res) {
+      message.success('Xóa tài sản thành công')
+      router.push('/asset')
+    } else {
+      message.error('Xóa tài sản thất bại')
+    }
   }
 
   return (

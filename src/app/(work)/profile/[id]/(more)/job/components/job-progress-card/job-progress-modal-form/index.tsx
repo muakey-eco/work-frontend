@@ -1,6 +1,7 @@
 'use client'
 
 import { App, Form, FormInstance, FormProps, Modal, ModalProps } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { addDepartmentSalaryRequest } from '../../action'
 import JobProgressDecisionInformationFormCard from './components/job-progress-decision-information-form-card'
@@ -27,6 +28,7 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
     eat_allowance: 0,
     kpi: 0,
   })
+  const router = useRouter()
   const { message } = App.useApp()
 
   const formRef = useRef<FormInstance>(null)
@@ -75,6 +77,7 @@ const JobProgressModalForm: React.FC<JobProgressModalFormProps> = ({
         message.success('Tạo mới quyết định bổ nhiệm, tăng lương thành công!')
         setOpen(false)
         formRef.current?.resetFields()
+        router.refresh()
       }
     } catch (error: any) {
       console.error('Form validation failed:', error)

@@ -119,6 +119,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
             <div>
               <div>TC: {Number(value?.workDay)}</div>
               <div>OT: {Number(value?.ot)}h</div>
+              <div>WFH: {Number(value?.wfh)}d</div>
             </div>
           </div>
         )
@@ -141,17 +142,31 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         align: 'center',
         render: (value: any) => {
           const checkIn = value.checkInValue
+          const wfh = value.wfh
 
           return (
             <div className="flex flex-col gap-[4px]">
-              {checkIn?.map((c: any, index: number) => (
-                <div key={`${c[0]}-${c[1]}-${index}`}>
-                  {index > 0 && <Divider className="my-[4px]!" />}
-                  <div>
-                    {c[0]} - {c[1] ? c[1] : '--:--'}
+              {checkIn &&
+                checkIn?.map((c: any, index: number) => (
+                  <div key={`${c[0]}-${c[1]}-${index}`}>
+                    {index > 0 && <Divider className="my-[4px]!" />}
+                    <div>
+                      {c[0]} - {c[1] ? c[1] : '--:--'}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              {Array.isArray(wfh) &&
+                wfh.filter((w) => w != null && w.length > 0).length > 0 &&
+                wfh
+                  .filter((w) => w != null && w.length > 0)
+                  .map((w: any, index: number) => (
+                    <div
+                      key={`${w?.[0]}-${w?.[1]}-${index}`}
+                      className="text-center font-bold text-red-500"
+                    >
+                      WFH
+                    </div>
+                  ))}
             </div>
           )
         },
@@ -170,15 +185,15 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
       const otPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name_category === 'Đăng ký OT')
-        .filter((p: any) => p?.account_id === user.id)
+        .filter((p: any) => p?.account_id === m.id)
 
       const timeOffPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name_category === 'Đăng ký nghỉ')
-        .filter((p: any) => p?.account_id === user.id)
+        .filter((p: any) => p?.account_id === m.id)
 
       const wfhPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name === 'Đăng ký WFH')
-        .filter((p: any) => p?.account_id === user.id)
+        .filter((p: any) => p?.account_id === m.id)
 
       const fields = times(dateNumber, (num): any => {
         const currentDate = num + 1
@@ -252,7 +267,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           avatar: m?.avatar,
           workDay: m?.workday,
           ot: m?.hours_over_time,
-          wfh: m?.work_from_home,
+          wfh: wfhPropose?.length || 0,
         },
         ...Object.fromEntries(fields),
       }

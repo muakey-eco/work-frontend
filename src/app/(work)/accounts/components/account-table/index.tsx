@@ -26,7 +26,7 @@ const generateRole = (role: string) => {
           text={<span className="font-[500] text-[#F5222D]">{role}</span>}
         />
       )
-    case 'Quản lí':
+    case 'Quản lý':
       return (
         <Badge
           color="#FAAD14"

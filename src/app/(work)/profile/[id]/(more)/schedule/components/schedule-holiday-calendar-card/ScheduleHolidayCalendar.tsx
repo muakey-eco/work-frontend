@@ -99,7 +99,7 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         .filter((p: any) => p?.account_id === user.id)
 
       const wfhPropose = attendances?.ot_and_holiday
-        .filter((p: any) => p?.name === 'Đăng ký làm ở nhà')
+        .filter((p: any) => p?.name === 'Đăng ký WFH')
         .filter((p: any) => p?.account_id === user.id)
 
       const fields = times(dateNumber, (num): any => {

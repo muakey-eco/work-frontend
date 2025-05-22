@@ -214,9 +214,9 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
 
-      // Nếu là quản lí viên và task chưa được giao, cho phép kéo
+      // Nếu là quản lý viên và task chưa được giao, cho phép kéo
       if (
-        (String(user?.role).toLocaleLowerCase().includes('quản lí') ||
+        (String(user?.role).toLocaleLowerCase().includes('quản lý') ||
           String(user?.role)
             .toLocaleLowerCase()
             .includes('Admin')) &&
@@ -227,7 +227,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       }
 
       if (
-        !user?.role?.toLocaleLowerCase()?.includes('quản lí') &&
+        !user?.role?.toLocaleLowerCase()?.includes('quản lý') &&
         !activeData?.started_at
       ) {
         message.error('Nhiệm vụ chưa được bắt đầu.')
@@ -313,7 +313,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       task_id: activeData.id,
     })
 
-    if (!String(user?.role).toLocaleLowerCase().includes('quản lí')) {
+    if (!String(user?.role).toLocaleLowerCase().includes('quản lý')) {
       if (activeData.account_id !== user?.id) {
         message.error(
           'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
@@ -321,7 +321,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
     } else {
-      // Nếu là quản lí viên và task chưa được giao, cho phép kéo
+      // Nếu là quản lý viên và task chưa được giao, cho phép kéo
       if (!activeData.account_id) {
         await handleDrag(e)
         return

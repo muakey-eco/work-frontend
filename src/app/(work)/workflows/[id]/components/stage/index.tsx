@@ -328,7 +328,10 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       }
     }
 
-    if (overIndex === 1 && requiredLink) {
+    if (
+      (overIndex === 1 && requiredLink) ||
+      (options?.isKeyWorkflow && overIndex === 1)
+    ) {
       setDoneOpen(true)
       return
     }
@@ -363,6 +366,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         },
         {
           task_id: activeData.id,
+          workflow_id: activeData.workflow_id,
         },
       )
 
@@ -519,10 +523,14 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           />
         )}
 
+        {/* Modal xác nhận có link youtube */}
         <TaskDoneModalForm
           open={doneOpen}
           onCancel={() => setDoneOpen(false)}
           taskId={Number(activeId)}
+          isKeyWorkflow={options?.isKeyWorkflow}
+          workflowsForProcess={options?.workflowsForProcess}
+          hasLink={requiredLink}
           onSubmit={async () => {
             if (!dragEvent) return
 
@@ -532,6 +540,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           initialValues={generateInitialValues()}
         />
 
+        {/* Modal xác nhận thời gian thực hiện */}
         <Modal
           title="Xác nhận thời gian thực hiện"
           open={isModalOpen}

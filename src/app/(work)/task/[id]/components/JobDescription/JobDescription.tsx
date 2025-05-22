@@ -1,10 +1,9 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import { Button, Form, Modal } from 'antd'
+import { App, Button, Form, Modal } from 'antd'
 import clsx from 'clsx'
 import React, { useState } from 'react'
-import toast from 'react-hot-toast'
 import { editTaskAction } from '../../../actions'
 
 type JobDescriptionProps = {
@@ -21,6 +20,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const [loading, setLoading] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [previewOpen, setPreviewOpen] = useState(false)
+  const { message } = App.useApp()
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
@@ -31,12 +31,12 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       })
 
       if (errors) {
-        toast.error(message)
+        message.error(message)
         setLoading(false)
         return
       }
 
-      toast.success('Cập nhật thành công')
+      message.success('Cập nhật thành công')
       setIsEdit(false)
       setLoading(false)
       setValue(formData?.description)

@@ -57,6 +57,8 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
           options={{
             user: options?.user,
             requiredLink: options?.workflow?.require_link_youtube === 1,
+            isKeyWorkflow: options?.workflow?.is_key_workflow === 1,
+            workflowsForProcess: options?.workflowsForProcess,
           }}
         />
       )

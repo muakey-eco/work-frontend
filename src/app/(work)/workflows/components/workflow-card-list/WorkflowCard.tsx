@@ -2,7 +2,7 @@
 
 import { randomColor } from '@/libs/utils'
 import { Card, Progress } from '@/ui'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, PushpinFilled } from '@ant-design/icons'
 import { App, Avatar, Dropdown, Tooltip } from 'antd'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -56,7 +56,10 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
     <div className="relative h-auto w-full overflow-hidden">
       <Link href={`/workflows/${workflow.id}`} prefetch={false}>
         <Card className="size-full">
-          <div className="text-[16px] leading-[20px]">
+          <div className="flex items-center gap-[4px] text-[16px] leading-[20px]">
+            {workflow?.is_key_workflow === 1 && (
+              <PushpinFilled className="!text-[20px] !text-[#1677FF]" />
+            )}
             <span className="line-clamp-1 font-[400]">{workflow?.name}</span>
           </div>
           <p className="mt-[8px] min-h-[36px] text-[12px] text-[#999]">
@@ -157,7 +160,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
           )}
         >
           <div className="cursor-pointer pl-[8px] text-[20px] leading-none text-[#000]">
-            ··
+            ···
           </div>
         </Dropdown>
       </div>

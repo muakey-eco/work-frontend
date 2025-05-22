@@ -1,6 +1,6 @@
 'use client'
 
-import { Form, Input, Select } from 'antd'
+import { Checkbox, Form, Input, Select } from 'antd'
 import React from 'react'
 
 const FormFields: React.FC<{
@@ -34,12 +34,12 @@ const FormFields: React.FC<{
       <Form.Item
         name="manager"
         label={
-          <span className="inline-block w-[160px]">Thành viên quản lí</span>
+          <span className="inline-block w-[160px]">Thành viên quản lý</span>
         }
         rules={[
           {
             required: true,
-            message: 'Nhập thành viên quản lí',
+            message: 'Nhập thành viên quản lý',
           },
         ]}
       >
@@ -50,6 +50,9 @@ const FormFields: React.FC<{
           placeholder="Chọn thành viên"
           options={manager}
         />
+      </Form.Item>
+      <Form.Item name="is_key_workflow" valuePropName="checked">
+        <Checkbox>Quy trình key</Checkbox>
       </Form.Item>
     </>
   )

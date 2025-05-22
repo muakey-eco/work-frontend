@@ -120,7 +120,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     const user = members?.find((u: any) => u?.id === task?.account_id)
 
     const handleRemoveExecutor = async (id: number) => {
-      if (!String(options?.role).toLowerCase().includes('quản lí')) {
+      if (!String(options?.role).toLowerCase().includes('quản lý')) {
         if (userId !== task.account_id) {
           toast.error('Không thể gỡ nhiệm vụ của người khác.')
           return
@@ -186,7 +186,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
         return
       }
 
-      if (!String(role).toLocaleLowerCase().includes('quản lí')) {
+      if (!String(role).toLocaleLowerCase().includes('quản lý')) {
         if (task.account_id !== userId) {
           message.error(
             'Không thể kéo nhiệm vụ của người khác hoặc chưa được giao.',
@@ -455,7 +455,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           ),
         })),
       },
-      ...(String(role).toLocaleLowerCase().includes('quản lí')
+      ...(String(role).toLocaleLowerCase().includes('quản lý')
         ? [
             {
               key: '3',
@@ -504,7 +504,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           </MarkTaskFailedModalForm>
         ),
       },
-      ...(String(role).toLocaleLowerCase().includes('quản lí')
+      ...(String(role).toLocaleLowerCase().includes('quản lý')
         ? [
             {
               key: '5',

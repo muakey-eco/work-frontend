@@ -105,13 +105,6 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
   }, [])
 
   useEffect(() => {
-    formRef.current?.setFieldsValue({
-      insurance: Number(basicSalary * 0.215),
-      insurance_employee: Number(basicSalary * 0.105),
-    })
-  }, [basicSalary])
-
-  useEffect(() => {
     const insurance = 1161000
     const insurance_employee = 567000
     const total_salary =

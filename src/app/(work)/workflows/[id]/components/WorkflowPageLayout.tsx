@@ -16,6 +16,7 @@ type WorkflowPageLayoutProps = {
   type?: string
   children?: React.ReactNode
   options?: any
+  workflowCategories?: any
 }
 
 export const StageContext = createContext<any>([])
@@ -24,6 +25,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
   workflow,
   type,
   options,
+  workflowCategories,
 }) => {
   const [stages, setStages] = useState<any>(
     options?.stages
@@ -32,6 +34,10 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
           id: `stage_${stage.id}`,
         }))
       : [],
+  )
+
+  const workflowsForProcess = workflowCategories?.filter(
+    (w: any) => w?.id === workflow?.workflow_category_id,
   )
 
   const isAuth =
@@ -141,6 +147,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
               date,
               tag,
               user,
+              workflowsForProcess,
             }}
           />
         </div>

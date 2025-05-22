@@ -76,21 +76,21 @@ const NavigationSubmenu: React.FC<{
                 'bg-[#FFFFFF29]':
                   pathName === child?.href && !child?.shouldRound,
 
-                'hover:bg-[#FFFFFF29]': !isSubMenu,
+                'hover:bg-[#FFFFFF29]': !isSubMenu && !hasChildren,
                 'mx-1 mt-1 rounded-md hover:bg-[#FFFFFF29]':
-                  isSubMenu && !isOpen,
+                  isSubMenu && !isOpen && level === 0 && !hasChildren,
 
-                'mx-1 rounded-md bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
+                'mx-1 rounded-md bg-gradient-to-b from-[#FFFFFF29]/10 to-[#999999]/10':
                   active && isSubMenu,
-                'bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16':
+                'bg-gradient-to-b from-[#FFFFFF29]/10 to-[#999999]/10':
                   active && !isSubMenu,
 
-                'rounded-4xl from-[#FFFFFF]/16 to-[#999999]/16 hover:bg-gradient-to-b':
+                'rounded-4xl from-[#FFFFFF29]/16 to-[#999999]/16 hover:bg-gradient-to-b':
                   child?.shouldRound && !child?.children && !isOpen,
 
                 'bg-gradient-to-b from-[rgba(255,255,255,0.10)] to-[rgba(213,213,213,0.16)]':
                   hasChildren && isOpen,
-                'rounded-4xl bg-gradient-to-b from-[#FFFFFF]/16 to-[#999999]/16 px-1':
+                'rounded-4xl bg-gradient-to-b from-[#FFFFFF29]/16 to-[#999999]/16 px-1':
                   activeChild && child?.shouldRound,
 
                 'rounded-b-2xl':

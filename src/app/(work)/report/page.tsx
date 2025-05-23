@@ -1,10 +1,10 @@
-import { PageHeader } from '@/components'
 import { getMarketingData } from '@/libs/marketing'
+import OverviewHeader from '../department/[department_id]/overview/overview-header'
 import DataCard from './components/data-card'
-import MarketingDetail from './components/marketing-detail'
-import MarketingFilter from './components/marketing-filter'
+import ReportDetail from './components/report-detail'
+import MarketingFilter from './components/report-filter'
 
-const MarketingPage = async () => {
+const ReportPage = async () => {
   const options = [
     {
       label: 'Views',
@@ -31,8 +31,8 @@ const MarketingPage = async () => {
 
   return (
     <>
-      <PageHeader title="Tổng quan" />
-      <div className="flex h-[100vh] flex-col gap-4 bg-[#f6f6f6] p-[16px]">
+      <OverviewHeader />
+      <div className="scrollbar-hide flex h-[100vh] flex-col gap-4 overflow-y-auto bg-[#f6f6f6] p-[16px]">
         <MarketingFilter />
         <div className="flex gap-4">
           <DataCard title="Số lượng Video" value="4" data={marketingData} />
@@ -49,10 +49,10 @@ const MarketingPage = async () => {
           />
           <DataCard title="Hoa hồng" value="1,240,000 đ" data={marketingData} />
         </div>
-        <MarketingDetail data={marketingData?.data} />
+        <ReportDetail data={marketingData?.data} />
       </div>
     </>
   )
 }
 
-export default MarketingPage
+export default ReportPage

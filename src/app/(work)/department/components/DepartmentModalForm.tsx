@@ -27,14 +27,22 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
-
+    const standardizedData = {
+      ...formData,
+      members: formData.members?.map((member: any) => {
+        if (typeof member === 'number') return member
+        // Nếu là tên, tìm ID tương ứng
+        const found = options?.members?.find((m: any) => m.full_name === member)
+        return found ? found.id : member // Nếu không tìm thấy thì giữ nguyên
+      }),
+    }
     try {
       if (action === 'create') {
         var { message: msg, errors } = await addDepartmentAction(formData)
       } else {
         var { message: msg, errors } = await updateDepartmentAction(
           Number(options?.id),
-          formData,
+          standardizedData,
         )
       }
 
@@ -77,9 +85,12 @@ const DepartmentModalForm: React.FC<DepartmentModalFormProps> = ({
             layout="vertical"
             initialValues={{
               ...options?.initialValues,
-              members: options?.initialValues?.members?.map(
-                (member: any) => member?.full_name,
-              ),
+              members: options?.initialValues?.members?.map((member: any) => {
+                return {
+                  value: member?.id,
+                  label: member?.full_name,
+                }
+              }),
             }}
           >
             {dom}

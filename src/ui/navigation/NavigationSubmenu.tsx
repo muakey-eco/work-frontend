@@ -73,8 +73,7 @@ const NavigationSubmenu: React.FC<{
           <li key={childKey}>
             <div
               className={clsx({
-                'bg-[#FFFFFF29]':
-                  pathName === child?.href && !child?.shouldRound,
+                'bg-[#FFFFFF29]': active && !child?.shouldRound,
 
                 'hover:bg-[#FFFFFF29]': !isSubMenu && !hasChildren,
                 'mx-1 mt-1 rounded-md hover:bg-[#FFFFFF29]':
@@ -104,7 +103,9 @@ const NavigationSubmenu: React.FC<{
                 open={isOpen}
                 ghost={ghost}
                 exact={exact}
-                matchType={matchType}
+                matchType={
+                  matchType as 'prefix' | 'default' | 'exact' | 'overview-base'
+                }
                 isSubMenu={true}
                 onClick={() => hasChildren && handleSubmenuClick(childKey)}
               />

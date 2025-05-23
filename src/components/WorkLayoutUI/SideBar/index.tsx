@@ -113,7 +113,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               ),
               shouldRound: false,
               key: `overview-${w?.id}`,
-              href: `#`,
+              href: `/department/${w?.department_id}/overview`,
             },
             {
               label: (
@@ -124,7 +124,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               ),
               shouldRound: false,
               key: `members-${w?.id}`,
-              href: `#`,
+              href: `/department/${w?.department_id}/employee`,
             },
             ...(w.workflows?.length
               ? [

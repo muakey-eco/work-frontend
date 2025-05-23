@@ -21,13 +21,14 @@ export type NavigationMenuType = {
   exact?: boolean
   matchType?: 'default' | 'prefix' | 'exact'
   className?: string
+  isMarketing?: boolean
 }
 
 export type NavigationProps = React.ComponentPropsWithoutRef<'ul'> & {
   items?: NavigationMenuType[]
   ghost?: boolean
   exact?: boolean
-  matchType?: 'default' | 'prefix' | 'exact'
+  matchType?: 'default' | 'prefix' | 'exact' | 'overview-base'
 }
 
 const InternalNavigation: React.ForwardRefRenderFunction<
@@ -98,6 +99,7 @@ const InternalNavigation: React.ForwardRefRenderFunction<
         const isActive = activeNav(
           url,
           item.href || '',
+
           exact,
           hash,
           item.matchType || matchType,

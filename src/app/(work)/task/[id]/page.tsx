@@ -128,10 +128,10 @@ const page: React.FC<any> = async (props: {
             <div className="mt-[4px] flex items-center gap-[8px] text-[#999]">
               <ExclamationCircleFilled className="text-[14px]" />
               <span className="text-[13px]">
-                Thời hạn trong giai đoạn:{' '}
+                Thời hạn nhiệm vụ:{' '}
                 <span className="text-[#000]">
                   {task?.expired
-                    ? dayjs(task?.expired).format('hh:mm DD/MM/YYYY')
+                    ? dayjs(task?.expired).format('HH:mm DD/MM/YYYY')
                     : 'Không thời hạn'}
                 </span>
               </span>

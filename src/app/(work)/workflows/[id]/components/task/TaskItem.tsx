@@ -81,6 +81,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
     options,
     style: externalStyle,
   }) => {
+    console.log('task', task)
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
     const [taskReportOpen, setTaskReportOpen] = useState(false)
@@ -294,6 +295,7 @@ const TaskItem: React.FC<TaskItemProps> = memo(
       try {
         const { message: msg, errors } = await editTaskAction(task?.id, {
           account_id: id,
+          started_at: new Date(),
         })
 
         setStages((prevStages: any[]) => {
@@ -308,11 +310,12 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                     return {
                       ...t,
                       account_id: id,
-                      expired: stage.expired_after_hours
-                        ? new Date().setHours(
-                            new Date().getHours() + stage.expired_after_hours,
-                          )
-                        : null,
+                      
+                      // expired: stage.expired_after_hours
+                      //   ? new Date().setHours(
+                      //       new Date().getHours() + stage.expired_after_hours,
+                      //     )
+                      //   : null,
                       started_at: new Date(),
                     }
                   }
@@ -331,7 +334,8 @@ const TaskItem: React.FC<TaskItemProps> = memo(
           return
         }
 
-        message.success('Nhận thành công.')
+        message.success('Bắt đầu công việc thành công.')
+        router.refresh()
         setAssignConfirmOpen(false)
       } catch (error: any) {
         throw new Error(error)
@@ -365,11 +369,11 @@ const TaskItem: React.FC<TaskItemProps> = memo(
                     return {
                       ...t,
                       account_id: id,
-                      expired: stage.expired_after_hours
-                        ? new Date().setHours(
-                            new Date().getHours() + stage.expired_after_hours,
-                          )
-                        : null,
+                      // expired: stage.expired_after_hours
+                      //   ? new Date().setHours(
+                      //       new Date().getHours() + stage.expired_after_hours,
+                      //     )
+                      //   : null,
                     }
                   }
 
@@ -683,37 +687,37 @@ const TaskItem: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {user
-              ? !task?.started_at && (
-                  <Button
-                    className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
-                    size="small"
-                    type="primary"
-                    onClick={() => {
-                      modal.confirm({
-                        title: 'Bạn muốn nhận công việc này?',
-                        onOk: () => handleAssign(userId || 0),
-                      })
-                    }}
-                  >
-                    Bắt đầu
-                  </Button>
-                )
-              : !task?.expired && (
-                  <Button
-                    className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
-                    size="small"
-                    type="primary"
-                    onClick={() => {
-                      modal.confirm({
-                        title: 'Bạn muốn nhận công việc này?',
-                        onOk: () => handleAssignWithoutWork(userId || 0),
-                      })
-                    }}
-                  >
-                    Nhận
-                  </Button>
-                )}
+            {user ? (
+              !task?.started_at && (
+                <Button
+                  className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
+                  size="small"
+                  type="primary"
+                  onClick={() => {
+                    modal.confirm({
+                      title: 'Bạn muốn nhận công việc này?',
+                      onOk: () => handleAssign(userId || 0),
+                    })
+                  }}
+                >
+                  Bắt đầu
+                </Button>
+              )
+            ) : (
+              <Button
+                className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
+                size="small"
+                type="primary"
+                onClick={() => {
+                  modal.confirm({
+                    title: 'Bạn muốn nhận công việc này?',
+                    onOk: () => handleAssignWithoutWork(userId || 0),
+                  })
+                }}
+              >
+                Nhận
+              </Button>
+            )}
           </>
         )}
 

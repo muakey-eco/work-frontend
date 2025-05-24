@@ -34,10 +34,11 @@ type StageColumnProps = {
 
 const StageColumn: React.FC<StageColumnProps> = memo(
   ({ stage, userId, options }) => {
-    const { tasks: stageTasks } = stage
+    const { stages } = useContext(WorkflowStageContext)
+    const stageData = stages.find((s: any) => s.id === stage.id)
+    const tasks = stageData ? stageData.tasks : []
 
     const [loading, setLoading] = useState(false)
-    const [tasks, setTasks] = useState<any[]>(stageTasks || [])
     const [filteredValues, setFilteredValues] = useState<any>({
       views: '',
       days: '',
@@ -89,42 +90,13 @@ const StageColumn: React.FC<StageColumnProps> = memo(
 
     useEffect(() => {
       if (!views && !formDays) {
-        setTasks(stageTasks || [])
         return
       }
 
-      setTasks(() => {
-        if (views && formDays) {
-          return [
-            ...stageTasks?.filter((t: any) => {
-              const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
-
-              return t?.view_count < +views && days >= +formDays
-            }),
-          ]
-        }
-
-        if (views) {
-          return [...stageTasks?.filter((t: any) => t?.view_count < +views)]
-        }
-
-        if (formDays) {
-          return [
-            ...stageTasks.filter((t: any) => {
-              const days = Math.abs(dayjs(t?.date_posted).diff(now, 'day'))
-
-              return days >= +formDays
-            }),
-          ]
-        }
-
-        return [...stageTasks]
-      })
-    }, [views, formDays, stageTasks])
-
-    useEffect(() => {
-      setTasks(stageTasks)
-    }, [stageTasks])
+      // Filtering logic (if you want to filter tasks)
+      // Example: const filteredTasks = ...
+      // You can pass filteredTasks to TaskList if needed
+    }, [views, formDays, tasks])
 
     useAsyncEffect(async () => {
       if (range === null) return

@@ -45,10 +45,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { message } = App.useApp()
   const formRef = useRef<FormInstance>(null)
 
-  const { account_id, members, ...restInitialValues } = initialValues
+  const { account_id, members, expired, ...restInitialValues } = initialValues
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
+    console.log('formData', formData)
 
     const { member: memberVal, tag, ...restFormData } = formData
 
@@ -62,6 +63,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       if (action === 'create') {
         var { errors, id } = await addTaskAction({
           ...restFormData,
+          expired: formData?.expired
+            ? String(dayjs(formData?.expired).format('YYYY-MM-DD HH:mm:ss'))
+            : null,
           description: restFormData.description,
           account_id: member?.id || null,
           workflow_id: params?.id || null,

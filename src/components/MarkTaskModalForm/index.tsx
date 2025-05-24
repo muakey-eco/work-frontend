@@ -43,7 +43,7 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
           typeof result.errors === 'object'
             ? result.errors.task || 'Có lỗi xảy ra'
             : result.errors
-        message.error(errorMessage)
+        message.error(String(errorMessage))
         setLoading(false)
         return
       }
@@ -67,7 +67,7 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
       var { errors } = await moveStageAction(task?.id, stageId)
 
       if (errors) {
-        message.error(errors)
+        message.error(String(errors.task || 'Có lỗi xảy ra'))
         setLoading(false)
         return
       }

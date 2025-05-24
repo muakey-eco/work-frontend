@@ -6,6 +6,10 @@ export const getDepartments = async () =>
   requestWithAuthorized('departments')
     .then((data) => data)
     .catch(() => [])
+export const getMembersByDepartmentId = async (department_id: string) =>
+  requestWithAuthorized(`departments/${department_id}/members`)
+    .then((data) => data)
+    .catch(() => [])
 
 export const getDepartmentById = async (id: number) =>
   requestWithAuthorized(`departments/${id}`)

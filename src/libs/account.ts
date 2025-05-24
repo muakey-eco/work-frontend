@@ -14,6 +14,12 @@ export const activeAccount = async (id: number) => {
   })
 }
 
+export const getAccounts = async () => {
+  return await requestWithAuthorized(`accounts`)
+    .then((data) => data)
+    .catch(() => null)
+}
+
 export const getAccountById = async (id: number, query?: any) => {
   return await requestWithAuthorized(
     `accounts/${id}?` + new URLSearchParams(query),

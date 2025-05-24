@@ -8,11 +8,10 @@ import { getSchedule } from '@/libs/statistics'
 import { getWeek } from '@/libs/utils'
 import dayjs from 'dayjs'
 import React from 'react'
-import PageHeader from './component/PageHeader'
+import OverviewHeader from '../department/[department_id]/overview/overview-header'
 import StatisticsFiltered from './component/statistics-filtered'
 import StatisticsSchedule from './component/statistics-schedule'
 import StatisticsModalForm from './component/statistics-schedule/statistics-modal-form'
-
 const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
   const searchParams = await prop.searchParams
 
@@ -43,7 +42,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
   ])
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
-      <PageHeader />
+      <OverviewHeader />
 
       {/* new */}
 

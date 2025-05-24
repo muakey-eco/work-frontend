@@ -146,7 +146,7 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
       dataSource={data}
       onChange={handleChange}
       pagination={false}
-      scroll={{ y: 320 }}
+      scroll={{ y: 400 }}
     />
   )
 }

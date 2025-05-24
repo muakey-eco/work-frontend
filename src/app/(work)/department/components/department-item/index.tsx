@@ -20,6 +20,7 @@ const DepartmentItem: React.FC<DepartmentItemProps> = ({
   const members = options?.accounts?.filter(
     (acc: any) => acc?.type !== 'department',
   )
+
   const { modal, message } = App.useApp()
   const router = useRouter()
 

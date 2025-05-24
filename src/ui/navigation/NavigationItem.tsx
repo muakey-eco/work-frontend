@@ -15,7 +15,7 @@ export type NavigationItemProps = {
   children?: React.ReactNode
   ghost?: boolean
   exact?: boolean
-  matchType?: 'default' | 'prefix' | 'exact'
+  matchType?: 'default' | 'prefix' | 'exact' | 'overview-base'
   className?: string
   isSubMenu?: boolean
   onClick?: () => void

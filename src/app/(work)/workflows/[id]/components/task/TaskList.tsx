@@ -11,7 +11,7 @@ import toast from 'react-hot-toast'
 import { deleteTaskAction } from '../../../action'
 import { StageContext } from '../stage'
 import { StageContext as WorkflowContext } from '../WorkflowPageLayout'
-import TaskItem from './TaskItem'
+import TaskItemDraggable from './TaskItemDraggable'
 
 type TaskListProps = ListProps<any> & {
   stageId?: number
@@ -82,13 +82,13 @@ const TaskList: React.FC<TaskListProps> = ({
           dataSource={tasks}
           renderItem={(task: any) => (
             <>
-              <TaskItem
+              <TaskItemDraggable
                 task={task}
                 isCompleted={currentStage?.index === 1}
                 isFailed={currentStage?.index === 0}
                 members={members}
                 expired={currentStage?.expired_after_hours}
-                onDelete={() => handleDelete(task?.id)}
+                onDelete={handleDelete}
                 userId={userId}
                 options={options}
               />

@@ -1,11 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable'
 import { Col } from 'antd'
 import React, { memo } from 'react'
-import StageColumn from './StageColumn'
+import StageColumnDroppable from './StageColumnDroppable'
 import StageModalForm from './StageModalForm'
 
 type StageColumnListProps = {
@@ -19,15 +15,12 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
 }) => {
   const { user, activeItem } = options
 
-  const sortItems =
-    items && items?.length > 0 ? items?.map((item: any) => item.id) : []
-
   const filteredStages = items?.filter(
     (stage: any) => ![0, 1].includes(stage?.index),
   )
 
   return (
-    <SortableContext items={sortItems} strategy={horizontalListSortingStrategy}>
+    <>
       {filteredStages && filteredStages?.length <= 0 && (
         <Col className="group flex w-[272px] cursor-pointer items-center justify-center overflow-hidden border-r border-[#eee] bg-[#fff] transition-all hover:bg-[#f9f9f9]">
           <StageModalForm>
@@ -39,7 +32,7 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
         </Col>
       )}
       {items?.map((stage: any) => (
-        <StageColumn
+        <StageColumnDroppable
           key={stage?.id}
           stage={stage}
           userId={user?.id}
@@ -50,7 +43,7 @@ const StageColumnList: React.FC<StageColumnListProps> = ({
           }}
         />
       ))}
-    </SortableContext>
+    </>
   )
 }
 

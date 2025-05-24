@@ -1,6 +1,6 @@
 'use client'
 
-import { App, Form, FormInstance, Input, Modal } from 'antd'
+import { App, Form, FormInstance, Input, Modal, ModalProps } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
@@ -15,11 +15,12 @@ type MarkTaskModalFormProps = {
   reportRequired?: boolean
 }
 
-const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
+const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
   children,
   options,
   mark = 'failed',
   reportRequired = false,
+  ...rest
 }) => {
   const [markOpen, setMarkOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -169,6 +170,7 @@ const MarkTaskModalForm: React.FC<MarkTaskModalFormProps> = ({
           loading,
         }}
         destroyOnClose
+        {...rest}
       >
         <Form
           onFinish={handleSubmit}

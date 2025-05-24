@@ -1,6 +1,4 @@
-'use client'
-
-import { TaskDoneModalForm } from '@/components'
+import TaskDoneModalForm from '@/app/(work)/workflows/[id]/components/stage/TaskDoneModalForm'
 import MarkTaskFailedModalForm from '@/components/MarkTaskModalForm'
 import {
   abbreviateNumber,
@@ -30,7 +28,6 @@ import {
   moveStageAction,
 } from '../../../action'
 import { StageContext } from '../stage'
-import { getReportFieldsByWorkflowIdAction } from '../stage/action'
 import TaskReportsModalForm from '../stage/TaskReportsModalForm'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import MemberList from './member-list'
@@ -422,19 +419,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
           return
         }
 
-        const data = await getReportFieldsByWorkflowIdAction({
-          workflow_id: Number(params?.id),
-          stage_id: task?.stage_id,
-          task_id: task?.id,
-        })
-
-        setReports(data)
-
-        if (
-          data?.length > 0 &&
-          task?.account_id &&
-          activeStage?.index > overStage?.index
-        ) {
+        if (task?.account_id && activeStage?.index > overStage?.index) {
           setTaskReportOpen(true)
           return
         }

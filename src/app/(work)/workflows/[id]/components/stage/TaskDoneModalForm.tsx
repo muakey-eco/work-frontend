@@ -29,6 +29,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
 }) => {
   const { message } = App.useApp()
   const handleSubmit = async (formData: any) => {
+    console.log('đã gọi api')
     try {
       const { errors } = await editTaskAction(taskId || 0, formData)
 
@@ -58,9 +59,9 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
       title={isKeyWorkflow ? 'Chuyển đến quy trình' : 'Báo cáo sản phẩm'}
       modalRender={(dom) => (
         <Form
-          onFinish={handleSubmit}
           initialValues={initialValues}
           layout="vertical"
+          onFinish={handleSubmit}
         >
           {dom}
         </Form>
@@ -68,6 +69,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
       destroyOnClose
       okText="Chuyển tiếp"
       cancelText="Hủy"
+      onOk={handleSubmit}
       okButtonProps={{
         htmlType: 'submit',
       }}

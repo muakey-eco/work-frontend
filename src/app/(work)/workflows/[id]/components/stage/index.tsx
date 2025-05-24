@@ -1,6 +1,7 @@
 'use client'
 
 import { getTaskHistoriesAction } from '@/components/action'
+import TimeConfirmationModal from '@/components/TimeConfirmationModal'
 import { useAsyncEffect } from '@/libs/hook'
 import { toast } from '@/ui'
 import {
@@ -16,7 +17,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { App, DatePicker, DatePickerProps, Modal, Row } from 'antd'
+import { App, DatePickerProps, Row } from 'antd'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import dynamic from 'next/dynamic'
@@ -217,9 +218,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       // Nếu là quản lý viên và task chưa được giao, cho phép kéo
       if (
         (String(user?.role).toLocaleLowerCase().includes('quản lý') ||
-          String(user?.role)
-            .toLocaleLowerCase()
-            .includes('Admin')) &&
+          String(user?.role).toLocaleLowerCase().includes('Admin')) &&
         !activeData?.account_id
       ) {
         moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
@@ -470,10 +469,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   )
 
   const handleOk = () => {
-    if (!newStartedAt) {
-      message.error('Vui lòng chọn thời gian bắt đầu')
-      return
-    }
     setIsModalOpen(false)
     if (dragEvent && dragEvent.over?.data.current) {
       moveTaskToNextStage(
@@ -494,7 +489,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
   const handleCancel = () => {
     setIsModalOpen(false)
-    setNewStartedAt(null)
   }
 
   return (
@@ -540,45 +534,13 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           initialValues={generateInitialValues()}
         />
 
-        {/* Modal xác nhận thời gian thực hiện */}
-        <Modal
-          title="Xác nhận thời gian thực hiện"
+        <TimeConfirmationModal
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
-          width={411}
-        >
-          <div className="flex flex-col gap-2 !text-[14px]">
-            <p>
-              Bạn đã thực hiện nhiệm vụ này trong{' '}
-              <strong>{Math.round(currentTimeDifference)} phút</strong>.
-            </p>
-            <p>Thời gian thực tế bạn bắt đầu công việc này là lúc nào?</p>
-
-            <p>Ngày/giờ bắt đầu</p>
-            <DatePicker
-              onChange={(value) => {
-                setNewStartedAt(value)
-              }}
-              placeholder="Chọn thời gian"
-              showTime
-              onOk={onOk}
-            />
-            <p>
-              Tổng thời gian thực hiện :{' '}
-              <span className="text-blue-500">
-                {newStartedAt
-                  ? (
-                      Math.round(
-                        dayjs(currentStartedAt).diff(newStartedAt, 'minutes'),
-                      ) / 60
-                    ).toFixed(2)
-                  : 0}
-                h
-              </span>
-            </p>
-          </div>
-        </Modal>
+          currentTimeDifference={currentTimeDifference}
+          currentStartedAt={currentStartedAt}
+        />
 
         <DragOverlay dropAnimation={dropAnimation}>
           {activeItem && activeItem?.id && (

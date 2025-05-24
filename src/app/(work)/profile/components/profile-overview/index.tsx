@@ -139,7 +139,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ user }) => {
           {user?.full_name || ''}
         </div>
         <div className="text-[14px] leading-[22px] font-[400] text-[#00000073]">
-          {user?.role}
+          {user?.position || '--'}
         </div>
       </div>
 

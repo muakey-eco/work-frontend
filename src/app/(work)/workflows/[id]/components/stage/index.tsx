@@ -572,6 +572,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
                 options={{
                   role: user?.role,
                 }}
+                className="!bg-[#fff]"
                 grabbing
               />
             )}

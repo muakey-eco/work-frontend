@@ -1,11 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import clsx from 'clsx'
-import Image, { ImageProps } from 'next/image'
 import React, { useMemo } from 'react'
 import Badge, { BadgeProps } from '../badge'
 
 export type AvatarProps = React.ComponentPropsWithoutRef<'div'> & {
-  src?: ImageProps['src']
-  alt?: ImageProps['alt']
+  src?: string
+  alt?: string
   size?: 'default' | 'small' | 'large' | number
   shape?: 'circle' | 'square'
   status?: 'online' | 'offline' | boolean
@@ -67,13 +67,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     return (
       <div className={className} style={avatarStyle} {...rest}>
         {src ? (
-          <Image
-            className="object-cover"
-            fill
-            src={src}
-            alt={alt ?? ''}
-            sizes="maxWidth: 100vw"
-          />
+          <img src={src} alt={alt} />
         ) : typeof children === 'string' ? (
           <span className="inline-block align-middle text-[12px] font-[400]">
             {children.charAt(0).toUpperCase()}
@@ -94,13 +88,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     >
       <div className={className} style={avatarStyle} {...rest}>
         {src ? (
-          <Image
-            className="object-cover"
-            fill
-            src={src}
-            alt={alt ?? ''}
-            sizes="maxWidth: 100vw"
-          />
+          <img src={src} alt={alt} />
         ) : typeof children === 'string' ? (
           <span className="inline-block align-middle text-[12px] font-[400]">
             {children.charAt(0).toUpperCase()}

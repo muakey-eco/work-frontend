@@ -12,7 +12,7 @@ type JobOverViewProps = {
 const JobOverView: React.FC<JobOverViewProps> = async ({
   task,
   members,
-  currentStage,
+  currentStage
 }) => {
   const workflow = await getWorkflowById(task?.workflow_id)
 
@@ -46,7 +46,7 @@ const JobOverView: React.FC<JobOverViewProps> = async ({
       <div>
         Người thực thi giai đoạn:{' '}
         <span className="font-[700]">
-          {members?.map((mem: any) => mem?.username)?.join(', ')}
+          {task?.account?.full_name || 'Không có người thực thi'}
         </span>
       </div>
     </div>

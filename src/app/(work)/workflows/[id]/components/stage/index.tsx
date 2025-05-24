@@ -35,7 +35,7 @@ import React, {
 import { addTaskReportAction, moveStageAction } from '../../../action'
 import TaskItemDraggable from '../task/TaskItemDraggable'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
-import { getReportFieldsByWorkflowIdAction } from './action'
+
 import StageColumnListSkeleton from './StageColumnListSkeleton'
 const PORTAL_HOLDER_ID = 'portals'
 
@@ -43,9 +43,13 @@ const TaskReportsModalForm = dynamic(() => import('./TaskReportsModalForm'), {
   ssr: false,
 })
 
-const TaskDoneModalForm = dynamic(() => import('./TaskDoneModalForm'), {
-  ssr: false,
-})
+const TaskDoneModalForm = dynamic(
+  () =>
+    import('@/app/(work)/workflows/[id]/components/stage/TaskDoneModalForm'),
+  {
+    ssr: false,
+  },
+)
 
 const StageColumnList = dynamic(() => import('./StageColumnList'), {
   ssr: false,
@@ -356,11 +360,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         stage.id ===
         (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
     )?.index
-    const data = await getReportFieldsByWorkflowIdAction({
-      workflow_id: Number(params?.id),
-      stage_id: activeData.stage_id,
-      task_id: activeData.id,
-    })
 
     if (
       (overIndex === 1 && requiredLink) ||
@@ -370,7 +369,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       return
     }
 
-    if (data?.length > 0 && activeData.account_id && activeIndex > overIndex) {
+    if (activeData.account_id && activeIndex > overIndex) {
       setOpen(true)
       return
     }
@@ -462,16 +461,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       (overData.stage_id ? `stage_${overData.stage_id}` : overData.id)
     )
       return
-
-    if (activeIndex && overIndex && activeIndex > overIndex) {
-      const data = await getReportFieldsByWorkflowIdAction({
-        workflow_id: Number(params?.id),
-        stage_id: activeData.stage_id,
-        task_id: activeData.id,
-      })
-
-      setReports([...data])
-    }
   }, [dragEvent])
 
   useEffect(() => {
@@ -540,34 +529,31 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         )}
 
         {/* Modal xác nhận có link youtube */}
-        {doneOpen && (
-          <TaskDoneModalForm
-            open={doneOpen}
-            onCancel={() => setDoneOpen(false)}
-            taskId={Number(activeId)}
-            isKeyWorkflow={options?.isKeyWorkflow}
-            workflowsForProcess={options?.workflowsForProcess}
-            hasLink={requiredLink}
-            onSubmit={async () => {
-              if (!dragEvent) return
 
-              await handleDrag(dragEvent)
-            }}
-            onOk={() => setDoneOpen(false)}
-            initialValues={generateInitialValues()}
-          />
-        )}
+        <TaskDoneModalForm
+          open={doneOpen}
+          onCancel={() => setDoneOpen(false)}
+          taskId={Number(activeId)}
+          isKeyWorkflow={options?.isKeyWorkflow}
+          workflowsForProcess={options?.workflowsForProcess}
+          hasLink={requiredLink}
+          onSubmit={async () => {
+            if (!dragEvent) return
+
+            await handleDrag(dragEvent)
+          }}
+          onOk={() => setDoneOpen(false)}
+          initialValues={generateInitialValues()}
+        />
 
         {/* Modal xác nhận thời gian thực hiện */}
-        {isModalOpen && (
-          <TimeConfirmationModal
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            currentTimeDifference={currentTimeDifference}
-            currentStartedAt={currentStartedAt}
-          />
-        )}
+        <TimeConfirmationModal
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          currentTimeDifference={currentTimeDifference}
+          currentStartedAt={currentStartedAt}
+        />
         <Portal>
           <DragOverlay>
             {activeItem && activeItem?.id && (

@@ -266,16 +266,6 @@ export const getTimeStagesByTaskId = async (id: number) =>
     .then((data) => data)
     .catch(() => [])
 
-export const getReportFieldsByWorkflowId = async (
-  query?: any,
-  options?: RequestOptions,
-) =>
-  requestWithAuthorized(`report-fields?` + new URLSearchParams(query), {
-    ...options,
-  })
-    .then((data) => data)
-    .catch(() => [])
-
 export const addReportField = async (data: any) =>
   requestWithAuthorized('report-fields', {
     method: 'POST',

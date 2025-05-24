@@ -1,10 +1,9 @@
 'use client'
 
-import { useAsyncEffect } from '@/libs/hook'
 import { PlusOutlined } from '@/ui/icons'
 import { Button } from 'antd'
 import React, { useState } from 'react'
-import { getReportFieldsByWorkflowIdRequest } from '../action'
+
 import ReportFieldList from './ReportFieldList'
 import ReportFieldsModalForm from './ReportFieldsModalForm'
 
@@ -17,12 +16,6 @@ const ReportFields: React.FC<ReportFieldsProps> = ({ stages, workflowId }) => {
   console.log('REPORT FIELDS')
 
   const [fields, setFields] = useState([])
-
-  useAsyncEffect(async () => {
-    const res = await getReportFieldsByWorkflowIdRequest(workflowId)
-
-    setFields(res)
-  }, [])
 
   return (
     <div className="h-[calc(100vh-82px)] overflow-auto bg-[#eee] p-[20px]">

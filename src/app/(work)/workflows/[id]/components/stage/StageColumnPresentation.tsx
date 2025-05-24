@@ -1,12 +1,11 @@
 import { useAsyncEffect } from '@/libs/hook'
-import { Col } from '@/ui'
 import {
   ExclamationCircleOutlined,
   FilterFilled,
   ReloadOutlined,
 } from '@ant-design/icons'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { DraggableAttributes } from '@dnd-kit/core'
+import { CSS, Transform } from '@dnd-kit/utilities'
 import { Button, DatePicker, Dropdown, Form, Input, Tooltip } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import clsx from 'clsx'
@@ -20,23 +19,24 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import TaskList from '../task/TaskList'
+import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
+import { getStagesByWorkflowIdRequest, refreshDataAction } from './action'
 import StageDropdownMenu from './StageDropdownMenu'
 import StageHeader from './StageHeader'
-import { getStagesByWorkflowIdRequest, refreshDataAction } from './action'
 
 type StageColumnProps = {
-  stage?: any
+  stage: any
   userId?: number
   options?: any
+  setNodeRef: (element: HTMLElement | null) => void
+  attributes: DraggableAttributes
+  transform: Transform | null
 }
 
-const StageColumn: React.FC<StageColumnProps> = memo(
-  ({ stage, userId, options }) => {
-    const { stages } = useContext(WorkflowStageContext)
-    const stageData = stages.find((s: any) => s.id === stage.id)
-    const tasks = stageData ? stageData.tasks : []
+const StageColumnPresentation: React.FC<StageColumnProps> = memo(
+  ({ stage, userId, options, setNodeRef, attributes, transform }) => {
+    const stageTasks = stage.tasks
 
     const [loading, setLoading] = useState(false)
     const [filteredValues, setFilteredValues] = useState<any>({
@@ -45,23 +45,10 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       range: null,
     })
 
-    const now = new Date()
     const [form] = Form.useForm()
     const { setStages } = useContext(WorkflowStageContext)
 
     const params = useParams()
-    const { attributes, setNodeRef, transform, transition } = useSortable({
-      id: stage?.id,
-      data: stage,
-    })
-
-    const StageColumnStyle: React.CSSProperties = useMemo(
-      () => ({
-        transform: CSS.Translate.toString(transform),
-        transition,
-      }),
-      [transform, transition],
-    )
 
     const handleRefresh = useCallback(async () => {
       setLoading(true)
@@ -96,7 +83,7 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       // Filtering logic (if you want to filter tasks)
       // Example: const filteredTasks = ...
       // You can pass filteredTasks to TaskList if needed
-    }, [views, formDays, tasks])
+    }, [views, formDays])
 
     useAsyncEffect(async () => {
       if (range === null) return
@@ -115,15 +102,27 @@ const StageColumn: React.FC<StageColumnProps> = memo(
       )
     }, [range])
 
+    const classNameColumn = clsx(
+      'w-[272px] overflow-hidden border-r border-[#eee]',
+      {
+        'bg-[#fff3f3]': stage.index === 0,
+        'bg-[#fff]': stage.index === 1,
+        'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
+      },
+    )
+
+    const StageColumnStyle: React.CSSProperties = useMemo(
+      () => ({
+        transform: CSS.Translate.toString(transform),
+      }),
+      [transform],
+    )
+
     return (
-      <Col
-        className={clsx('w-[272px] overflow-hidden border-r border-[#eee]', {
-          'bg-[#fff3f3]': stage.index === 0,
-          'bg-[#fff]': stage.index === 1,
-          'bg-[#f6f6f6]': ![0, 1].includes(stage.index),
-        })}
-        key={stage.id}
+      <div
         ref={setNodeRef}
+        className={classNameColumn}
+        key={stage.id}
         style={StageColumnStyle}
         {...{
           ...attributes,
@@ -242,20 +241,23 @@ const StageColumn: React.FC<StageColumnProps> = memo(
           </div>
         </StageHeader>
 
-        <div className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]">
+        <div
+          className="no-scroll h-[calc(100vh-171px)] overflow-auto pb-[22px]"
+          // style={highlightStyle}
+        >
           <TaskList
-            tasks={tasks}
+            tasks={stage.tasks}
             stageId={stage?.id}
             loading={loading}
             userId={userId}
             options={options}
           />
         </div>
-      </Col>
+      </div>
     )
   },
 )
 
-StageColumn.displayName = 'Stage column'
+StageColumnPresentation.displayName = 'Stage column'
 
-export default StageColumn
+export default StageColumnPresentation

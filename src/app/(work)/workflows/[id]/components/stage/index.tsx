@@ -4,12 +4,12 @@ import { getTaskHistoriesAction } from '@/components/action'
 import TimeConfirmationModal from '@/components/TimeConfirmationModal'
 import { useAsyncEffect } from '@/libs/hook'
 import { toast } from '@/ui'
+import Portal from '@/ui/portal'
 import {
-  defaultDropAnimationSideEffects,
+  closestCorners,
   DndContext,
   DragEndEvent,
   DragOverlay,
-  DragOverlayProps,
   DragStartEvent,
   MouseSensor,
   TouchSensor,
@@ -19,7 +19,7 @@ import {
 } from '@dnd-kit/core'
 import { App, DatePickerProps, Row } from 'antd'
 import dayjs from 'dayjs'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, pick } from 'lodash'
 import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
 import React, {
@@ -33,10 +33,11 @@ import React, {
   useState,
 } from 'react'
 import { addTaskReportAction, moveStageAction } from '../../../action'
-import TaskItem from '../task/TaskItem'
+import TaskItemDraggable from '../task/TaskItemDraggable'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import { getReportFieldsByWorkflowIdAction } from './action'
 import StageColumnListSkeleton from './StageColumnListSkeleton'
+const PORTAL_HOLDER_ID = 'portals'
 
 const TaskReportsModalForm = dynamic(() => import('./TaskReportsModalForm'), {
   ssr: false,
@@ -72,6 +73,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [newStartedAt, setNewStartedAt] = useState<any>()
   const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
   const [currentStartedAt, setCurrentStartedAt] = useState<dayjs.Dayjs>()
+  const [stagesMinimal, setStagesMinimal] = useState<any>([])
 
   const onOk = (value: DatePickerProps['value']) => {}
 
@@ -83,17 +85,46 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const { setStages } = useContext(WorkflowStageContext)
   const params = useParams()
 
+  const getMinimalStages = useCallback((stages: any) => {
+    const result = stages.map((st: any) => {
+      const tasks = st.tasks?.map((ta: any) =>
+        pick(ta, [
+          'date_posted',
+          'view_count',
+          'id',
+          'name',
+          'account_id',
+          'stage_id',
+          'expired',
+          'sticker',
+          'tags',
+          'started_at',
+          'like_count',
+          'comment_count',
+          'link_youtube',
+          'description',
+        ]),
+      )
+      return { ...st, tasks }
+    })
+    setStagesMinimal(result)
+  }, [])
+
+  useEffect(() => {
+    getMinimalStages(stages)
+  }, [getMinimalStages, stages])
+
   const failedStageId = useMemo(
     () =>
       Number(
-        stages?.length > 0
-          ? stages
+        stagesMinimal?.length > 0
+          ? stagesMinimal
               ?.find((stage: any) => stage.index === 0)
               ?.['id'].split('_')
               .pop()
           : 0,
       ),
-    [stages],
+    [stagesMinimal],
   )
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -110,168 +141,173 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
   const sensors = useSensors(mouseSensor, touchSensor)
 
-  const moveTaskToNextStage = async (
-    activeTaskId: number,
-    stageId: number,
-    activeData: any,
-    overData: any,
-  ) => {
-    try {
-      // Move the task to the new stage
-      const { message: msg, errors } = await moveStageAction(
-        activeTaskId as number,
-        stageId,
-      )
-
-      if (errors) {
-        message.error(msg)
-        return
-      }
-
-      // Retrieve task history
-      const taskHistory = await getTaskHistoriesAction({
-        task_id: activeData.id,
-        stage_id: stageId,
-      })
-
-      // Update the stages
-      setStages((prevStages: any) => {
-        const newStages = cloneDeep(prevStages)
-
-        // Find active and over columns
-        const activeColumn = newStages.find(
-          (s: any) => s.id === `stage_${activeData.stage_id}`,
-        )
-        const overColumn = newStages.find(
-          (s: any) => s.id === `stage_${stageId}`,
+  const moveTaskToNextStage = useCallback(
+    async (activeTaskId: number, stageId: number, activeData: any) => {
+      try {
+        // Move the task to the new stage
+        const { message: msg, errors } = await moveStageAction(
+          activeTaskId as number,
+          stageId,
         )
 
-        // Remove the task from the current stage
-        if (activeColumn) {
-          activeColumn.tasks = activeColumn.tasks.filter(
-            (t: any) => t.id !== activeTaskId,
+        if (errors) {
+          message.error(msg)
+          return
+        }
+
+        // Retrieve task history
+        const taskHistory = await getTaskHistoriesAction({
+          task_id: activeData.id,
+          stage_id: stageId,
+        })
+
+        // Update the stages
+        setStages((prevStages: any) => {
+          const newStages = cloneDeep(prevStages)
+
+          // Find active and over columns
+          const activeColumn = newStages.find(
+            (s: any) => s.id === `stage_${activeData.stage_id}`,
           )
-        }
+          const overColumn = newStages.find(
+            (s: any) => s.id === `stage_${stageId}`,
+          )
 
-        // Add the task to the new stage
-        if (overColumn) {
-          overColumn.tasks = [
-            {
-              ...activeData,
-              stage_id: stageId,
-              account_id: taskHistory?.worker || null,
-              expired: taskHistory?.worker
-                ? taskHistory?.expired_at
+          // Remove the task from the current stage
+          if (activeColumn) {
+            activeColumn.tasks = activeColumn.tasks.filter(
+              (t: any) => t.id !== activeTaskId,
+            )
+          }
+
+          // Add the task to the new stage
+          if (overColumn) {
+            overColumn.tasks = [
+              {
+                ...activeData,
+                stage_id: stageId,
+                account_id: taskHistory?.worker || null,
+                expired: taskHistory?.worker
                   ? taskHistory?.expired_at
-                  : overColumn.expired_after_hours
-                    ? new Date().setHours(
-                        new Date().getHours() + overColumn.expired_after_hours,
-                      )
-                    : null
-                : null,
-              started_at: taskHistory?.started_at || null,
-            },
-            ...overColumn.tasks,
-          ]
+                    ? taskHistory?.expired_at
+                    : overColumn.expired_after_hours
+                      ? new Date().setHours(
+                          new Date().getHours() +
+                            overColumn.expired_after_hours,
+                        )
+                      : null
+                  : null,
+                started_at: taskHistory?.started_at || null,
+              },
+              ...overColumn.tasks,
+            ]
+          }
+
+          return newStages
+        })
+      } catch (error: any) {
+        message.error('Có lỗi xảy ra khi di chuyển task')
+        throw new Error(error)
+      }
+    },
+    [message, setStages],
+  )
+
+  const handleDrag = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+
+      if (!over) return
+
+      if (active.id !== over.id) {
+        const {
+          data: { current: overData },
+        } = over
+        const {
+          id: activeTaskId,
+          data: { current: activeData },
+        } = active
+
+        if (!overData || !activeData) return
+
+        const stageId = Number(
+          String(overData.stage_id || overData.id)
+            .split('_')
+            .pop(),
+        )
+
+        const memberIds = members?.map((member: any) => member?.id)
+
+        if (
+          !memberIds?.includes(user?.id) &&
+          !user?.role?.toLocaleLowerCase()?.includes('Admin')
+        ) {
+          message.error(' Bạn không phải thành viên trong quy trình này.')
+          return
         }
 
-        return newStages
-      })
-    } catch (error: any) {
-      message.error('Có lỗi xảy ra khi di chuyển task')
-      throw new Error(error)
-    }
-  }
+        // Nếu là quản lý viên và task chưa được giao, cho phép kéo
+        if (
+          (String(user?.role).toLocaleLowerCase().includes('quản lý') ||
+            String(user?.role).toLocaleLowerCase().includes('Admin')) &&
+          !activeData?.account_id
+        ) {
+          moveTaskToNextStage(Number(activeTaskId), stageId, activeData)
+          return
+        }
 
-  const handleDrag = async (event: DragEndEvent) => {
-    const { active, over } = event
+        if (
+          !user?.role?.toLocaleLowerCase()?.includes('quản lý') &&
+          !activeData?.started_at
+        ) {
+          message.error('Nhiệm vụ chưa được bắt đầu.')
+          return
+        }
 
-    if (!over) return
+        // Check the time difference between the current time and the task's started_at
+        const startedAt = dayjs(activeData?.started_at)
 
-    if (active.id !== over.id) {
+        if (!startedAt.isValid()) {
+          message.error('Nhiệm vụ chưa được bắt đầu.')
+          return
+        }
+        const currentTime = dayjs()
+        const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
+
+        // If the time difference is less than 5 minutes, show the confirmation modal
+        if (timeDifference < 5) {
+          setCurrentTimeDifference(timeDifference)
+          setCurrentStartedAt(startedAt)
+          setIsModalOpen(true)
+          return
+        } else {
+          // If time difference is greater than or equal to 5 minutes, move the task immediately
+          moveTaskToNextStage(Number(activeTaskId), stageId, activeData)
+        }
+      }
+    },
+    [members, message, moveTaskToNextStage, user?.id, user?.role],
+  )
+
+  const handleDragStart = useCallback(
+    (e: DragStartEvent) => {
       const {
-        data: { current: overData },
-      } = over
-      const {
-        id: activeTaskId,
-        data: { current: activeData },
-      } = active
+        active: {
+          id: activeId,
+          data: { current },
+        },
+      } = e
 
-      if (!overData || !activeData) return
-
-      const stageId = Number(
-        String(overData.stage_id || overData.id)
-          .split('_')
-          .pop(),
+      const stage = stagesMinimal?.find(
+        (s: any) => s.id === current?.stage_id || activeId,
       )
 
-      const memberIds = members?.map((member: any) => member?.id)
-
-      if (
-        !memberIds?.includes(user?.id) &&
-        !user?.role?.toLocaleLowerCase()?.includes('Admin')
-      ) {
-        message.error(' Bạn không phải thành viên trong quy trình này.')
-        return
-      }
-
-      // Nếu là quản lý viên và task chưa được giao, cho phép kéo
-      if (
-        (String(user?.role).toLocaleLowerCase().includes('quản lý') ||
-          String(user?.role).toLocaleLowerCase().includes('Admin')) &&
-        !activeData?.account_id
-      ) {
-        moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
-        return
-      }
-
-      if (
-        !user?.role?.toLocaleLowerCase()?.includes('quản lý') &&
-        !activeData?.started_at
-      ) {
-        message.error('Nhiệm vụ chưa được bắt đầu.')
-        return
-      }
-
-      // Check the time difference between the current time and the task's started_at
-      const startedAt = dayjs(activeData?.started_at)
-
-      if (!startedAt.isValid()) {
-        message.error('Nhiệm vụ chưa được bắt đầu.')
-        return
-      }
-      const currentTime = dayjs()
-      const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
-
-      // If the time difference is less than 5 minutes, show the confirmation modal
-      if (timeDifference < 5) {
-        setCurrentTimeDifference(timeDifference)
-        setCurrentStartedAt(startedAt)
-        setIsModalOpen(true)
-        return
-      } else {
-        // If time difference is greater than or equal to 5 minutes, move the task immediately
-        moveTaskToNextStage(Number(activeTaskId), stageId, activeData, overData)
-      }
-    }
-  }
-
-  const handleDragStart = (e: DragStartEvent) => {
-    const {
-      active: {
-        id: activeId,
-        data: { current },
-      },
-    } = e
-
-    const stage = stages?.find(
-      (s: any) => s.id === current?.stage_id || activeId,
-    )
-
-    setCurrentStage(stage)
-    setActiveId(activeId)
-    setActiveItem(current)
-  }
+      setCurrentStage(stage)
+      setActiveId(activeId)
+      setActiveItem(current)
+    },
+    [stagesMinimal],
+  )
 
   const handleDragEnd = async (e: DragEndEvent) => {
     setDragEvent(e)
@@ -297,21 +333,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       return
     }
 
-    const activeIndex = stages?.find(
-      (stage: any) => stage.id === `stage_${activeData.stage_id}`,
-    )?.index
-    const overIndex = stages?.find(
-      (stage: any) =>
-        stage.id ===
-        (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
-    )?.index
-
-    const data = await getReportFieldsByWorkflowIdAction({
-      workflow_id: Number(params?.id),
-      stage_id: activeData.stage_id,
-      task_id: activeData.id,
-    })
-
     if (!String(user?.role).toLocaleLowerCase().includes('quản lý')) {
       if (activeData.account_id !== user?.id) {
         message.error(
@@ -326,6 +347,20 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         return
       }
     }
+
+    const activeIndex = stagesMinimal?.find(
+      (stage: any) => stage.id === `stage_${activeData.stage_id}`,
+    )?.index
+    const overIndex = stagesMinimal?.find(
+      (stage: any) =>
+        stage.id ===
+        (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
+    )?.index
+    const data = await getReportFieldsByWorkflowIdAction({
+      workflow_id: Number(params?.id),
+      stage_id: activeData.stage_id,
+      task_id: activeData.id,
+    })
 
     if (
       (overIndex === 1 && requiredLink) ||
@@ -412,11 +447,11 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
     if (!activeData || !overData) return
 
-    const activeIndex = stages?.find(
+    const activeIndex = stagesMinimal?.find(
       (stage: any) => stage.id === `stage_${activeData.stage_id}`,
     )?.index
 
-    const overIndex = stages?.find(
+    const overIndex = stagesMinimal?.find(
       (stage: any) =>
         stage.id ===
         (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
@@ -445,19 +480,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     activeRef.current = activeId
   }, [activeId])
 
-  const dropAnimation: DragOverlayProps['dropAnimation'] = useMemo(
-    () => ({
-      sideEffects: defaultDropAnimationSideEffects({
-        styles: {
-          active: {
-            opacity: '0.5',
-          },
-        },
-      }),
-    }),
-    [],
-  )
-
   const contextValue = useMemo(
     () => ({
       activeId,
@@ -482,7 +504,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
             .pop(),
         ),
         dragEvent.active.data.current,
-        dragEvent.over.data.current,
       )
     }
   }
@@ -493,6 +514,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
   return (
     <DndContext
+      collisionDetection={closestCorners}
       sensors={sensors}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -500,7 +522,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       <StageContext.Provider value={contextValue}>
         <Row className="h-full w-max" wrap={false}>
           <StageColumnList
-            items={stages}
+            items={stagesMinimal}
             options={{
               user,
               activeItem,
@@ -518,46 +540,57 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         )}
 
         {/* Modal xác nhận có link youtube */}
-        <TaskDoneModalForm
-          open={doneOpen}
-          onCancel={() => setDoneOpen(false)}
-          taskId={Number(activeId)}
-          isKeyWorkflow={options?.isKeyWorkflow}
-          workflowsForProcess={options?.workflowsForProcess}
-          hasLink={requiredLink}
-          onSubmit={async () => {
-            if (!dragEvent) return
+        {doneOpen && (
+          <TaskDoneModalForm
+            open={doneOpen}
+            onCancel={() => setDoneOpen(false)}
+            taskId={Number(activeId)}
+            isKeyWorkflow={options?.isKeyWorkflow}
+            workflowsForProcess={options?.workflowsForProcess}
+            hasLink={requiredLink}
+            onSubmit={async () => {
+              if (!dragEvent) return
 
-            await handleDrag(dragEvent)
-          }}
-          onOk={() => setDoneOpen(false)}
-          initialValues={generateInitialValues()}
-        />
+              await handleDrag(dragEvent)
+            }}
+            onOk={() => setDoneOpen(false)}
+            initialValues={generateInitialValues()}
+          />
+        )}
 
-        <TimeConfirmationModal
-          open={isModalOpen}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          currentTimeDifference={currentTimeDifference}
-          currentStartedAt={currentStartedAt}
-        />
-
-        <DragOverlay dropAnimation={dropAnimation}>
-          {activeItem && activeItem?.id && (
-            <TaskItem
-              key={activeItem?.id}
-              task={activeItem}
-              isCompleted={currentStage?.index === 1}
-              isFailed={currentStage?.index === 0}
-              members={members}
-              expired={currentStage?.expired_after_hours}
-              userId={user?.id}
-              options={{
-                role: user?.role,
-              }}
-            />
-          )}
-        </DragOverlay>
+        {/* Modal xác nhận thời gian thực hiện */}
+        {isModalOpen && (
+          <TimeConfirmationModal
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            currentTimeDifference={currentTimeDifference}
+            currentStartedAt={currentStartedAt}
+          />
+        )}
+        <Portal>
+          <DragOverlay>
+            {activeItem && activeItem?.id && (
+              <TaskItemDraggable
+                style={{
+                  transform: 'rotate(5deg)',
+                  transformOrigin: 'center center',
+                }}
+                key={activeItem?.id}
+                task={activeItem}
+                isCompleted={currentStage?.index === 1}
+                isFailed={currentStage?.index === 0}
+                members={members}
+                expired={currentStage?.expired_after_hours}
+                userId={user?.id}
+                options={{
+                  role: user?.role,
+                }}
+                grabbing
+              />
+            )}
+          </DragOverlay>
+        </Portal>
       </StageContext.Provider>
     </DndContext>
   )

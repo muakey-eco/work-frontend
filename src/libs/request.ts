@@ -85,13 +85,14 @@ export const requestWithAuthorized = async (
   }
 
   const xForwardedFor = (await headers()).get('x-forwarded-for')
+  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '1.54.23.141'
 
   return request(path, {
     cache: 'no-store',
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
-      'x-forwarded-for': xForwardedFor || '',
+      'x-forwarded-for': String(ipRaw),
       ...options?.headers,
     },
   })

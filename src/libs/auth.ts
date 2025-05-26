@@ -1,3 +1,6 @@
+'use server'
+
+import { headers } from 'next/headers'
 import { request, requestWithAuthorized } from './request'
 import { getSession } from './session'
 
@@ -16,10 +19,16 @@ export const changeLoggedInDate = async () => {
   await session.save()
 }
 
-export const loginWidthCredentials = async (data: any) =>
-  request('login', {
+export const loginWidthCredentials = async (data: any) => {
+  const xForwardedFor = (await headers()).get('x-forwarded-for')
+  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '1.54.23.141'
+
+  return request('login', {
     method: 'POST',
     data,
+    headers: {
+      'X-Forwarded-For': String(ipRaw),
+    },
   }).then(async (data) => {
     const { token, errors } = data
 
@@ -33,6 +42,7 @@ export const loginWidthCredentials = async (data: any) =>
 
     return { token: accessToken, errors }
   })
+}
 
 export const logout = async () => {
   const session = await getSession()

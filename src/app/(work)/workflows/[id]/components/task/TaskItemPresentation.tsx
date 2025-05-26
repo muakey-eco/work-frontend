@@ -452,21 +452,37 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
         {
           key: '2',
           label: 'Chuyển giai đoạn',
-          children: stages?.map((stage: any, index: number) => ({
-            key: `2-${index + 1}`,
-            label: (
-              <div
-                className={clsx({
-                  'text-[#d96c6c]': stage?.index === 0,
-                  'text-[#42bb14]': stage?.index === 1,
-                })}
-                key={stage?.id}
-                onClick={() => handleMoveStageClick(stage)}
-              >
-                {stage?.name}
-              </div>
-            ),
-          })),
+          children: stages
+            ?.filter((stage: any) => {
+              const currentStageIndex = stages?.findIndex(
+                (s: any) => s?.id === `stage_${task?.stage_id}`,
+              )
+              const stageIndex = stages?.findIndex(
+                (s: any) => s?.id === stage?.id,
+              )
+
+              // Show first stage, previous stage, and next stage
+              return (
+                stageIndex === 0 ||
+                stageIndex === currentStageIndex - 1 ||
+                stageIndex === currentStageIndex + 1
+              )
+            })
+            .map((stage: any, index: number) => ({
+              key: `2-${index + 1}`,
+              label: (
+                <div
+                  className={clsx({
+                    'text-[#d96c6c]': stage?.index === 0,
+                    'text-[#42bb14]': stage?.index === 1,
+                  })}
+                  key={stage?.id}
+                  onClick={() => handleMoveStageClick(stage)}
+                >
+                  {stage?.name}
+                </div>
+              ),
+            })),
         },
         ...(String(role).toLocaleLowerCase().includes('quản lý')
           ? [

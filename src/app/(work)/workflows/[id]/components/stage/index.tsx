@@ -39,10 +39,6 @@ import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import StageColumnListSkeleton from './StageColumnListSkeleton'
 const PORTAL_HOLDER_ID = 'portals'
 
-const TaskReportsModalForm = dynamic(() => import('./TaskReportsModalForm'), {
-  ssr: false,
-})
-
 const TaskDoneModalForm = dynamic(
   () =>
     import('@/app/(work)/workflows/[id]/components/stage/TaskDoneModalForm'),
@@ -69,7 +65,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
@@ -217,6 +213,23 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     [message, setStages],
   )
 
+  const isAdjacentStage = useCallback(
+    (currentStageId: number, targetStageId: number) => {
+      const currentStageIndex = stagesMinimal.findIndex(
+        (s: any) => s.id === `stage_${currentStageId}`,
+      )
+      const targetStageIndex = stagesMinimal.findIndex(
+        (s: any) => s.id === `stage_${targetStageId}`,
+      )
+      // Cho phép kéo tới cột thành công hoặc thất bại - Cần không nhỉ : ))
+      // if (targetStageIndex === 0 || targetStageIndex === 1) return true
+
+      // Kiểm tra xem cột có liền kề nhau không
+      return Math.abs(currentStageIndex - targetStageIndex) === 1
+    },
+    [stagesMinimal],
+  )
+
   const handleDrag = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event
@@ -320,20 +333,22 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
     if (!over) return
 
-    const {
-      data: { current: activeData },
-    } = active
+    const activeId = active.id
+    const overId = over.id
 
-    const {
-      data: { current: overData },
-    } = over
+    if (activeId === overId) return
 
-    if (!overData || !activeData) return
+    const activeData = active.data.current
+    const overData = over.data.current
 
-    if (
-      `stage_${activeData.stage_id}` ===
-      (overData.stage_id ? `stage_${overData.stage_id}` : overData.id)
-    ) {
+    if (!activeData || !overData) return
+
+    const activeStageId = activeData.stage_id
+    const overStageId = +String(overId).split('_')[1]
+
+    // Kiểm tra xem cột có liền kề nhau không
+    if (!isAdjacentStage(activeStageId, overStageId)) {
+      message.error('Chỉ có thể kéo task sang cột liền kề')
       return
     }
 
@@ -366,11 +381,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       (options?.isKeyWorkflow && overIndex === 1)
     ) {
       setDoneOpen(true)
-      return
-    }
-
-    if (activeData.account_id && activeIndex > overIndex) {
-      setOpen(true)
       return
     }
 
@@ -409,7 +419,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       }
 
       await handleDrag(dragEvent)
-      setOpen(false)
+      // setOpen(false)
     } catch (error) {
       throw new Error()
     }
@@ -519,15 +529,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           />
         </Row>
 
-        {reports?.length > 0 && activeRef.current === activeId && (
-          <TaskReportsModalForm
-            open={open}
-            onCancel={() => setOpen(false)}
-            onSubmit={(values) => handleSubmit(values)}
-            reports={reports}
-          />
-        )}
-
         {/* Modal xác nhận có link youtube */}
 
         <TaskDoneModalForm
@@ -571,6 +572,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
                 userId={user?.id}
                 options={{
                   role: user?.role,
+                  stages,
                 }}
                 className="!bg-[#fff]"
                 grabbing

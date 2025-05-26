@@ -13,7 +13,6 @@ const ProfileMoreLayout: React.FC<{
   const account = await getMe({
     include: 'profile',
   })
-  console.log('account', account)
   return (
     <>
       <ProfileHeader account={account} />

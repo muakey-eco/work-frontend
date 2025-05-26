@@ -49,7 +49,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
-    console.log('formData', formData)
 
     const { member: memberVal, tag, ...restFormData } = formData
 

@@ -8,6 +8,11 @@ import {
   getTags,
   updateTagById,
 } from '@/libs/tag'
+import {
+  moveNextStage,
+  movePreviousStage,
+  movetoFirstStage,
+} from '@/libs/workflow'
 
 export const addTagAction = async (data: any) => {
   return await addTag(data)
@@ -35,3 +40,12 @@ export const getMeAction = async () => {
 
 export const editTaskAction = async (id: number, data: any) =>
   editTask(id, data)
+
+export const moveNextStageAction = async (id: number, data: any) =>
+  moveNextStage(id, data)
+
+export const movePreviousStageAction = async (id: number, data: any) =>
+  movePreviousStage(id, data)
+
+export const movetoFirstStageAction = async (id: number, data: any) =>
+  movetoFirstStage(id, data)

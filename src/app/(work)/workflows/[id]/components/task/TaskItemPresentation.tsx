@@ -28,7 +28,6 @@ import {
   moveStageAction,
 } from '../../../action'
 import { StageContext } from '../stage'
-import TaskReportsModalForm from '../stage/TaskReportsModalForm'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 import MemberList from './member-list'
 import TaskItemStatistics from './task-item-statistics'
@@ -82,12 +81,10 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
   }) => {
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
-    const [taskReportOpen, setTaskReportOpen] = useState(false)
     const [doneOpen, setDoneOpen] = useState(false)
     const [taskModalFormOpen, setTaskmodalFormOpen] = useState(false)
     const [ddOpen, setDdOpen] = useState(false)
     const [markTaskFailedOpen, setMarkTaskFailedOpen] = useState(false)
-    const [reports, setReports] = useState<any[]>([])
     const [currentStage, setCurrentStage] = useState<any>()
     const router = useRouter()
 
@@ -279,7 +276,6 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
           }
 
           handleStageClick(currentStage)
-          setTaskReportOpen(false)
         } catch (error) {
           throw new Error()
         }
@@ -419,21 +415,9 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
           return
         }
 
-        if (task?.account_id && activeStage?.index > overStage?.index) {
-          setTaskReportOpen(true)
-          return
-        }
-
         handleStageClick(stage)
       },
-      [
-        handleStageClick,
-        params?.id,
-        stages,
-        task?.account_id,
-        task?.id,
-        task?.stage_id,
-      ],
+      [handleStageClick, stages, task?.stage_id],
     )
 
     const taskDropdownItems = useMemo<MenuProps['items']>(() => {
@@ -463,9 +447,10 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
 
               // Show first stage, previous stage, and next stage
               return (
-                stageIndex === 0 ||
-                stageIndex === currentStageIndex - 1 ||
-                stageIndex === currentStageIndex + 1
+                (stageIndex === 0 ||
+                  stageIndex === currentStageIndex - 1 ||
+                  stageIndex === currentStageIndex + 1) &&
+                stageIndex !== currentStageIndex
               )
             })
             .map((stage: any, index: number) => ({
@@ -580,6 +565,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
       stages,
       task?.id,
       task?.name,
+      task?.stage_id,
     ])
 
     const renderTooltipOrTag = useCallback(
@@ -849,15 +835,6 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
                 </div>
               </div>
             </Modal>
-          )}
-
-          {taskReportOpen && (
-            <TaskReportsModalForm
-              reports={reports}
-              open={taskReportOpen}
-              onCancel={() => setTaskReportOpen(false)}
-              onSubmit={(values) => handleSubmit(values)}
-            />
           )}
 
           {doneOpen && (

@@ -2,24 +2,28 @@
 
 import { DatePicker, Modal } from 'antd'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React from 'react'
 
 type TimeConfirmationModalProps = {
   open: boolean
   onOk: () => void
   onCancel: () => void
+  value: dayjs.Dayjs | null
   currentTimeDifference: number
-  currentStartedAt: any
+  onTimeChange?: (value: dayjs.Dayjs | null) => void
 }
 
 const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
   open,
   onOk,
   onCancel,
+  value,
   currentTimeDifference,
-  currentStartedAt,
+  onTimeChange,
 }) => {
-  const [newStartedAt, setNewStartedAt] = useState<any>(null)
+  const handleTimeChange = (value: dayjs.Dayjs | null) => {
+    onTimeChange?.(value) // callback thời gian thực hiện mới
+  }
 
   return (
     <Modal
@@ -38,22 +42,18 @@ const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
 
         <p>Ngày/giờ bắt đầu</p>
         <DatePicker
-          onChange={(value) => {
-            setNewStartedAt(value)
-          }}
+          onChange={handleTimeChange}
           placeholder="Chọn thời gian"
           showTime
+          value={value}
         />
+
         <p>
-          Tổng thời gian thực hiện :{' '}
+          Tổng thời gian thực hiện:{' '}
           <span className="text-blue-500">
-            {newStartedAt
-              ? (
-                  Math.round(
-                    dayjs(currentStartedAt).diff(newStartedAt, 'minutes'),
-                  ) / 60
-                ).toFixed(2)
-              : 0}
+            {value
+              ? Math.round(value.diff(dayjs(), 'minutes')) / 60
+              : Math.round(currentTimeDifference) / 60}
             h
           </span>
         </p>

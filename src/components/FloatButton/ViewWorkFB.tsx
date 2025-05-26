@@ -47,7 +47,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
                 </p>
               </div>
               <Link
-                href={`/workflow/${todo?.workflow_id}`}
+                href={`/workflows/${todo?.workflow_id}`}
                 className="!line-clamp-1 text-[12px] text-[#555]"
               >
                 {todo?.workflow_name}

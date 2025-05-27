@@ -21,6 +21,7 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
         todos?.map((t: any) => {
           return (
             <Row key={t?.name} className="w-max">
+              {/* Cột đầu tiên */}
               <Col className="!sticky left-0 z-10 w-[296px] overflow-hidden border-r bg-[#f5f5f5]">
                 <div className="h-full w-[296px] bg-[#fff] p-[16px]">
                   <div className="flex items-center gap-[8px]">
@@ -59,6 +60,7 @@ const StatisticsRowsWorkflow: React.FC<StatisticsRowsWorkflowProps> = ({
                   </div>
                 </div>
               </Col>
+              {/* Cột tiếp theo */}
               {days?.map((day: string) => {
                 const tasksOfDay = t?.tasks?.[day]
 

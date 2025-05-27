@@ -4,7 +4,11 @@ import DataCard from './components/data-card'
 import ReportDetail from './components/report-detail'
 import MarketingFilter from './components/report-filter'
 
-const ReportPage = async () => {
+type ReportPageProps = {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+const ReportPage: React.FC<ReportPageProps> = async ({ searchParams }) => {
   const options = [
     {
       label: 'Views',

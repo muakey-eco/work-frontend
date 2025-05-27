@@ -1,4 +1,4 @@
-import { getMyAccount } from '@/libs/data'
+import { getMyAccount, getWorkflowCategories } from '@/libs/data'
 import { getDepartments } from '@/libs/department'
 import {
   getScheduleAsWorkflows,
@@ -12,22 +12,34 @@ import OverviewHeader from '../department/[department_id]/overview/overview-head
 import StatisticsFiltered from './component/statistics-filtered'
 import StatisticsSchedule from './component/statistics-schedule'
 import StatisticsModalForm from './component/statistics-schedule/statistics-modal-form'
-const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
-  const searchParams = await prop.searchParams
 
+type StatisticsPageProps = {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+const StatisticsPage: React.FC<StatisticsPageProps> = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) => {
   const today = new Date()
-  const week = getWeek(searchParams?.dw ? new Date(searchParams?.dw) : today)
-  const currentDate = String(
-    dayjs(searchParams?.dw ? new Date(searchParams?.dw) : today).format(
-      'YYYY-MM-DD',
-    ),
+
+  const week = getWeek(
+    searchParams?.dw ? new Date(searchParams?.dw as string) : today,
   )
+  const currentDate = String(
+    dayjs(
+      searchParams?.dw ? new Date(searchParams?.dw as string) : today,
+    ).format('YYYY-MM-DD'),
+  )
+
   const [
     schedule,
     scheduleAsMembers,
     scheduleAsWorkflows,
     departments,
     myAccount,
+    workflowCategories,
   ] = await Promise.all([
     getSchedule({
       start: week[0].date,
@@ -39,6 +51,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
     getScheduleAsWorkflows(),
     getDepartments(),
     getMyAccount(),
+    getWorkflowCategories(),
   ])
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">
@@ -59,6 +72,7 @@ const StatisticsPage: React.FC<any> = async (prop: { searchParams: any }) => {
               workflows: scheduleAsWorkflows,
               departments,
               currentDate,
+              workflowCategories,
             }}
           />
           {/* <StatisticsScheduleComp /> */}

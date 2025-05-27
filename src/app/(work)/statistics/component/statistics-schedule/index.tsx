@@ -7,7 +7,7 @@ import { Col, Row } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import StatisticsColHeader from './statistics-col-header'
 
@@ -20,17 +20,40 @@ type StatisticsScheduleProps = {
 }
 
 const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
+  const pathname = usePathname()
+  const department_id = pathname.split('/')[2]
+
   const [ref] = useDragScroll()
   const colRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const today = new Date()
   const week = getWeek(options?.dw ? new Date(options?.dw) : today)
-  const { schedule, accounts, account_id, workflows, as, departments } = options
+  const {
+    schedule,
+    accounts,
+    account_id,
+    workflows,
+    as,
+    departments,
+    workflowCategories,
+  } = options
+
+  // Lọc workflow categories theo phòng ban
+  const workflowCategoriesWithWorkflows = workflowCategories?.filter(
+    (w: any) => w?.department_id === Number(department_id),
+  )
+
+  // Lọc workflows theo phòng ban
+  const workflowsDepartment = workflows?.filter((w: any) =>
+    workflowCategoriesWithWorkflows?.some((wf: any) =>
+      wf?.workflows.some((wf2: any) => wf2?.id === w?.id),
+    ),
+  )
 
   const days = week?.map((w: any) => w?.date)
 
-  // Lọc task theo account
+  // Lọc task theo account và phòng ban
   const todosWithAccounts = accounts
     ?.filter(
       (acc: any) =>
@@ -38,7 +61,8 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
           String(account_id || '')
             .split(',')
             .includes(String(acc?.id))) &&
-        acc?.type !== 'department',
+        acc?.type !== 'department' &&
+        acc?.department_id === Number(department_id),
     )
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
     ?.map((acc: any) => {
@@ -64,7 +88,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
       }
     })
 
-  const todosWithWorkflows = workflows?.map((wf: any) => {
+  const todosWithWorkflows = workflowsDepartment?.map((wf: any) => {
     const days = week?.map((w: any) => {
       const tasks = schedule?.filter(
         (s: any) => String(dayjs(s?.start).format('YYYY-MM-DD')) === w?.date,
@@ -105,23 +129,25 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
     }
   })
 
-  const todosWithDepartments = departments?.map((department: any) => {
-    const members = department?.members || []
+  const todosWithDepartments = departments
+    ?.filter((department: any) => department?.id === Number(department_id))
+    ?.map((department: any) => {
+      const members = department?.members || []
 
-    const tasksForDepartment = members.reduce((tasks: any[], member: any) => {
-      const tasksForMember = schedule?.filter(
-        (task: any) => task?.account_id === member?.id,
-      )
+      const tasksForDepartment = members.reduce((tasks: any[], member: any) => {
+        const tasksForMember = schedule?.filter(
+          (task: any) => task?.account_id === member?.id,
+        )
 
-      tasks.push(...tasksForMember)
-      return tasks
-    }, [])
+        tasks.push(...tasksForMember)
+        return tasks
+      }, [])
 
-    return {
-      departmentName: department?.name,
-      tasks: tasksForDepartment,
-    }
-  })
+      return {
+        departmentName: department?.name,
+        tasks: tasksForDepartment,
+      }
+    })
 
   useEffect(() => {
     if (colRef.current) {
@@ -152,7 +178,9 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
               onClick={() => {
                 const searchParams = new URLSearchParams(window.location.search)
                 searchParams.set('dw', date.date)
-                router.push(`/statistics?${searchParams.toString()}`)
+                router.push(
+                  `/department/${department_id}/overview/statistics?${searchParams.toString()}`,
+                )
               }}
             >
               <StatisticsColHeader

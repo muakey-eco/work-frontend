@@ -41,49 +41,13 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
   const { stageId, task, workflowsForProcess, isKeyWorkflow } = options
   const { message, modal } = App.useApp()
 
+  const startedAt = dayjs(task?.started_at)
+  const timeDifference = dayjs().diff(startedAt, 'minutes') || 0 // in minutes
+
   const handleSubmit = async (formData: any) => {
     setLoading(true)
-
     try {
-      if (mark === 'completed') {
-        await editTaskAction(task?.id, formData)
-      }
-
-      setMarkOpen(false)
-      setIsTimeModalOpen(true)
-      setLoading(false)
-      message.success('Đánh dấu hoàn thành.')
-      router.refresh()
-    } catch (error: any) {
-      setLoading(false)
-      throw new Error(error)
-    }
-  }
-
-  const handleMarkCompleted = async (formData: any) => {
-    try {
-      const startedAt = dayjs(task?.started_at)
-      if (!startedAt.isValid()) {
-        message.error('Nhiệm vụ chưa được bắt đầu.')
-        return
-      }
-
-      const currentTime = dayjs()
-      const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
-
-      // If the time difference is less than 5 minutes, show the confirmation modal
-      if (timeDifference < 5) {
-        setCurrentTimeDifference(timeDifference)
-        setIsTimeModalOpen(true)
-        return
-      }
-
-      let result
-      if (mark === 'failed') {
-        result = await moveStageAction(task?.id, stageId, formData)
-      } else {
-        result = await moveStageAction(task?.id, stageId)
-      }
+      const result = await moveStageAction(task?.id, stageId, formData)
 
       if (result.errors) {
         const errorMessage =
@@ -95,9 +59,13 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
         return
       }
 
-      setIsTimeModalOpen(false)
+      setMarkOpen(false)
       setLoading(false)
-      message.success('Đã đánh dấu hoàn thành.')
+      message.success(
+        mark === 'completed'
+          ? 'Đã đánh dấu hoàn thành.'
+          : 'Đã đánh dấu thất bại.',
+      )
       router.refresh()
     } catch (error: any) {
       setLoading(false)
@@ -106,19 +74,20 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
   }
 
   const handleTimeConfirm = async () => {
+    setLoading(true)
     try {
       if (!customStartedAt) {
         message.error('Vui lòng chọn thời gian')
         return
       }
 
-      if (customStartedAt.isBefore(dayjs())) {
-        message.error('Thời gian không được nhỏ hơn hiện tại')
+      if (customStartedAt.isAfter(dayjs())) {
+        message.error('Thời gian không được lớn hơn hiện tại')
         return
       }
 
-      const { errors } = await moveStageAction(task?.id, stageId, {
-        started_at: customStartedAt.toISOString(),
+      const { errors } = await editTaskAction(task?.id, {
+        started_at: customStartedAt.format('YYYY-MM-DD HH:mm:ss'),
       })
 
       if (errors) {
@@ -130,7 +99,8 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
       setIsTimeModalOpen(false)
       setCustomStartedAt(null) // ✅ reset
       setLoading(false)
-      message.success('Đã đánh dấu hoàn thành.')
+      setMarkOpen(true)
+      message.success('Đã cập nhật thời gian mới.')
       router.refresh()
     } catch (error: any) {
       setLoading(false)
@@ -154,7 +124,7 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
           onClick={() => {
             modal.confirm({
               title: 'Xác nhận nhiệm vụ hoàn thành?',
-              onOk: handleMarkCompleted,
+              onOk: handleSubmit,
             })
           }}
         >
@@ -177,7 +147,13 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setMarkOpen(true)}>{children}</div>
+      <div
+        onClick={() =>
+          timeDifference < 5 ? setIsTimeModalOpen(true) : setMarkOpen(true)
+        }
+      >
+        {children}
+      </div>
       <Modal
         title={`ĐÁNH DẤU NHIỆM VỤ ${mark === 'failed' ? 'THẤT BẠI' : 'HOÀN THÀNH'}`}
         open={markOpen}

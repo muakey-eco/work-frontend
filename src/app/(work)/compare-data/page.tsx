@@ -2,7 +2,9 @@ import OverviewHeader from '../department/[department_id]/overview/overview-head
 import CompareDataAction from './components/compare-data-action'
 import CompareDataDetail from './components/compare-data-detail'
 
-const CompareData = () => {
+type CompareDataProps = {}
+
+const CompareData: React.FC<CompareDataProps> = () => {
   return (
     <>
       <OverviewHeader />

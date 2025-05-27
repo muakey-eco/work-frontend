@@ -235,12 +235,6 @@ export const editCustomField = async (id: number, data: any) =>
     data,
   }).then((data) => data)
 
-export const getTaskFieldsByTaskId = async (query?: any) => {
-  return requestWithAuthorized(`field-values?` + new URLSearchParams(query))
-    .then((data) => data)
-    .catch(() => [])
-}
-
 export const editTaskField = async (id: number, data?: any) =>
   requestWithAuthorized(`task-fields/${id}`, {
     method: 'PUT',

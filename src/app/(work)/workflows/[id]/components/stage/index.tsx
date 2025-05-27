@@ -1,7 +1,6 @@
 'use client'
 
-import { getTaskHistoriesAction } from '@/components/action'
-import TimeConfirmationModal from '@/components/TimeConfirmationModal'
+import { editTaskAction, getTaskHistoriesAction } from '@/components/action'
 import { useAsyncEffect } from '@/libs/hook'
 import Portal from '@/ui/portal'
 import {
@@ -20,7 +19,6 @@ import { App, Row } from 'antd'
 import dayjs from 'dayjs'
 import { cloneDeep, pick } from 'lodash'
 import dynamic from 'next/dynamic'
-import { useParams } from 'next/navigation'
 import React, {
   createContext,
   memo,
@@ -31,12 +29,13 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { moveStageAction } from '../../../action'
+import { moveStageAction } from '../../../../../../components/MarkTaskModalForm/action'
 import TaskItemDraggable from '../task/TaskItemDraggable'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 
+import TimeConfirmationModal from '@/components/TimeConfirmationModal'
+import { useRouter } from 'next/navigation'
 import StageColumnListSkeleton from './StageColumnListSkeleton'
-const PORTAL_HOLDER_ID = 'portals'
 
 const TaskDoneModalForm = dynamic(
   () =>
@@ -60,19 +59,24 @@ export type StageListProps = {
 export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
+  const router = useRouter()
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
-  // const [open, setOpen] = useState(false)
+
   const [doneOpen, setDoneOpen] = useState(false)
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
   // Modal xác nhận thời gian thực hiện
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
+  const [overIndex, setOverIndex] = useState<number | undefined>()
   //Thời gian thực hiện mới
   const [customStartedAt, setCustomStartedAt] = useState<dayjs.Dayjs | null>(
     null,
   )
+
+  const [isTimeModalLoading, setIsTimeModalLoading] = useState(false)
+  const [isDoneModalLoading, setIsDoneModalLoading] = useState(false)
 
   const [stagesMinimal, setStagesMinimal] = useState<any>([])
 
@@ -82,7 +86,10 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const { user, requiredLink } = options
 
   const { setStages } = useContext(WorkflowStageContext)
-  const params = useParams()
+
+  const completedStageId = stages
+    ?.find((stage: any) => stage.index === 1)
+    ?.['id']?.split('_')[1]
 
   const getMinimalStages = useCallback((stages: any) => {
     const result = stages.map((st: any) => {
@@ -281,25 +288,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         }
 
         // Check the time difference between the current time and the task's started_at
-        const startedAt = dayjs(activeData?.started_at)
-
-        if (!startedAt.isValid()) {
-          message.error('Nhiệm vụ chưa được bắt đầu.')
-          return
-        }
-        const currentTime = dayjs()
-        const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
-
-        // If the time difference is less than 5 minutes, show the confirmation modal
-        if (timeDifference < 5) {
-          setCurrentTimeDifference(timeDifference)
-          // setCurrentStartedAt(startedAt)
-          setIsModalOpen(true)
-          return
-        } else {
-          // If time difference is greater than or equal to 5 minutes, move the task immediately
-          moveTaskToNextStage(Number(activeTaskId), stageId, activeData)
-        }
       }
     },
     [members, message, moveTaskToNextStage, user?.id, user?.role],
@@ -374,14 +362,32 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         stage.id ===
         (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
     )?.index
+    setOverIndex(overIndex)
 
-    if (
-      (overIndex === 1 && requiredLink) ||
-      (options?.isKeyWorkflow && overIndex === 1)
-    ) {
+    const startedAt = dayjs(activeData?.started_at)
+
+    if (!startedAt.isValid()) {
+      message.error('Nhiệm vụ chưa được bắt đầu.')
+      return
+    }
+    const currentTime = dayjs()
+    const timeDifference = currentTime.diff(startedAt, 'minutes') || 0 // in minutes
+
+    // If the time difference is less than 5 minutes, show the confirmation modal
+    if (timeDifference < 5) {
+      setCurrentTimeDifference(timeDifference)
+      // setCurrentStartedAt(startedAt)
+      setIsModalOpen(true)
+      return
+    }
+
+    // If time difference is greater than or equal to 5 minutes and task is in the completed stage, show the confirmation modal
+    if (overStageId === Number(completedStageId)) {
       setDoneOpen(true)
       return
     }
+
+    moveTaskToNextStage(Number(activeId), overStageId, activeData)
 
     await handleDrag(e)
   }
@@ -421,7 +427,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
       (stage: any) => stage.id === `stage_${activeData.stage_id}`,
     )?.index
 
-    const overIndex = stagesMinimal?.find(
+    let overIndex = stagesMinimal?.find(
       (stage: any) =>
         stage.id ===
         (overData.stage_id ? `stage_${overData.stage_id}` : overData.id),
@@ -450,38 +456,87 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     [activeId, members, failedStageId],
   )
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (!customStartedAt) {
       message.error('Vui lòng chọn thời gian')
       return
     }
 
-    if (customStartedAt.isBefore(dayjs())) {
-      message.error('Thời gian không được nhỏ hơn thời gian hiện tại')
+    if (customStartedAt.isAfter(dayjs())) {
+      message.error('Thời gian không được lớn hơn thời gian hiện tại')
       return
     }
 
-    setIsModalOpen(false)
-
-    if (dragEvent && dragEvent.over?.data.current) {
-      moveTaskToNextStage(
-        Number(dragEvent.active.id),
-        Number(
-          String(
-            dragEvent.over.data.current.stage_id ||
-              dragEvent.over.data.current.id,
-          )
-            .split('_')
-            .pop(),
-        ),
-        {
-          ...dragEvent.active.data.current,
-          started_at: customStartedAt?.toISOString(),
-        },
-      )
+    if (!activeId || !dragEvent?.over?.id) {
+      message.error('Không tìm thấy thông tin task hoặc stage đích')
+      return
     }
 
+    setIsTimeModalLoading(true)
+    const overStageId = +String(dragEvent.over.id).split('_')[1]
+
+    const { errors } = await editTaskAction(Number(activeId), {
+      started_at: customStartedAt.format('YYYY-MM-DD HH:mm:ss'),
+    })
+
+    if (errors) {
+      message.error(typeof errors === 'string' ? errors : 'Đã xảy ra lỗi')
+      setIsTimeModalLoading(false)
+      return
+    }
+
+    const isTargetDoneColumn = overIndex === 1
+
+    if (
+      (isTargetDoneColumn && requiredLink) ||
+      (isTargetDoneColumn && options?.isKeyWorkflow)
+    ) {
+      setDoneOpen(true)
+    } else {
+      await moveTaskToNextStage(Number(activeId), overStageId, activeItem)
+    }
+
+    setIsModalOpen(false)
     setCustomStartedAt(null)
+    setIsTimeModalLoading(false)
+  }
+
+  const handleSubmit = async (formData: any) => {
+    setIsDoneModalLoading(true)
+
+    const res = await moveStageAction(
+      Number(activeId),
+      completedStageId,
+      formData,
+    )
+
+    if (res?.errors) {
+      message.error(res?.message || 'Đã xảy ra lỗi khi chuyển stage')
+      setIsDoneModalLoading(false)
+      return
+    }
+
+    setStages((prevStages: any) => {
+      const newStages = cloneDeep(prevStages)
+
+      // Find active and over columns
+      const activeColumn = newStages.find(
+        (s: any) => s.id === `stage_${activeItem.stage_id}`,
+      )
+
+      // Remove the task from the current stage
+      if (activeColumn) {
+        activeColumn.tasks = activeColumn.tasks.filter(
+          (t: any) => t.id !== activeId,
+        )
+      }
+
+      return newStages
+    })
+
+    message.success(res?.message || 'Đã chuyển stage')
+    router.refresh()
+    setIsDoneModalLoading(false)
   }
 
   const handleCancel = () => {
@@ -506,6 +561,18 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
             }}
           />
         </Row>
+        {/* Modal xác nhận thời gian thực hiện */}
+        <TimeConfirmationModal
+          open={isModalOpen}
+          value={customStartedAt}
+          onOk={handleOk}
+          loading={isTimeModalLoading}
+          onCancel={handleCancel}
+          currentTimeDifference={currentTimeDifference}
+          onTimeChange={(value) => {
+            setCustomStartedAt(value)
+          }}
+        />
 
         {/* Modal xác nhận có link youtube */}
 
@@ -513,28 +580,14 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           open={doneOpen}
           onCancel={() => setDoneOpen(false)}
           taskId={Number(activeId)}
+          isLoading={isDoneModalLoading}
           isKeyWorkflow={options?.isKeyWorkflow}
           workflowsForProcess={options?.workflowsForProcess}
+          workflowId={options?.workflowId}
           hasLink={requiredLink}
-          onSubmit={async () => {
-            if (!dragEvent) return
-
-            await handleDrag(dragEvent)
-          }}
+          onSubmit={handleSubmit}
           onOk={() => setDoneOpen(false)}
           initialValues={generateInitialValues()}
-        />
-
-        {/* Modal xác nhận thời gian thực hiện */}
-        <TimeConfirmationModal
-          open={isModalOpen}
-          value={customStartedAt}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          currentTimeDifference={currentTimeDifference}
-          onTimeChange={(value) => {
-            setCustomStartedAt(value)
-          }}
         />
 
         <Portal>

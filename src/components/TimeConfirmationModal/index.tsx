@@ -11,6 +11,7 @@ type TimeConfirmationModalProps = {
   value: dayjs.Dayjs | null
   currentTimeDifference: number
   onTimeChange?: (value: dayjs.Dayjs | null) => void
+  loading?: boolean
 }
 
 const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
@@ -20,6 +21,7 @@ const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
   value,
   currentTimeDifference,
   onTimeChange,
+  loading,
 }) => {
   const handleTimeChange = (value: dayjs.Dayjs | null) => {
     onTimeChange?.(value) // callback thời gian thực hiện mới
@@ -32,6 +34,9 @@ const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
       onOk={onOk}
       onCancel={onCancel}
       width={411}
+      okButtonProps={{
+        loading,
+      }}
     >
       <div className="flex flex-col gap-2 !text-[14px]">
         <p>
@@ -52,7 +57,7 @@ const TimeConfirmationModal: React.FC<TimeConfirmationModalProps> = ({
           Tổng thời gian thực hiện:{' '}
           <span className="text-blue-500">
             {value
-              ? Math.round(value.diff(dayjs(), 'minutes')) / 60
+              ? Math.round(dayjs().diff(value, 'minutes')) / 60
               : Math.round(currentTimeDifference) / 60}
             h
           </span>

@@ -64,7 +64,6 @@ const columns: TableProps<DataType>['columns'] = [
 ]
 
 const EmployeePageTable: React.FC<{
-  
   members: {
     id: number
     name: string

@@ -4,11 +4,7 @@ import { MarkTaskModalForm } from '@/components'
 import MemberList from '@/components/MemberList'
 import TaskModalForm from '@/components/TaskModalForm'
 import { assignTaskWithoutWorkAction } from '@/components/action'
-import {
-  DoubleRightOutlined,
-  MenuOutlined,
-  SyncOutlined,
-} from '@ant-design/icons'
+import { MenuOutlined, SyncOutlined } from '@ant-design/icons'
 import { App, Button, Dropdown, Input, MenuProps, Modal, Tag } from 'antd'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
@@ -311,21 +307,9 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
             requireLink={options?.reportRequired}
           >
             <div className="cursor-pointer rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] leading-[22px] font-[500] text-nowrap text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
-              Đánh dấu hoàn thành
+              Hoàn thành giai đoạn này
             </div>
           </MarkTaskModalForm>
-        )}
-        {!!stages && stages?.length > 0 && (
-          <Dropdown
-            trigger={['click']}
-            rootClassName="z-auto!"
-            placement="bottomLeft"
-            open={dropdownOpen}
-            onOpenChange={setDropdownOpen}
-            menu={{ items: stageItems }}
-          >
-            <Button icon={<DoubleRightOutlined className="text-[16px]" />} />
-          </Dropdown>
         )}
         <Dropdown
           trigger={['click']}

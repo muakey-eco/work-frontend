@@ -132,7 +132,12 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
               query.delete('as')
             }
 
-            router.push(`?${String(query)}`)
+            const currentPath = window.location.pathname
+            const targetPath = currentPath.includes('/statistics')
+              ? currentPath
+              : `${currentPath}/statistics`
+
+            router.push(`${targetPath}?${String(query)}`)
           }}
         />
       </div>

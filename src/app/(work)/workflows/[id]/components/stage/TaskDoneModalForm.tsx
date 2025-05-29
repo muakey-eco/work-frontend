@@ -6,11 +6,13 @@ import { editTaskAction } from '../../../action'
 
 type TaskDoneModalFormProps = ModalProps & {
   taskId?: number
-  onSubmit?: () => void
+  onSubmit?: (formData: any) => void
   initialValues?: any
   isKeyWorkflow?: boolean
   hasLink?: boolean
   workflowsForProcess?: any
+  workflowId?: number
+  isLoading?: boolean
 }
 const style: React.CSSProperties = {
   display: 'flex',
@@ -25,6 +27,8 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
   isKeyWorkflow,
   hasLink,
   workflowsForProcess,
+  workflowId,
+  isLoading,
   ...rest
 }) => {
   const { message } = App.useApp()
@@ -37,7 +41,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
         return
       }
 
-      onSubmit?.()
+      onSubmit?.(formData)
       message.success(
         isKeyWorkflow
           ? 'Bạn đã hoàn thành task ở giai đoạn này'
@@ -48,10 +52,12 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
     }
   }
 
-  const options = workflowsForProcess?.[0]?.workflows?.map((w: any) => ({
-    value: w?.id,
-    label: w?.name,
-  }))
+  const options = workflowsForProcess?.[0]?.workflows
+    ?.filter((w: any) => w?.id !== workflowId)
+    .map((w: any) => ({
+      value: w?.id,
+      label: w?.name,
+    }))
 
   return (
     <Modal
@@ -71,6 +77,7 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
       onOk={handleSubmit}
       okButtonProps={{
         htmlType: 'submit',
+        loading: isLoading,
       }}
       {...rest}
     >

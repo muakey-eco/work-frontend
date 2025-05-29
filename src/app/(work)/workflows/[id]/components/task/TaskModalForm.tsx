@@ -85,6 +85,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                 !restInitialValues?.stage_id &&
                 stage?.id === newStages[0]?.id
               ) {
+                let prevTask = stage?.tasks ? Object.values(stage?.tasks) : []
                 return {
                   ...stage,
                   tasks: [
@@ -109,7 +110,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                         }
                       }),
                     },
-                    ...stage?.tasks,
+                    ...prevTask,
                   ],
                 }
               }

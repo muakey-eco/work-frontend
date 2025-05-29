@@ -1,30 +1,17 @@
 'use client'
 
-import { useAsyncEffect } from '@/libs/hook'
 import { Table, TableProps } from 'antd'
 import React, { useState } from 'react'
 import { Converter } from 'showdown'
-import { getTaskReportsAction } from './action'
 
 type WorkflowDocsTableProps = {
   stageId: number
   stageName: string
 }
 
-const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({
-  stageId,
-  stageName,
-}) => {
+const WorkflowDocsTable: React.FC<WorkflowDocsTableProps> = ({ stageName }) => {
   const [taskReports, setTaskReports] = useState<any[]>([])
   const converter = new Converter()
-
-  useAsyncEffect(async () => {
-    if (stageId) {
-      const data = await getTaskReportsAction(stageId)
-
-      setTaskReports(data)
-    }
-  }, [stageId])
 
   const columnKeys = taskReports?.reduce((prev: any, current: any) => {
     const prevKeyLength = Object.keys(prev)

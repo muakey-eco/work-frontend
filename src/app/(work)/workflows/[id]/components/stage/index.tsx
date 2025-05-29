@@ -3,7 +3,6 @@
 import { getTaskHistoriesAction } from '@/components/action'
 import TimeConfirmationModal from '@/components/TimeConfirmationModal'
 import { useAsyncEffect } from '@/libs/hook'
-import { toast } from '@/ui'
 import Portal from '@/ui/portal'
 import {
   closestCorners,
@@ -17,7 +16,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { App, DatePickerProps, Row } from 'antd'
+import { App, Row } from 'antd'
 import dayjs from 'dayjs'
 import { cloneDeep, pick } from 'lodash'
 import dynamic from 'next/dynamic'
@@ -32,7 +31,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { addTaskReportAction, moveStageAction } from '../../../action'
+import { moveStageAction } from '../../../action'
 import TaskItemDraggable from '../task/TaskItemDraggable'
 import { StageContext as WorkflowStageContext } from '../WorkflowPageLayout'
 
@@ -61,21 +60,21 @@ export type StageListProps = {
 export const StageContext = createContext<any>({})
 
 const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
-  const { modal } = App.useApp()
   const [activeId, setActiveId] = useState<UniqueIdentifier>()
   const [currentStage, setCurrentStage] = useState<any>()
   const [activeItem, setActiveItem] = useState<any>()
   // const [open, setOpen] = useState(false)
   const [doneOpen, setDoneOpen] = useState(false)
-  const [reports, setReports] = useState<any[]>([])
   const [dragEvent, setDragEvent] = useState<DragEndEvent>()
+  // Modal xác nhận thời gian thực hiện
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [newStartedAt, setNewStartedAt] = useState<any>()
   const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
-  const [currentStartedAt, setCurrentStartedAt] = useState<dayjs.Dayjs>()
-  const [stagesMinimal, setStagesMinimal] = useState<any>([])
+  //Thời gian thực hiện mới
+  const [customStartedAt, setCustomStartedAt] = useState<dayjs.Dayjs | null>(
+    null,
+  )
 
-  const onOk = (value: DatePickerProps['value']) => {}
+  const [stagesMinimal, setStagesMinimal] = useState<any>([])
 
   const activeRef = useRef<any>(null)
 
@@ -294,7 +293,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         // If the time difference is less than 5 minutes, show the confirmation modal
         if (timeDifference < 5) {
           setCurrentTimeDifference(timeDifference)
-          setCurrentStartedAt(startedAt)
+          // setCurrentStartedAt(startedAt)
           setIsModalOpen(true)
           return
         } else {
@@ -387,44 +386,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     await handleDrag(e)
   }
 
-  const handleSubmit = async (values: any) => {
-    if (!dragEvent) return
-
-    const { active } = dragEvent
-
-    const {
-      data: { current: activeData },
-    } = active
-
-    if (!activeData) return
-
-    const formData = Object.fromEntries(
-      Object.keys(values).map((key: string) => [key, values[key] || '']),
-    )
-
-    try {
-      const { message, errors } = await addTaskReportAction(
-        {
-          ...formData,
-        },
-        {
-          task_id: activeData.id,
-          workflow_id: activeData.workflow_id,
-        },
-      )
-
-      if (errors) {
-        toast.error(message)
-        return
-      }
-
-      await handleDrag(dragEvent)
-      // setOpen(false)
-    } catch (error) {
-      throw new Error()
-    }
-  }
-
   const generateInitialValues = useCallback(() => {
     if (!dragEvent) return {}
 
@@ -490,7 +451,18 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   )
 
   const handleOk = () => {
+    if (!customStartedAt) {
+      message.error('Vui lòng chọn thời gian')
+      return
+    }
+
+    if (customStartedAt.isBefore(dayjs())) {
+      message.error('Thời gian không được nhỏ hơn thời gian hiện tại')
+      return
+    }
+
     setIsModalOpen(false)
+
     if (dragEvent && dragEvent.over?.data.current) {
       moveTaskToNextStage(
         Number(dragEvent.active.id),
@@ -502,13 +474,19 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
             .split('_')
             .pop(),
         ),
-        dragEvent.active.data.current,
+        {
+          ...dragEvent.active.data.current,
+          started_at: customStartedAt?.toISOString(),
+        },
       )
     }
+
+    setCustomStartedAt(null)
   }
 
   const handleCancel = () => {
     setIsModalOpen(false)
+    setCustomStartedAt(null) // Reset thời gian thực hiện mới
   }
 
   return (
@@ -550,11 +528,15 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         {/* Modal xác nhận thời gian thực hiện */}
         <TimeConfirmationModal
           open={isModalOpen}
+          value={customStartedAt}
           onOk={handleOk}
           onCancel={handleCancel}
           currentTimeDifference={currentTimeDifference}
-          currentStartedAt={currentStartedAt}
+          onTimeChange={(value) => {
+            setCustomStartedAt(value)
+          }}
         />
+
         <Portal>
           <DragOverlay>
             {activeItem && activeItem?.id && (

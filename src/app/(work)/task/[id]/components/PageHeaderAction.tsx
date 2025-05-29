@@ -304,9 +304,11 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
             options={{
               ...rest,
               stageId: completedStageId,
+              workflowsForProcess: options?.workflowsForProcess,
+              isKeyWorkflow: options?.isKeyWorkflow,
             }}
             mark="completed"
-            reportRequired={options?.reportRequired}
+            requireLink={options?.reportRequired}
           >
             <div className="cursor-pointer rounded-[8px] bg-[#D9F7BE] px-[16px] py-[5px] text-[14px] leading-[22px] font-[500] text-nowrap text-[#389E0D] brightness-100 transition-all duration-300 hover:brightness-95">
               Đánh dấu hoàn thành

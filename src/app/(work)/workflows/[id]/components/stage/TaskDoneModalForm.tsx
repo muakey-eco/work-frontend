@@ -29,7 +29,6 @@ const TaskDoneModalForm: React.FC<TaskDoneModalFormProps> = ({
 }) => {
   const { message } = App.useApp()
   const handleSubmit = async (formData: any) => {
-    console.log('đã gọi api')
     try {
       const { errors } = await editTaskAction(taskId || 0, formData)
 

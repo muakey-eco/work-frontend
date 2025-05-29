@@ -20,9 +20,7 @@ import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import React, { memo, useCallback, useContext, useMemo, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { Converter } from 'showdown'
 import {
-  addTaskReportAction,
   assignTaskWithoutWorkAction,
   editTaskAction,
   moveStageAction,
@@ -248,39 +246,6 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
         }
       },
       [message, role, router, setStages, task, userId],
-    )
-
-    const handleSubmit = useCallback(
-      async (values: any) => {
-        const converter = new Converter()
-        const formData = Object.fromEntries(
-          Object.keys(values).map((key: string) => [
-            key,
-            converter.makeHtml(values[key]),
-          ]),
-        )
-
-        try {
-          const { message, errors } = await addTaskReportAction(
-            {
-              ...formData,
-            },
-            {
-              task_id: task?.id,
-            },
-          )
-
-          if (errors) {
-            toast.error(message)
-            return
-          }
-
-          handleStageClick(currentStage)
-        } catch (error) {
-          throw new Error()
-        }
-      },
-      [currentStage, handleStageClick, task?.id],
     )
 
     const handleAssign = useCallback(

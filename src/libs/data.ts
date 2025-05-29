@@ -283,28 +283,6 @@ export const deleteReportField = async (id: number) =>
     method: 'DELETE',
   }).then((data) => data)
 
-export const addTaskReport = async (data: any, query?: any) =>
-  requestWithAuthorized(`report-field-values?` + new URLSearchParams(query), {
-    method: 'POST',
-    data,
-  }).then((data) => data)
-
-export const updateTaskReports = async (id: number, data: any) =>
-  requestWithAuthorized(`report-field-values/${id}`, {
-    method: 'PUT',
-    data,
-  }).then((data) => data)
-
-export const getTaskReports = async (query?: any) =>
-  requestWithAuthorized(`report-field-values?` + new URLSearchParams(query))
-    .then((data) => data)
-    .catch(() => [])
-
-export const getTaskReportsByTaskId = async (taskId: number) =>
-  requestWithAuthorized(`report-field-values/${taskId}`)
-    .then((data) => data)
-    .catch(() => [])
-
 export const getMe = async (query?: any, options?: RequestOptions) =>
   requestWithAuthorized(`my-account?` + new URLSearchParams(query), {
     ...options,

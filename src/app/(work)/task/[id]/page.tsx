@@ -3,9 +3,9 @@ import {
   getMe,
   getStagesByWorkflowId,
   getTaskById,
-  getTaskReportsByTaskId,
   getTimeStagesByTaskId,
   getWorkflowById,
+  getWorkflowCategories,
 } from '@/libs/data'
 import { getStageById } from '@/libs/stage'
 import { ArrowLeftOutlined, ExclamationCircleFilled } from '@ant-design/icons'
@@ -20,7 +20,6 @@ import JobHistory from './components/JobHistory'
 import JobOverView from './components/JobOverview'
 import JobProgress from './components/JobProgress'
 import JobProgressTime from './components/JobProgressTime'
-import JobReports from './components/JobReports'
 import JobReview from './components/JobReview'
 import PageHeader from './components/PageHeader'
 import PageHeaderAction from './components/PageHeaderAction'
@@ -59,19 +58,22 @@ const page: React.FC<any> = async (props: {
 
   const stage = await getStageById(task?.stage_id)
 
-  const [stages, workflow, reports, user] = await Promise.all([
+  const [stages, workflow, user, workflowCategories] = await Promise.all([
     getStagesByWorkflowId({
       workflow_id: stage?.workflow_id,
     }),
     getWorkflowById(stage?.workflow_id),
-    getTaskReportsByTaskId(params?.id),
     getMe(),
+    getWorkflowCategories(),
   ])
 
   const timeStages = await getTimeStagesByTaskId(task?.id)
 
   const filteredStages = stages?.filter(
     (stage: any) => ![0, 1].includes(stage.index),
+  )
+  const workflowsForProcess = workflowCategories?.filter(
+    (w: any) => w?.id === workflow?.workflow_category_id,
   )
 
   const failedStageId = stages?.find((stage: any) => stage.index === 0)?.['id']
@@ -111,6 +113,8 @@ const page: React.FC<any> = async (props: {
                   members: workflow?.members,
                   workflowId: stage?.workflow_id,
                   reportRequired: workflow?.require_link_youtube === 1,
+                  workflowsForProcess,
+                  isKeyWorkflow: workflow?.is_key_workflow === 1,
                 }}
               />
             }
@@ -188,8 +192,6 @@ const page: React.FC<any> = async (props: {
               }}
             />
           )}
-
-          {reports?.length > 0 && <JobReports reports={reports} />}
 
           <JobOverView
             task={task}

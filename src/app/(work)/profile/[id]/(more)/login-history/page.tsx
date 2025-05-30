@@ -2,9 +2,22 @@
 
 import { Table, TableProps } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getLoginHistoryAction } from '../action'
 import LoginHistoryFooterTable from './Components/login-history-footer-table'
+
+export enum PaginationType {
+  DEFAULT = 'DEFAULT',
+}
+
+export const PaginationMap = {
+  [PaginationType.DEFAULT]: {
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  },
+}
+const defaultPagination = PaginationMap[PaginationType.DEFAULT]
 
 const columns: TableProps['columns'] = [
   {
@@ -34,29 +47,31 @@ const columns: TableProps['columns'] = [
 const LoginHistoryPage: React.FC = () => {
   const [data, setData] = useState<any[]>()
   const [loading, setLoading] = useState(false)
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  })
+  const [pagination, setPagination] = useState(defaultPagination)
 
-  const fetchData = async (page: number, pageSize: number) => {
-    setLoading(true)
-    try {
-      const response = await getLoginHistoryAction(page, pageSize)
-      const { data, current_page, per_page, total } = response
-      setData(data)
-      setPagination({
-        current: current_page,
-        pageSize: per_page,
-        total,
-      })
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fetchData = useCallback(
+    async (
+      page: number = defaultPagination.current,
+      pageSize: number = defaultPagination.pageSize,
+    ) => {
+      setLoading(true)
+      try {
+        const response = await getLoginHistoryAction(page, pageSize)
+        const { data, current_page, per_page, total } = response
+        setData(data)
+        setPagination({
+          current: current_page,
+          pageSize: per_page,
+          total,
+        })
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [],
+  )
 
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination
@@ -64,8 +79,8 @@ const LoginHistoryPage: React.FC = () => {
   }
 
   useEffect(() => {
-    fetchData(pagination.current, pagination.pageSize)
-  }, [pagination])
+    fetchData()
+  }, [fetchData])
 
   return (
     <div className="no-scroll h-screen overflow-y-scroll pb-[104px]">

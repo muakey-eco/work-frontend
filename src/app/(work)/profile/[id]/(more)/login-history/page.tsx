@@ -36,7 +36,7 @@ const LoginHistoryPage: React.FC = () => {
   const [data, setData] = useState<any[]>()
   const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState(defaultPagination)
-
+ 
   const fetchData = useCallback(
     async (
       page: number = defaultPagination.current,

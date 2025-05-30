@@ -5,19 +5,7 @@ import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 import { getLoginHistoryAction } from '../action'
 import LoginHistoryFooterTable from './Components/login-history-footer-table'
-
-export enum PaginationType {
-  DEFAULT = 'DEFAULT',
-}
-
-export const PaginationMap = {
-  [PaginationType.DEFAULT]: {
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  },
-}
-const defaultPagination = PaginationMap[PaginationType.DEFAULT]
+import { defaultPagination } from './types'
 
 const columns: TableProps['columns'] = [
   {

@@ -1,6 +1,3 @@
-'use server'
-
-import { headers } from 'next/headers'
 import { request, requestWithAuthorized } from './request'
 import { getSession } from './session'
 
@@ -20,15 +17,12 @@ export const changeLoggedInDate = async () => {
 }
 
 export const loginWidthCredentials = async (data: any) => {
-  const xForwardedFor = (await headers()).get('x-forwarded-for')
-  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '1.54.23.141'
+  const { headers: clientHeaders, ...loginData } = data
 
   return request('login', {
     method: 'POST',
-    data,
-    headers: {
-      'X-Forwarded-For': String(ipRaw),
-    },
+    data: loginData,
+    headers: clientHeaders,
   }).then(async (data) => {
     const { token, errors } = data
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
+import { convertToSlugVer2 } from '@/lib/utils'
 import {
   App,
   DatePicker,
@@ -18,6 +19,7 @@ import React, { useContext, useRef, useState } from 'react'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
 import { addTagToTaskAction } from './action'
+import CutomFields from './CutomFields'
 import TagSelect from './tag-select'
 
 type TaskModalFormProps = ModalProps & {
@@ -45,12 +47,28 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { message } = App.useApp()
   const formRef = useRef<FormInstance>(null)
 
-  const { account_id, members, expired, ...restInitialValues } = initialValues
+  const { account_id, members, expired, customFields, ...restInitialValues } =
+    initialValues
 
   const handleSubmit = async (formData: any) => {
     setLoading(true)
+    const { member: memberVal, tag, fields, ...restFormData } = formData
 
-    const { member: memberVal, tag, ...restFormData } = formData
+    const fieldsArr = fields
+      .filter(
+        ([_, value]: any) =>
+          value !== undefined && value !== null && value !== '',
+      )
+      .map(([name, value]: any) => {
+        const field = customFields.find(
+          (f: any) => convertToSlugVer2(f.name) === name,
+        )
+        return {
+          id: field?.id,
+          name,
+          value,
+        }
+      })
 
     const member: any = members.find(
       (m: any) =>
@@ -69,6 +87,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           account_id: member?.id || null,
           workflow_id: params?.id || null,
           tag_id: tag || [],
+          fields: fieldsArr,
         })
 
         if (!errors) {
@@ -133,6 +152,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           expired: restFormData?.expired
             ? String(dayjs(restFormData?.expired).format('YYYY-MM-DD HH:mm:ss'))
             : null,
+          fields: fieldsArr,
         })
 
         if (!errors) {
@@ -249,6 +269,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               expired: initialValues?.expired
                 ? dayjs(initialValues?.expired)
                 : null,
+              fields: customFields?.map((field: any) => field?.id),
             }}
             onFinish={handleSubmit}
             layout="vertical"
@@ -291,6 +312,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         >
           <TiptapEditor placeholder="Mô tả nhiệm vụ" />
         </Form.Item>
+        <CutomFields customFields={customFields} />
         <Form.Item name="member" label="Giao cho">
           <Select
             options={members?.map((m: any) => {

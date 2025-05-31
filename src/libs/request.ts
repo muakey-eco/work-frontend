@@ -85,7 +85,7 @@ export const requestWithAuthorized = async (
   }
 
   const xForwardedFor = (await headers()).get('x-forwarded-for')
-  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '1.54.23.141'
+  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '1.54.23.203'
 
   return request(path, {
     cache: 'no-store',

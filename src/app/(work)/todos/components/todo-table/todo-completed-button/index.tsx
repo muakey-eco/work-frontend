@@ -26,7 +26,7 @@ const TodoCompletedButton: React.FC<TodoCompletedButtonProps> = ({
 
       if (errors) {
         message.error('Đang lỗi có mù không')
-        console.log('lỗi', msg)
+
         setLoading(false)
         setOpen(false)
         return

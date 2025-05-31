@@ -21,6 +21,7 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState('')
   const { stages, initialValues, fieldId } = options
+
   const params = useParams()
   const router = useRouter()
   const formRef = useRef<FormInstance>(null)
@@ -173,12 +174,12 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
               },
             ]}
             layout="vertical"
-            initialValue={initialValues?.stage_id ?? stages?.[0]?.id}
+            initialValue={initialValues?.stages ?? stages?.[0]?.name}
           >
             <Select
               className="w-full"
               options={stages?.map((stage: any) => ({
-                value: stage?.id,
+                value: stage?.id.toString().split('_')[1],
                 label: stage?.name,
               }))}
             />

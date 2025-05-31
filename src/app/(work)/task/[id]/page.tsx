@@ -171,6 +171,7 @@ const page: React.FC<any> = async (props: {
               query={{
                 workflow_id: stage?.workflow_id,
                 task_id: task?.id,
+                fields: task?.fields,
               }}
             />
 

@@ -173,6 +173,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
             ...options?.task,
             members: options?.members,
             userId: user?.id,
+            customFields: options?.customFields,
           }}
           action="edit"
         >

@@ -2,6 +2,7 @@
 
 import { UploadOutlined } from '@ant-design/icons'
 import {
+  App,
   Button,
   DatePicker,
   Form,
@@ -15,9 +16,10 @@ import {
 } from 'antd'
 import { UploadChangeParam, UploadFile } from 'antd/es/upload'
 import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
-import { editTaskFieldAction, uploadImageAction } from '../../../actions'
+import { editTaskAction, uploadImageAction } from '../../../actions'
 
 type JobCustomFieldModalFormProps = {
   children?: React.ReactNode
@@ -39,19 +41,24 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
   initialValues,
 }) => {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const [image, setImage] = useState<{ url: string; preview: string }>({
     url: '',
     preview: '',
   })
   const formRef = useRef<FormInstance>(null)
+  const { message } = App.useApp()
 
   const {
     require,
     taskId,
     value: defaultValue,
+    fieldId,
     options,
     ...rest
   } = initialValues
+
   const initVal = generateInitialValues(rest?.type, defaultValue)
 
   const handleUpload = useCallback(
@@ -84,20 +91,26 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
 
   const handleSubmit = async (formData: any) => {
     try {
-      var { error, success } = await editTaskFieldAction(rest?.id, {
-        value: rest?.type === 'file' ? image.url : formData?.value,
-        field_id: rest?.id,
-        task_id: taskId,
+      setLoading(true)
+      var { error, success } = await editTaskAction(taskId, {
+        fields: [
+          {
+            id: fieldId,
+            value: rest?.type === 'file' ? image.url : formData?.value,
+          },
+        ],
       })
 
       if (error) {
-        toast.error(error)
+        message.error(error)
         setOpen(false)
         return
       }
 
-      toast.success(success)
+      message.success(`Cập nhật trường ${rest?.name} thành công`)
+      router.refresh()
       setOpen(false)
+      setLoading(false)
     } catch (error: any) {
       throw new Error(error)
     }
@@ -211,6 +224,7 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
                 color="primary"
                 type="primary"
                 htmlType="submit"
+                loading={loading}
               >
                 Cập nhật
               </Button>

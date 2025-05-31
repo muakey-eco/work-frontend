@@ -16,10 +16,11 @@ const WorkflowContent: React.FC<WorkflowContentProps> = ({ options }) => {
       : []
 
   switch (options?.type) {
-    case 'custom-field':
+    case 'custom-fields':
       return (
         <CustomFields
           stages={filteredStages}
+          customFields={options?.customFields}
           workflowId={options?.workflow?.id}
         />
       )

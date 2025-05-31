@@ -1,4 +1,5 @@
 import {
+  getCustomFieldsByWorkflowId,
   getMe,
   getStagesByWorkflowId,
   getWorkflowById,
@@ -31,14 +32,18 @@ const Page: React.FC<any> = async (prop: {
   const date = searchParams?.date
   const tag = searchParams?.tag
 
-  const [workflow, workflowCategories, stages, user] = await Promise.all([
-    getWorkflowById(workflowId),
-    getWorkflowCategories(),
-    getStagesByWorkflowId({
-      workflow_id: workflowId,
-    }),
-    getMe(),
-  ])
+  const [workflow, workflowCategories, stages, user, customFields] =
+    await Promise.all([
+      getWorkflowById(workflowId),
+      getWorkflowCategories(),
+      getStagesByWorkflowId({
+        workflow_id: workflowId,
+      }),
+      getMe(),
+      getCustomFieldsByWorkflowId({
+        workflow_id: workflowId,
+      }),
+    ])
 
   return (
     <WorkflowPageLayout
@@ -50,6 +55,7 @@ const Page: React.FC<any> = async (prop: {
         user,
         date,
         tag,
+        customFields,
       }}
     />
   )

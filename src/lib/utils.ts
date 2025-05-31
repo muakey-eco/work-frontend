@@ -71,6 +71,21 @@ export const convertToSlug = (text: string): string => {
     .replace(/\-\-+/g, '-') // Gộp nhiều gạch thành một
 }
 
+// Tạo slug từ tên trường dữ liệu dùng cho form trường dữ liệu tùy chỉnh
+export const convertToSlugVer2 = (text: string): string => {
+  return text
+    .normalize('NFD') // Tách dấu (é -> e + ́)
+    .replace(/[\u0300-\u036f]/g, '') // Xoá dấu
+    .replace(/đ/g, 'd') // Thay đ thường
+    .replace(/Đ/g, 'd') // Thay Đ thành d
+    .toLowerCase() // Chuyển lowercase
+    .trim() // Xoá khoảng trắng đầu/cuối
+    .replace(/\s+/g, '_') // Thay khoảng trắng bằng gạch ngang
+    .replace(/[^\w\-]+/g, '') // Xoá ký tự đặc biệt (ngoại trừ gạch ngang)
+    .replace(/\-\-+/g, '_') // Gộp nhiều gạch thành một
+    .replace(/^[-]+|[-]+$/g, '') // Bỏ gạch ngang đầu cuối
+}
+
 export const handleUploadChange = (
   info: any,
   setUploadErrors: (errors: string[]) => void,

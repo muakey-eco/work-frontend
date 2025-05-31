@@ -13,8 +13,6 @@ type ReportFieldsProps = {
 }
 
 const ReportFields: React.FC<ReportFieldsProps> = ({ stages, workflowId }) => {
-  console.log('REPORT FIELDS')
-
   const [fields, setFields] = useState([])
 
   return (

@@ -44,7 +44,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
     workflow?.members?.map((mem: any) => mem?.id).includes(options?.user.id) ||
     options?.user?.role === 'Admin'
 
-  const { date, tag, user } = options
+  const { date, tag, user, customFields } = options
 
   return (
     <StageContext.Provider value={{ stages, setStages, isAuth }}>
@@ -87,6 +87,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
               <TaskModalForm
                 initialValues={{
                   members: workflow?.members,
+                  customFields,
                 }}
               >
                 <Button
@@ -121,10 +122,10 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
                 key: 'table',
                 label: 'Dạng bảng',
               },
-              // {
-              //   key: 'statistics',
-              //   label: 'Thống kê',
-              // },
+              {
+                key: 'custom-fields',
+                label: 'Trường tùy chỉnh',
+              },
               {
                 key: 'docs',
                 label: 'Báo cáo',
@@ -148,6 +149,7 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
               tag,
               user,
               workflowsForProcess,
+              customFields,
             }}
           />
         </div>

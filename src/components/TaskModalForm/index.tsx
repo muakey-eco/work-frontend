@@ -59,6 +59,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     sticker,
     description,
     userId,
+    customFields,
     ...restInitialValues
   } = initialValues
 
@@ -219,6 +220,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             onTagsChange={(data) => setTags(data)}
             open={selectOpen}
             onClick={() => setSelectOpen(!selectOpen)}
+          />
+        </Form.Item>
+        <Form.Item name="fields" label="Trường tùy chỉnh">
+          <Select
+            options={customFields?.map((field: any) => ({
+              label: field?.name,
+              value: field?.id,
+            }))}
           />
         </Form.Item>
         <Form.Item

@@ -4,7 +4,7 @@ import { CaretRightOutlined } from '@ant-design/icons'
 import { Collapse, Flex, Image, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import React from 'react'
 import JobCustomFieldModalForm from '../JobCustomFieldModalForm'
 
 type JobCustomFieldsProps = {
@@ -38,8 +38,6 @@ const generateValue = (type: string, value: any) => {
 }
 
 const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
-  const [fields, setFields] = useState<any[]>([])
-
   return (
     <div className="mt-[24px]">
       <div className="text-[12px] font-[500] text-[#42b814]">
@@ -53,20 +51,23 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
             className={clsx(isActive ? 'rotate-90' : 'rotate-0')}
           />
         )}
-        items={fields?.map((field: any) => {
-          const value = generateValue(field?.type, field?.value)
+        items={query?.fields.map((field: any) => {
+          const displayValue = generateValue(field?.type, field?.value)
 
           return {
             label: (
               <div className="group flex items-center justify-between gap-[16px]">
                 <span className="text-[12px] font-[500] text-[#888]">
-                  {String(field?.name).toLocaleUpperCase()}
+                  {String(field?.label).toLocaleUpperCase()}
                 </span>
                 <JobCustomFieldModalForm
                   initialValues={{
-                    ...field,
-                    require: field?.require === 1 ? true : false,
-                    taskId: field?.task_id,
+                    name: field?.label,
+                    fieldId: field?.id,
+                    value: field?.value,
+                    require: field?.required,
+                    taskId: query?.task_id,
+                    type: field?.type,
                   }}
                 >
                   <span className="hidden cursor-pointer text-[13px] text-[#267cde] group-hover:inline-block hover:underline">
@@ -77,7 +78,7 @@ const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
             ),
             children: (
               <div className="pl-[24px] text-[#888]">
-                {value || `Không có ${field?.name}`}
+                {displayValue || `Không có ${field?.name}`}
               </div>
             ),
             style: {

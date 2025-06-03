@@ -35,7 +35,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
           Không có việc nào
         </div>
       ) : (
-        todos.map((todo: any, index: number) => (
+        todos?.map((todo: any) => (
           <div
             key={todo.id}
             className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"

@@ -55,11 +55,11 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     const { member: memberVal, tag, fields, ...restFormData } = formData
 
     const fieldsArr = fields
-      .filter(
+      ?.filter(
         ([_, value]: any) =>
           value !== undefined && value !== null && value !== '',
       )
-      .map(([name, value]: any) => {
+      ?.map(([name, value]: any) => {
         const field = customFields.find(
           (f: any) => convertToSlugVer2(f.name) === name,
         )

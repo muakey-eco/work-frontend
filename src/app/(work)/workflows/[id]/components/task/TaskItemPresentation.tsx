@@ -77,6 +77,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
     setNodeRef,
     isDragging,
   }) => {
+    console.log('task', task)
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
     const [doneOpen, setDoneOpen] = useState(false)
@@ -678,7 +679,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {user ? (
+            {user && userId === task?.account_id ? (
               !task?.started_at && (
                 <Button
                   className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"

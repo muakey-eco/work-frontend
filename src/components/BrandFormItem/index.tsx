@@ -2,7 +2,7 @@
 
 import { getBrandAction } from '@/app/(work)/asset/components/action'
 import { useAsyncEffect } from '@/libs/hook'
-import { Form, FormItemProps, Select } from 'antd'
+import { Form, FormItemProps, Input } from 'antd'
 import { useState } from 'react'
 
 type BrandFormItemsProps = FormItemProps
@@ -25,12 +25,7 @@ const BrandFormItems: React.FC<BrandFormItemsProps> = ({ ...props }) => {
 
   return (
     <Form.Item {...props}>
-      <Select
-        placeholder="Chọn hãng"
-        options={brands}
-        fieldNames={{ label: 'name', value: 'id' }}
-        allowClear
-      />
+      <Input placeholder="Nhập tên hãng" />
     </Form.Item>
   )
 }

@@ -14,7 +14,6 @@ export type AssetFilterProps = {
 
 const AssetFilter: React.FC<AssetFilterProps> = ({ onAdd }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
   const router = useRouter()
 
   const handleAdd = () => {

@@ -47,7 +47,7 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     {
       key: '5',
       label: 'Nhà cung cấp',
-      children: <span className="font-bold">{asset?.brand?.name || '--'}</span>,
+      children: <span className="font-bold">{asset?.brand_name || '--'}</span>,
     },
     {
       key: '6',

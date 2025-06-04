@@ -72,7 +72,14 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
 
   return (
     <>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div
+        onClick={() => {
+          action === 'edit' && setType(initialValues?.type)
+          setOpen(true)
+        }}
+      >
+        {children}
+      </div>
       <Modal
         title={
           action === 'create'
@@ -162,26 +169,6 @@ const CustomFieldsModalForm: React.FC<CustomFieldsModalFormProps> = ({
                 { value: false, label: 'Không bắt buộc' },
                 { value: true, label: 'Bắt buộc trả lời' },
               ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Liên kết"
-            name="stage_id"
-            rules={[
-              {
-                required: true,
-                message: 'Chọn 1 loại dữ liệu.',
-              },
-            ]}
-            layout="vertical"
-            initialValue={initialValues?.stages ?? stages?.[0]?.name}
-          >
-            <Select
-              className="w-full"
-              options={stages?.map((stage: any) => ({
-                value: stage?.id.toString().split('_')[1],
-                label: stage?.name,
-              }))}
             />
           </Form.Item>
           <Form.Item>

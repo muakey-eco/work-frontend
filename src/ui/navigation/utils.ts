@@ -34,14 +34,18 @@ export const activeNav = (
     const pathParts = pathName.split('/')
     const hrefParts = hrefPathName?.split('/') || []
 
-    // For overview route, check if it's exactly the overview route
-    if (pathName.includes('/overview')) {
-      return pathName === hrefPathName
+    // For overview route, check up to /department/{id}/overview
+    if (pathName.includes('/overview') || pathName.includes('/employee')) {
+      const pathBase = pathParts.slice(0, 4).join('/')
+      const hrefBase = hrefParts.slice(0, 4).join('/')
+      return pathBase === hrefBase
     }
 
-    // For other department routes, check exact match
+    // For other department routes, check only up to /department/{id}
     if (pathParts.length >= 3 && hrefParts.length >= 3) {
-      return pathName === hrefPathName
+      const pathBase = pathParts.slice(0, 3).join('/')
+      const hrefBase = hrefParts.slice(0, 3).join('/')
+      return pathBase === hrefBase
     }
   }
 

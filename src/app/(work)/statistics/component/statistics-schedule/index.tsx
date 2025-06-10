@@ -193,7 +193,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
       </Row>
       <div className="no-scroll h-[calc(100vh-244px)] w-full divide-y">
         <StatisticsRows
-          type={as ? as : 'workflow'}
+          type={as ? as : 'staff'}
           options={{
             accounts,
             days,

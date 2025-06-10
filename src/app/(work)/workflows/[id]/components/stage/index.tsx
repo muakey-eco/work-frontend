@@ -83,7 +83,8 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const activeRef = useRef<any>(null)
 
   const { message } = App.useApp()
-  const { user, requiredLink } = options
+  const { user, requiredLink, workflowsForProcess, workflowId, isKeyWorkflow } =
+    options
 
   const { setStages } = useContext(WorkflowStageContext)
 
@@ -382,7 +383,10 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     }
 
     // If time difference is greater than or equal to 5 minutes and task is in the completed stage, show the confirmation modal
-    if (overStageId === Number(completedStageId)) {
+    if (
+      overStageId === Number(completedStageId) &&
+      (requiredLink || isKeyWorkflow)
+    ) {
       setDoneOpen(true)
       return
     }
@@ -489,7 +493,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
 
     if (
       (isTargetDoneColumn && requiredLink) ||
-      (isTargetDoneColumn && options?.isKeyWorkflow)
+      (isTargetDoneColumn && isKeyWorkflow)
     ) {
       setDoneOpen(true)
     } else {
@@ -581,9 +585,9 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
           onCancel={() => setDoneOpen(false)}
           taskId={Number(activeId)}
           isLoading={isDoneModalLoading}
-          isKeyWorkflow={options?.isKeyWorkflow}
-          workflowsForProcess={options?.workflowsForProcess}
-          workflowId={options?.workflowId}
+          isKeyWorkflow={isKeyWorkflow}
+          workflowsForProcess={workflowsForProcess}
+          workflowId={workflowId}
           hasLink={requiredLink}
           onSubmit={handleSubmit}
           onOk={() => setDoneOpen(false)}

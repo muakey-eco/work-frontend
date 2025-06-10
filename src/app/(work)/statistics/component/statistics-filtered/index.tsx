@@ -124,7 +124,7 @@ const StatisticsFiltered: React.FC<StatisticsFilteredProps> = ({
           style={{ width: 240 }}
           options={memberOptions}
           size="large"
-          defaultValue={[filterBy || 'workflow']}
+          defaultValue={[filterBy || 'staff']}
           onChange={(value) => {
             if (value) {
               query.set('as', String(value))

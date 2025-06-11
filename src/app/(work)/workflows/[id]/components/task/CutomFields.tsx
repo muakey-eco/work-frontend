@@ -10,9 +10,11 @@ const CutomFields: React.FC<CutomFieldsProps> = ({ customFields }) => {
   const renderInputByType = (field: CutomField) => {
     switch (field.type) {
       case 'text':
-        return <Input />
+        return <Input placeholder={field?.description} />
       case 'number':
-        return <InputNumber />
+        return (
+          <InputNumber placeholder={field?.description} className="!w-full" />
+        )
       case 'date':
         return <DatePicker />
       case 'list':
@@ -25,7 +27,7 @@ const CutomFields: React.FC<CutomFieldsProps> = ({ customFields }) => {
           />
         )
       case 'paragraph':
-        return <Input.TextArea />
+        return <Input.TextArea placeholder={field?.description} />
       default:
         return null
     }

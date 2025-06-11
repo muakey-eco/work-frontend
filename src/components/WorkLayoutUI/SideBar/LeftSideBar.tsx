@@ -139,7 +139,9 @@ const SubSide: React.FC<SubSideProps> = ({ user, options }) => {
   // lấy thông báo chưa đọc
   useEffect(() => {
     setNotificationsWithNotRead(
-      notifications?.filter((notify: any) => notify?.new === 1),
+      Array.from(notifications || [])?.filter(
+        (notify: any) => notify?.new === 1,
+      ),
     )
   }, [notifications])
 

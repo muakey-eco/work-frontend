@@ -29,14 +29,14 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
 }) => {
   const [stages, setStages] = useState<any>(
     options?.stages
-      ? options?.stages?.map((stage: any) => ({
+      ? Array.from(options?.stages)?.map((stage: any) => ({
           ...stage,
           id: `stage_${stage.id}`,
         }))
       : [],
   )
 
-  const workflowsForProcess = workflowCategories?.filter(
+  const workflowsForProcess = Array.from(workflowCategories)?.filter(
     (w: any) => w?.id === workflow?.workflow_category_id,
   )
 

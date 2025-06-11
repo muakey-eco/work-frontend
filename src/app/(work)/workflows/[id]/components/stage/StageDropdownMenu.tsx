@@ -78,15 +78,31 @@ const StageDropdownMenu: React.FC<StageDropdownMenuProps> = ({
                   (st: any) => st?.id === s?.id,
                 )
 
-                const toStage = stages?.find((st: any) => st?.id === s?.id)
+                const newStages: any[] = arrayMove(stages, oldIndex, newIndex)
 
-                setStages(arrayMove(stages, oldIndex, newIndex))
+                // Filter out stages with index 0 and 1 to count remaining stages
+                const nonFixedStages = newStages.filter(
+                  (s) => s.index !== 0 && s.index !== 1,
+                )
+
+                const updatedStages = newStages.map((s: any) => ({
+                  ...s,
+                  index:
+                    s.index === 0 || s.index === 1
+                      ? s.index
+                      : nonFixedStages.findIndex((ns) => ns.id === s.id) + 2,
+                }))
+
+                setStages(updatedStages)
 
                 try {
                   const { message: msg, errors } = await editStageAction(
                     +String(stage?.id).split('_')[1],
                     {
-                      index: toStage?.index,
+                      stages: updatedStages.map((s: any) => ({
+                        id: +String(s.id).split('_')[1],
+                        index: s.index,
+                      })),
                     },
                   )
 

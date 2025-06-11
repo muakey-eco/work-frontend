@@ -54,7 +54,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     setLoading(true)
     const { member: memberVal, tag, fields, ...restFormData } = formData
 
-    const fieldsArr = fields
+    const fieldsArr = Object.entries(fields)
       ?.filter(
         ([_, value]: any) =>
           value !== undefined && value !== null && value !== '',

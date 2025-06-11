@@ -470,47 +470,44 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
             </span>
           ),
         },
-        ...(String(role).toLocaleLowerCase().includes('quản lý')
-          ? [
-              {
-                key: '5',
-                label: (
-                  <div
-                    className="px-[12px] leading-[32px]"
-                    onClick={() => {
-                      modal.confirm({
-                        title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
-                        open: removeConfirmOpen,
-                        width: 600,
-                        onCancel: () => setRemoveConfirmOpen(false),
-                        onOk: () => handleRemoveExecutor(task?.id),
-                      })
-                    }}
-                  >
-                    Gỡ người thực thi
-                  </div>
-                ),
-              },
-              {
-                key: '6',
-                label: (
-                  <div
-                    className="px-[12px] leading-[32px] text-[#cc1111]"
-                    onClick={() => {
-                      modal.confirm({
-                        title: `Xác nhận xoá nhiệm vụ ${task?.name.toUpperCase()}?`,
-                        content: 'Nhiệm vụ sẽ bị xóa và không thể khôi phục.',
-                        width: 600,
-                        onOk: () => onDelete?.(task?.id),
-                      })
-                    }}
-                  >
-                    Xóa nhiệm vụ
-                  </div>
-                ),
-              },
-            ]
-          : []),
+
+        {
+          key: '5',
+          label: (
+            <div
+              className="px-[12px] leading-[32px]"
+              onClick={() => {
+                modal.confirm({
+                  title: 'Xác nhận gỡ người thực thi của nhiệm vụ này?',
+                  open: removeConfirmOpen,
+                  width: 600,
+                  onCancel: () => setRemoveConfirmOpen(false),
+                  onOk: () => handleRemoveExecutor(task?.id),
+                })
+              }}
+            >
+              Gỡ người thực thi
+            </div>
+          ),
+        },
+        {
+          key: '6',
+          label: (
+            <div
+              className="px-[12px] leading-[32px] text-[#cc1111]"
+              onClick={() => {
+                modal.confirm({
+                  title: `Xác nhận xoá nhiệm vụ ${task?.name.toUpperCase()}?`,
+                  content: 'Nhiệm vụ sẽ bị xóa và không thể khôi phục.',
+                  width: 600,
+                  onOk: () => onDelete?.(task?.id),
+                })
+              }}
+            >
+              Xóa nhiệm vụ
+            </div>
+          ),
+        },
       ]
     }, [
       handleMoveStageClick,
@@ -652,9 +649,9 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
                             : 'Quá hạn'}{' '}
                           {convertTime(time.asSeconds())}
                         </div>
-                      ) : (
+                      ) : task?.account_id === userId ? (
                         <div className="text-[#999]">Không thời hạn</div>
-                      ))}
+                      ) : null)}
                   </div>
                 ) : (
                   <span className="flex items-center gap-[4px] leading-[28px] text-[#D96C6C]">

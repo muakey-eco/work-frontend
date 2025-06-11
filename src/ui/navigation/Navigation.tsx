@@ -99,7 +99,6 @@ const InternalNavigation: React.ForwardRefRenderFunction<
         const isActive = activeNav(
           url,
           item.href || '',
-
           exact,
           hash,
           item.matchType || matchType,

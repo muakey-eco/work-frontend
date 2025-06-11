@@ -72,7 +72,7 @@ const page: React.FC<any> = async (props: {
   const filteredStages = stages?.filter(
     (stage: any) => ![0, 1].includes(stage.index),
   )
-  const workflowsForProcess = workflowCategories?.filter(
+  const workflowsForProcess = Array.from(workflowCategories)?.filter(
     (w: any) => w?.id === workflow?.workflow_category_id,
   )
 

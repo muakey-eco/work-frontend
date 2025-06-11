@@ -31,7 +31,7 @@ type Notification = {
 const groupByDate = (notifications: Notification[] = []) => {
   const groups: Record<string, Notification[]> = {}
 
-  notifications?.forEach((item) => {
+  Array.from(notifications)?.forEach((item) => {
     const dateKey = dayjs(item.created_at).format('DD/MM/YYYY')
     if (!groups[dateKey]) groups[dateKey] = []
     groups[dateKey].push(item)
@@ -131,7 +131,7 @@ const ViewNotificationFB: React.FC = () => {
 
   useEffect(() => {
     setNotificationsWithNotRead(
-      notifications?.filter((notify: any) => notify?.new === 1),
+      Array.from(notifications)?.filter((notify: any) => notify?.new === 1),
     )
   }, [notifications])
 

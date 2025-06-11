@@ -40,7 +40,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   } = options
 
   // Lọc workflow categories theo phòng ban
-  const workflowCategoriesWithWorkflows = workflowCategories?.filter(
+  const workflowCategoriesWithWorkflows = Array.from(workflowCategories)?.filter(
     (w: any) => w?.department_id === Number(department_id),
   )
 

@@ -35,7 +35,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
           Không có việc nào
         </div>
       ) : (
-        todos?.map((todo: any) => (
+        Array.from(todos)?.map((todo: any) => (
           <div
             key={todo.id}
             className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"
@@ -66,12 +66,13 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
 
   const overdueList = (
     <div className="scrollbar-hide !h-[664px] overflow-y-auto">
-      {todos.filter((todo: any) => todo?.status === 'overdue').length === 0 ? (
+      {Array.from(todos).filter((todo: any) => todo?.status === 'overdue')
+        .length === 0 ? (
         <div className="!h-[664px] py-4 text-center text-sm text-gray-400">
           Không có việc nào
         </div>
       ) : (
-        todos
+        Array.from(todos)
           .filter((todo: any) => todo?.status === 'overdue')
           .map((todo: any) => (
             <div
@@ -137,7 +138,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
           },
           {
             key: '2',
-            label: `Quá hạn (${todos.filter((todo: any) => todo?.status === 'overdue').length})`,
+            label: `Quá hạn (${Array.from(todos).filter((todo: any) => todo?.status === 'overdue').length})`,
             children: overdueList,
           },
         ]}

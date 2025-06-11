@@ -2,7 +2,6 @@
 
 import { Asset, TotalStatus } from '@/interfaces'
 import { formatCurrency } from '@/lib/utils'
-import { ColumnHeightOutlined, SettingOutlined } from '@ant-design/icons'
 import { Table, TableProps, Tabs, TabsProps, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -49,7 +48,9 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const searchParams = useSearchParams()
 
   const [tab, setTab] = useState(defaultActiveKey)
+
   const [assets, setAssets] = useState<Asset[]>(dataSource || [])
+
   const [totalStatus, setTotalStatus] = useState<TotalStatus[]>(
     total_status || [],
   )
@@ -109,6 +110,23 @@ const AssetTable: React.FC<AssetTableProps> = ({
     fetchData()
   }, [searchParams])
 
+  //Cập nhật data khi có event add
+  useEffect(() => {
+    const handleAdd = () => {
+      const fetchData = async () => {
+        const res = await filterAssetsAction(searchParams.toString())
+        setAssets(res?.data?.data || [])
+        setTotalStatus(res?.data?.total_status || [])
+      }
+      fetchData()
+    }
+
+    window.addEventListener('add', handleAdd)
+    return () => {
+      window.removeEventListener('add', handleAdd)
+    }
+  }, [])
+
   //Xử lý đổi tab
   const handleChangeTab = async (key: string) => {
     const currentParams = new URLSearchParams(window.location.search) // Giữ nguyên tham số hiện tại
@@ -160,7 +178,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
     { title: 'Tên tài sản', dataIndex: 'name' },
     { title: 'Loại tài sản', dataIndex: ['asset_category', 'name'] },
     { title: 'Người sử dụng', dataIndex: ['account', 'full_name'] },
-    { title: 'Nhà cung cấp', dataIndex: ['brand', 'name'] },
+    { title: 'Nhà cung cấp', dataIndex: 'brand_name' },
     {
       title: 'Giá mua',
       dataIndex: 'price',

@@ -1,7 +1,6 @@
 'use client'
 
 import { TiptapEditor } from '@/components'
-import BrandFormItems from '@/components/BrandFormItem'
 import CategoryFormItems from '@/components/CategoryFormItem'
 import AssetUserFormItem from '@/components/UserFormItem'
 
@@ -140,6 +139,7 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
       if (!res.success) throw new Error(res.error || 'Có lỗi xảy ra')
 
       // Xử lý thành công
+      window.dispatchEvent(new Event('add'))
       message.success(successMessage)
       setOpen(false)
       form.resetFields()
@@ -281,12 +281,14 @@ const AssetModalForm: React.FC<AssetModalFormProps> = ({
         </div>
 
         <div className="flex items-center gap-[16px]">
-          <BrandFormItems
-            key="brand_id"
+          <Form.Item
+            key="brand_name"
             className="mb-[16px]! flex-1"
-            name="brand_id"
+            name="brand_name"
             label="Tên nhà cung cấp"
-          />
+          >
+            <Input placeholder="Nhập tên nhà cung cấp" />
+          </Form.Item>
           <Form.Item
             key="brand_link"
             className="mb-[16px]! flex-1"

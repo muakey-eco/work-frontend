@@ -78,7 +78,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     try {
       if (action === 'create') {
-        var { errors, id } = await addTaskAction({
+        var response = await addTaskAction({
           ...restFormData,
           expired: formData?.expired
             ? String(dayjs(formData?.expired).format('YYYY-MM-DD HH:mm:ss'))
@@ -90,54 +90,69 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           fields: fieldsArr,
         })
 
-        if (!errors) {
-          await addTagToTaskAction({
-            task_id: id,
-            tag_id: tag,
-          })
+        console.log('response', response)
 
-          setStages((prevStages: any[]) => {
-            const newStages = [...prevStages]
-
-            return newStages?.map((stage: any) => {
-              if (
-                !restInitialValues?.stage_id &&
-                stage?.id === newStages[0]?.id
-              ) {
-                let prevTask = stage?.tasks ? Object.values(stage?.tasks) : []
-                return {
-                  ...stage,
-                  tasks: [
-                    {
-                      ...restFormData,
-                      description: restFormData.description,
-                      account_id: member?.id || null,
-                      workflow_id: params?.id || null,
-                      stage_id: Number(String(stage?.id).split('_').pop()),
-                      id,
-                      sticker: tag?.map((t: number) => {
-                        const tagName = tags.find(
-                          (s: any) => s?.id === t,
-                        )?.title
-                        const tagColor = tags.find(
-                          (s: any) => s?.id === t,
-                        )?.code_color
-                        return {
-                          name: tagName,
-                          color: tagColor,
-                          sticker_id: t,
-                        }
-                      }),
-                    },
-                    ...prevTask,
-                  ],
-                }
-              }
-
-              return stage
-            })
-          })
+        // Kiểm tra nếu response có message lỗi
+        if (response?.message) {
+          message.error(response.message)
+          setLoading(false)
+          setOpen(false)
+          return
         }
+
+        // Nếu thành công, response sẽ có id
+        const { id } = response || {}
+
+        if (!response) {
+          message.error('Đã xảy ra lỗi khi thêm nhiệm vụ')
+          setLoading(false)
+          return
+        }
+
+        await addTagToTaskAction({
+          task_id: id,
+          tag_id: tag,
+        })
+
+        setStages((prevStages: any[]) => {
+          const newStages = [...prevStages]
+
+          return newStages?.map((stage: any) => {
+            if (
+              !restInitialValues?.stage_id &&
+              stage?.id === newStages[0]?.id
+            ) {
+              let prevTask = stage?.tasks ? Object.values(stage?.tasks) : []
+              return {
+                ...stage,
+                tasks: [
+                  {
+                    ...restFormData,
+                    description: restFormData.description,
+                    account_id: member?.id || null,
+                    workflow_id: params?.id || null,
+                    stage_id: Number(String(stage?.id).split('_').pop()),
+                    id,
+                    sticker: tag?.map((t: number) => {
+                      const tagName = tags.find((s: any) => s?.id === t)?.title
+                      const tagColor = tags.find(
+                        (s: any) => s?.id === t,
+                      )?.code_color
+                      return {
+                        name: tagName,
+                        color: tagColor,
+                        sticker_id: t,
+                      }
+                    }),
+                  },
+                  ...prevTask,
+                ],
+              }
+            }
+
+            return stage
+          })
+        })
       } else {
         if (!isAuth) {
           message.error('Bạn không có quyền sửa nhiệm vụ')
@@ -195,7 +210,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         }
       }
 
-      if (errors) {
+      // Xử lý lỗi cho edit action
+      if (action === 'edit' && errors) {
         if (errors.task) {
           message.error(errors.task)
           setLoading(false)

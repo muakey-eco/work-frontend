@@ -171,6 +171,7 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
           title="CHỈNH SỬA NHIỆM VỤ"
           initialValues={{
             ...options?.task,
+            workflowId: options?.workflowId,
             members: options?.members,
             userId: user?.id,
             customFields: options?.customFields,

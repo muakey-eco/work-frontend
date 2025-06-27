@@ -5,6 +5,7 @@ import {
   getWorkflowById,
   getWorkflowCategories,
 } from '@/libs/data'
+import { getDepartments } from '@/libs/department'
 import { Metadata } from 'next'
 import React from 'react'
 import WorkflowPageLayout from './components/WorkflowPageLayout'
@@ -32,18 +33,25 @@ const Page: React.FC<any> = async (prop: {
   const date = searchParams?.date
   const tag = searchParams?.tag
 
-  const [workflow, workflowCategories, stages, user, customFields] =
-    await Promise.all([
-      getWorkflowById(workflowId),
-      getWorkflowCategories(),
-      getStagesByWorkflowId({
-        workflow_id: workflowId,
-      }),
-      getMe(),
-      getCustomFieldsByWorkflowId({
-        workflow_id: workflowId,
-      }),
-    ])
+  const [
+    workflow,
+    workflowCategories,
+    stages,
+    user,
+    customFields,
+    departments,
+  ] = await Promise.all([
+    getWorkflowById(workflowId),
+    getWorkflowCategories(),
+    getStagesByWorkflowId({
+      workflow_id: workflowId,
+    }),
+    getMe(),
+    getCustomFieldsByWorkflowId({
+      workflow_id: workflowId,
+    }),
+    getDepartments(),
+  ])
 
   return (
     <WorkflowPageLayout
@@ -56,6 +64,7 @@ const Page: React.FC<any> = async (prop: {
         date,
         tag,
         customFields,
+        departments,
       }}
     />
   )

@@ -3,6 +3,7 @@
 import { TiptapEditor } from '@/components'
 import { App, Button, Form, Modal } from 'antd'
 import clsx from 'clsx'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { editTaskAction } from '../../../actions'
 
@@ -21,7 +22,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
   const [previewImage, setPreviewImage] = useState('')
   const [previewOpen, setPreviewOpen] = useState(false)
   const { message } = App.useApp()
-
+  const router = useRouter()
   const handleSubmit = async (formData: any) => {
     setLoading(true)
 
@@ -37,6 +38,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       }
 
       message.success('Cập nhật thành công')
+      router.refresh()
       setIsEdit(false)
       setLoading(false)
       setValue(formData?.description)

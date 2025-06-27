@@ -4,12 +4,20 @@ import { randomColor } from '@/libs/utils'
 import { PlusOutlined } from '@ant-design/icons'
 import { Avatar, Button, Tooltip } from 'antd'
 import clsx from 'clsx'
+import dynamic from 'next/dynamic'
 import React, { createContext, useState } from 'react'
 import PageHeader from '../../components/PageHeader'
 import WorkflowTabs from '../../components/WorkflowTabs'
 import StageModalForm from './stage/StageModalForm'
 import TaskModalForm from './task/TaskModalForm'
 import WorkflowContent from './WorkflowContent'
+
+const WorkflowModalForm = dynamic(
+  () => import('../../components/workflow-list/WorkflowModalForm'),
+  {
+    ssr: false,
+  },
+)
 
 type WorkflowPageLayoutProps = {
   workflow?: any
@@ -54,32 +62,43 @@ const WorkflowPageLayout: React.FC<WorkflowPageLayoutProps> = ({
           title={
             <div className="flex items-center gap-[8px] text-[24px] leading-[28px] font-[600]">
               <span>{workflow?.name}</span>
-              <Avatar.Group
-                className="h-[32px] overflow-hidden"
-                max={{
-                  count: 3,
-                  style: {
-                    backgroundColor: '#fde3cf',
-                    color: '#f56a00',
-                  },
+              <WorkflowModalForm
+                action="edit"
+                initialValues={{
+                  ...workflow,
+                  manager: workflow?.members
+                    ?.map((m: any) => m?.username)
+                    .join(' '),
+                  ...options,
                 }}
               >
-                {workflow?.members &&
-                  workflow?.members?.map((mem: any) => (
-                    <Tooltip key={mem?.id} title={mem?.full_name}>
-                      <Avatar
-                        className="size-[32px] cursor-pointer overflow-hidden"
-                        key={mem?.username}
-                        src={mem?.avatar}
-                        style={{
-                          backgroundColor: randomColor(mem?.full_name || ''),
-                        }}
-                      >
-                        {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
-                      </Avatar>
-                    </Tooltip>
-                  ))}
-              </Avatar.Group>
+                <Avatar.Group
+                  className="h-[32px] overflow-hidden"
+                  max={{
+                    count: 3,
+                    style: {
+                      backgroundColor: '#fde3cf',
+                      color: '#f56a00',
+                    },
+                  }}
+                >
+                  {workflow?.members &&
+                    workflow?.members?.map((mem: any) => (
+                      <Tooltip key={mem?.id} title={mem?.full_name}>
+                        <Avatar
+                          className="size-[32px] cursor-pointer overflow-hidden"
+                          key={mem?.username}
+                          src={mem?.avatar}
+                          style={{
+                            backgroundColor: randomColor(mem?.full_name || ''),
+                          }}
+                        >
+                          {String(mem?.full_name).charAt(0).toLocaleUpperCase()}
+                        </Avatar>
+                      </Tooltip>
+                    ))}
+                </Avatar.Group>
+              </WorkflowModalForm>
             </div>
           }
           extra={

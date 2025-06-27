@@ -78,23 +78,50 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     try {
       if (action === 'create') {
-        var { errors, id } = await addTaskAction({
+        const workflowId = searchParams.get('wid')
+        if (!workflowId) {
+          message.error('Bạn phải ở trong workflow để tạo nhiệm vụ')
+          setLoading(false)
+          return
+        }
+
+        if (!isAuth) {
+          message.error('Người dùng không trong workflow này')
+          setLoading(false)
+          return
+        }
+
+        var response = await addTaskAction({
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
-          workflow_id: Number(searchParams.get('wid')),
+          workflow_id: Number(workflowId),
           tag_id: tag || [],
         })
 
-        if (!errors) {
-          await addTagToTaskAction({
-            task_id: id,
-            tag_id: tag,
-          })
+        console.log('response', response)
+
+        if (response?.message) {
+          message.error(response.message)
+          setLoading(false)
+          return
         }
+
+        const { id } = response || {}
+
+        if (!response) {
+          message.error('Đã xảy ra lỗi khi thêm nhiệm vụ')
+          setLoading(false)
+          return
+        }
+
+        await addTagToTaskAction({
+          task_id: id,
+          tag_id: tag,
+        })
       } else {
         if (!isAuth) {
-          message.error('Bạn không có quyền sửa nhiệm vụ')
+          message.error('Người dùng không trong workflow này')
           return
         }
 
@@ -109,7 +136,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         })
       }
 
-      if (errors) {
+      if (action === 'edit' && errors) {
         if (errors.task) {
           message.error(errors.task)
           setLoading(false)

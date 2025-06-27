@@ -1,8 +1,5 @@
 'use client'
 
-import { InitializedMDXEditor } from '@/components'
-import { useAsyncEffect } from '@/libs/hook'
-import { MDXEditorMethods } from '@mdxeditor/editor'
 import {
   App,
   DatePicker,
@@ -15,10 +12,11 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
 import { Converter } from 'showdown'
 import { addTagToTaskAction, addTaskAction, editTaskAction } from '../action'
+import TiptapEditor from '../TiptapEditor'
 import TagSelect from './TagSelect'
 
 type TaskModalFormProps = ModalProps & {
@@ -41,9 +39,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
   const [selectOpen, setSelectOpen] = useState(false)
 
-  const searchParams = useSearchParams()
   const { message } = App.useApp()
-  const editorRef = useRef<MDXEditorMethods>(null)
+
   const formRef = useRef<FormInstance>(null)
   const router = useRouter()
 
@@ -60,6 +57,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     description,
     userId,
     customFields,
+    workflowId,
     ...restInitialValues
   } = initialValues
 
@@ -70,28 +68,24 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
 
     const { member: memberVal, tag, ...restFormData } = formData
 
-    const member: any = members.find(
-      (m: any) =>
-        `${`${m.full_name} ·`} ${m.username} ${!!m.position ? `· ${m.position}` : ''}` ===
-        memberVal,
-    )
+    const member = members.find((m: any) => {
+      const fullDisplay = `${m.full_name} · ${m.username}${m.position ? ` · ${m.position}` : ''}`
+      return fullDisplay === memberVal
+    })
 
     try {
+      if (!isAuth) {
+        message.error('Người dùng không trong workflow này')
+        return
+      }
+
       if (action === 'create') {
-        const workflowId = searchParams.get('wid')
         if (!workflowId) {
           message.error('Bạn phải ở trong workflow để tạo nhiệm vụ')
-          setLoading(false)
           return
         }
 
-        if (!isAuth) {
-          message.error('Người dùng không trong workflow này')
-          setLoading(false)
-          return
-        }
-
-        var response = await addTaskAction({
+        const response = await addTaskAction({
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
@@ -99,81 +93,63 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           tag_id: tag || [],
         })
 
-        console.log('response', response)
-
-        if (response?.message) {
-          message.error(response.message)
-          setLoading(false)
+        if (!response) {
+          message.error('Đã xảy ra lỗi khi thêm nhiệm vụ')
           return
         }
 
-        const { id } = response || {}
-
-        if (!response) {
-          message.error('Đã xảy ra lỗi khi thêm nhiệm vụ')
-          setLoading(false)
+        if (response.message) {
+          message.error(response.message)
           return
         }
 
         await addTagToTaskAction({
-          task_id: id,
+          task_id: response.id,
           tag_id: tag,
         })
-      } else {
-        if (!isAuth) {
-          message.error('Người dùng không trong workflow này')
-          return
-        }
+      }
 
-        var { errors } = await editTaskAction(initialValues?.id, {
+      if (action === 'edit') {
+        const { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
           account_id: member?.id || null,
           tag_id: tag || [],
           expired: restFormData?.expired
-            ? String(dayjs(restFormData?.expired).format('YYYY-MM-DD HH:mm:ss'))
+            ? dayjs(restFormData.expired).format('YYYY-MM-DD HH:mm:ss')
             : null,
         })
-      }
 
-      if (action === 'edit' && errors) {
-        if (errors.task) {
-          message.error(errors.task)
-          setLoading(false)
+        if (errors) {
+          if (errors.task) {
+            message.error(errors.task)
+          } else {
+            const nameList = Object.keys(errors)
+            formRef.current?.setFields(
+              nameList.map((name) => ({
+                name,
+                errors: [errors[name]],
+              })),
+            )
+          }
           return
         }
-
-        const nameList: string[] = Object.keys(errors)
-
-        formRef.current?.setFields(
-          nameList.map((name) => ({
-            name,
-            errors: [errors?.[name]],
-          })),
-        )
-
-        return
       }
 
       message.success(
         action === 'create' ? 'Thêm thành công.' : 'Cập nhật thành công.',
       )
+      window.location.reload()
       setOpen(false)
-      setLoading(false)
-      router.refresh()
     } catch (error: any) {
+      message.error('Đã xảy ra lỗi không mong muốn')
+      console.error(error)
+    } finally {
       setLoading(false)
-      throw new Error(error)
     }
   }
 
   const mem: any = members?.find((m: any) => m?.id === account_id)
-
-  useAsyncEffect(async () => {
-    if (!open) return
-
-    editorRef.current?.setMarkdown(description || '')
-  }, [open])
 
   return (
     <>
@@ -213,6 +189,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               expired: initialValues?.expired
                 ? dayjs(initialValues?.expired)
                 : null,
+              description: converter.makeHtml(description || ''),
             }}
             onFinish={handleSubmit}
             layout="vertical"
@@ -240,9 +217,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         </Form.Item>
         <Form.Item name="tag" label="Thêm nhãn">
           <TagSelect
-            params={{
-              id: Number(searchParams.get('wid')),
-            }}
+            workflowId={workflowId}
             tags={tags}
             onTagsChange={(data) => setTags(data)}
             open={selectOpen}
@@ -261,13 +236,9 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           rootClassName="min-h-[240px]"
           name="description"
           label="Mô tả"
+          valuePropName="content"
         >
-          <InitializedMDXEditor
-            contentEditableClassName="p-[12px] border border-[#eee] focus:outline-hidden rounded-[4px] min-h-[180px] prose max-w-full!"
-            ref={editorRef}
-            markdown={converter.makeMarkdown(description || '')}
-            placeholder="Mô tả nhiệm vụ"
-          />
+          <TiptapEditor placeholder="Mô tả" />
         </Form.Item>
         <Form.Item name="member" label="Giao cho">
           <Select

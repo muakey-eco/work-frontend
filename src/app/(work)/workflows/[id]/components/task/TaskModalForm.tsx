@@ -14,7 +14,7 @@ import {
 } from 'antd'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjs from 'dayjs'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useContext, useRef, useState } from 'react'
 import { addTaskAction, editTaskAction } from '../../../action'
 import { StageContext } from '../WorkflowPageLayout'
@@ -46,7 +46,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { setStages, isAuth } = useContext(StageContext)
   const { message } = App.useApp()
   const formRef = useRef<FormInstance>(null)
-
+  const router = useRouter()
   const { account_id, members, expired, customFields, ...restInitialValues } =
     initialValues
 
@@ -90,7 +90,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           fields: fieldsArr,
         })
 
-        console.log('response', response)
 
         // Kiểm tra nếu response có message lỗi
         if (response?.message) {
@@ -235,6 +234,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
       )
       setOpen(false)
       setLoading(false)
+      router.refresh()
     } catch (error: any) {
       setLoading(false)
       throw new Error(error)

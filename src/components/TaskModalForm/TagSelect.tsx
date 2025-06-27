@@ -29,7 +29,7 @@ import { addTagAction, getTagsAction, updateTagAction } from '../action'
 import TagOption from './TaskOption'
 
 type TagSelectProps = Omit<SelectProps, 'open' | 'onClick'> & {
-  params?: any
+  workflowId?: any
   tags?: any
   onTagsChange?: (tags: any) => void
   open?: boolean
@@ -37,7 +37,7 @@ type TagSelectProps = Omit<SelectProps, 'open' | 'onClick'> & {
 }
 
 const TagSelect: React.FC<TagSelectProps> = ({
-  params,
+  workflowId,
   tags: initTags,
   onTagsChange,
   onClick,
@@ -83,7 +83,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
       } = await addTagAction({
         title: tagName,
         code_color: tagColor,
-        workflow_id: params?.id,
+        workflow_id: workflowId,
       })
 
       if (errors) {
@@ -122,7 +122,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
       const { message: msg, errors } = await updateTagAction(id, {
         title: restValues.title,
         code_color: restValues.color,
-        workflow_id: params?.id,
+        workflow_id: workflowId,
       })
 
       if (errors) {
@@ -160,7 +160,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
                     ...tag,
                     title: restValues.title,
                     code_color: restValues.color,
-                    workflow_id: params?.id,
+                    workflow_id: workflowId,
                   }
                 }
 
@@ -249,7 +249,7 @@ const TagSelect: React.FC<TagSelectProps> = ({
 
   useAsyncEffect(async () => {
     const res = await getTagsAction({
-      workflow_id: params?.id,
+      workflow_id: workflowId,
     })
 
     setTags(res)

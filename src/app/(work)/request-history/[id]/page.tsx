@@ -77,7 +77,7 @@ const page: React.FC<any> = async (props) => {
           {
             key: uniqueId(),
             label: 'Tổng thời gian',
-            children: `${calculateDayOffTotal(dayjs(propose?.date_holidays[0]?.start_date).format('YYYY-MM-DD HH:mm:ss'), dayjs(propose?.date_holidays[0]?.end_date).format('YYYY-MM-DD HH:mm:ss'))} ngày`,
+            children: `${calculateDayOffTotal(dayjs(propose?.date_holidays[0]?.start_date).format('DD/MM/YYYY HH:mm:ss'), dayjs(propose?.date_holidays[0]?.end_date).format('DD/MM/YYYY HH:mm:ss'))} ngày`,
           },
         ]
       : [

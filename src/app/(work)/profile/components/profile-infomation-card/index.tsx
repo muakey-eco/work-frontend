@@ -1,5 +1,6 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Button, Card, ListProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 import ProfileInfomationList from './ProfileInfomationList'
 import ProfileInfomationModalForm from './ProfileInfomationModalForm'
@@ -30,7 +31,7 @@ const ProfileInfomationCard: React.FC<ProfileInfomationCardProps> = ({
     },
     {
       label: 'Ngày sinh',
-      value: user?.birthday || '--',
+      value: user?.birthday ? dayjs(user?.birthday).format('DD/MM/YYYY') : '--',
     },
     {
       label: 'Giới tính',

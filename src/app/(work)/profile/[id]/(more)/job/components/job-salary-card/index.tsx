@@ -16,7 +16,7 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
   extra,
   data: externalData,
 }) => {
-  const { salary } = externalData
+  const { salary, status } = externalData
   const DISABLED_SALARY_FIELDS = {
     insurance: 1161000,
     insurance_employee: 567000,
@@ -42,14 +42,18 @@ const JobSalaryCard: React.FC<JobSalaryCardProps> = ({
       label: 'Lương Net',
       value: isNaN(netSalary) ? '--' : `${formatCurrency(netSalary)} đ`,
     },
-    {
-      label: 'BHXH, BHYT, BHTN do CTY đóng (21,5%)',
-      value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance)} đ`,
-    },
-    {
-      label: 'BHXH, BHYT, BHTN do NLĐ đóng (10,5%)',
-      value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance_employee)} đ`,
-    },
+    ...(status !== 'Thử việc'
+      ? [
+          {
+            label: 'BHXH, BHYT, BHTN do CTY đóng (21,5%)',
+            value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance)} đ`,
+          },
+          {
+            label: 'BHXH, BHYT, BHTN do NLĐ đóng (10,5%)',
+            value: `${formatCurrency(DISABLED_SALARY_FIELDS.insurance_employee)} đ`,
+          },
+        ]
+      : []),
     {
       label: 'Lương cơ bản',
       value: salary?.basic_salary

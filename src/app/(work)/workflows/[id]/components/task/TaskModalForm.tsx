@@ -50,6 +50,22 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { account_id, members, expired, customFields, ...restInitialValues } =
     initialValues
 
+  // Chuẩn bị initialFields cho các trường tùy chỉnh
+  const initialFields = React.useMemo(() => {
+    const obj: Record<string, any> = {}
+    customFields?.forEach((field: any) => {
+      obj[convertToSlugVer2(field.name)] = field.defaultValue || ''
+    })
+    // Nếu có giá trị từ restInitialValues.fields thì merge vào
+    if (
+      restInitialValues?.fields &&
+      typeof restInitialValues.fields === 'object'
+    ) {
+      Object.assign(obj, restInitialValues.fields)
+    }
+    return obj
+  }, [customFields, restInitialValues?.fields])
+
   const handleSubmit = async (formData: any) => {
     setLoading(true)
     const { member: memberVal, tag, fields, ...restFormData } = formData
@@ -89,7 +105,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
           tag_id: tag || [],
           fields: fieldsArr,
         })
-
 
         // Kiểm tra nếu response có message lỗi
         if (response?.message) {
@@ -285,7 +300,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
               expired: initialValues?.expired
                 ? dayjs(initialValues?.expired)
                 : null,
-              fields: customFields?.map((field: any) => field?.id),
+              fields: initialFields,
             }}
             onFinish={handleSubmit}
             layout="vertical"

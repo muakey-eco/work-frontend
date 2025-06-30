@@ -55,6 +55,7 @@ const page: React.FC<any> = async (props: {
   const params = await props.params
 
   const task = await getTaskById(params?.id)
+  console.log('task', task)
 
   const stage = await getStageById(task?.stage_id)
 

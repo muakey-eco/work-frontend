@@ -224,14 +224,14 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             onClick={() => setSelectOpen(!selectOpen)}
           />
         </Form.Item>
-        <Form.Item name="fields" label="Trường tùy chỉnh">
+        {/* <Form.Item name="fields" label="Trường tùy chỉnh">
           <Select
             options={customFields?.map((field: any) => ({
               label: field?.name,
               value: field?.id,
             }))}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           rootClassName="min-h-[240px]"
           name="description"

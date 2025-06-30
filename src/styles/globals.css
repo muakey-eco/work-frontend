@@ -238,3 +238,9 @@ html *::-webkit-scrollbar-track {
 .mention-item {
   padding: 6px 10px;
 }
+.ant-tooltip {
+  z-index: 9999 !important;
+}
+.ant-avatar-group-wrapper {
+  z-index: 9999 !important;
+}

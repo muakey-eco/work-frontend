@@ -2,6 +2,7 @@
 
 import type { TableProps } from 'antd'
 import { Table } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 
 interface DataType {
@@ -44,7 +45,9 @@ const columns: TableProps<DataType>['columns'] = [
     title: 'Ngày sinh',
     dataIndex: 'birthday',
     key: 'birthday',
-    render: (text: string) => <span>{text || '--'}</span>,
+    render: (text: string) => (
+      <span>{dayjs(text).format('DD/MM/YYYY') || '--'}</span>
+    ),
     sorter: (a, b) => (a.birthday || '').localeCompare(b.birthday || ''),
   },
   {

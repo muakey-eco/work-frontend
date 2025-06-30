@@ -1,6 +1,7 @@
 'use client'
 
 import { List, ListProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 import { genStatus } from '../ultils'
 import ContractItemCard, { ContractItemCardProps } from './ContractItemCard'
@@ -29,10 +30,12 @@ const ContractList: React.FC<ContractListProps> = ({
     {
       label: 'Ngày bắt đầu',
       dataIndex: 'start_date',
+      render: (value: any) => dayjs(value).format('DD/MM/YYYY'),
     },
     {
       label: 'Ngày kết thúc',
       dataIndex: 'end_date',
+      render: (value: any) => dayjs(value).format('DD/MM/YYYY'),
     },
   ]
 

@@ -1,4 +1,5 @@
 import { Descriptions, DescriptionsProps } from 'antd'
+import dayjs from 'dayjs'
 import React from 'react'
 
 const AssetDescription: React.FC<any> = ({ asset }) => {
@@ -61,7 +62,11 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     {
       key: '7',
       label: 'Ngày mua',
-      children: <span className="font-bold">{asset?.buy_date || '--'}</span>,
+      children: (
+        <span className="font-bold">
+          {asset?.buy_date ? dayjs(asset?.buy_date).format('DD/MM/YYYY') : '--'}
+        </span>
+      ),
     },
     {
       key: '8',
@@ -80,7 +85,13 @@ const AssetDescription: React.FC<any> = ({ asset }) => {
     {
       key: '10',
       label: 'Ngày thanh lý',
-      children: <span className="font-bold">{asset?.buy_date || '--'}</span>,
+      children: (
+        <span className="font-bold">
+          {asset?.sell_date
+            ? dayjs(asset?.sell_date).format('DD/MM/YYYY')
+            : '--'}
+        </span>
+      ),
     },
     {
       key: '11',

@@ -99,9 +99,9 @@ const RequestFilter: React.FC<any> = () => {
           if (dates && dates[0] && dates[1]) {
             updateSearchParams(
               'start_date',
-              dates[0].format('YYYY-MM-DD'),
+              dates[0]?.format('DD/MM/YYYY'),
               'end_date',
-              dates[1].format('YYYY-MM-DD'),
+              dates[1]?.format('DD/MM/YYYY'),
             )
           } else {
             updateSearchParams('start_date', '', 'end_date', '')

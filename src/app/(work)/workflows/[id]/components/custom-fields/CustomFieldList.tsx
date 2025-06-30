@@ -90,7 +90,7 @@ const CustomFieldList: React.FC<CustomFieldListProps> = ({
                           </CustomFieldsModalForm>
                           <CustomFieldDeleteButton fieldId={item?.id} />
                           <Switch
-                            defaultChecked={item?.require === true}
+                            defaultValue={item?.require}
                             onChange={() =>
                               handleChangeRequired(item?.id, item?.require)
                             }

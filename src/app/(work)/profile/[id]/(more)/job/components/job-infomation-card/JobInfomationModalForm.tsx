@@ -48,6 +48,10 @@ const JobInfomationModalForm: React.FC<JobInfomationModalFormProps> = ({
       label: 'Thử việc',
       value: 'Thử việc',
     },
+    {
+      label: 'Thực tập',
+      value: 'Thực tập',
+    },
   ]
 
   const staffTypeOptions = [

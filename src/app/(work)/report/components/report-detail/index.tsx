@@ -8,7 +8,8 @@ import {
   ShoppingOutlined,
 } from '@ant-design/icons'
 import type { TableColumnsType, TableProps } from 'antd'
-import { Avatar, Table } from 'antd'
+import { Avatar, Table, Tooltip } from 'antd'
+import Link from 'next/link'
 import React, { useState } from 'react'
 
 type OnChange = NonNullable<TableProps<DataType>['onChange']>
@@ -17,6 +18,7 @@ type GetSingle<T> = T extends (infer U)[] ? U : never
 type Sorts = GetSingle<Parameters<OnChange>[2]>
 
 interface Worker {
+  id: string
   name: string
   avatar: string
   full_name: string
@@ -122,19 +124,30 @@ const MarketingDetail: React.FC<MarketingDetailProps> = ({ data }) => {
       key: 'workers',
       render: (workers: Worker[]) => (
         <Avatar.Group>
-          {workers.map((e, index) =>
-            e.avatar || e.avatar !== null ? (
-              <Avatar key={index} src={e.avatar} alt={e.name} />
-            ) : (
-              <Avatar
-                key={index}
-                style={{ backgroundColor: randomColor(String(e.full_name)) }}
-                alt={e.full_name}
+          {workers.map((e, index) => (
+            <Link href={`/profile/${e?.id}`} key={index}>
+              <Tooltip
+                title={e.name || e.full_name || ''}
+                placement="top"
+                className="cursor-pointer"
               >
-                {e.full_name.charAt(0).toUpperCase()}
-              </Avatar>
-            ),
-          )}
+                <span>
+                  {e.avatar ? (
+                    <Avatar src={e.avatar} alt={e.name} />
+                  ) : (
+                    <Avatar
+                      style={{
+                        backgroundColor: randomColor(String(e.full_name)),
+                      }}
+                      alt={e.full_name}
+                    >
+                      {e.full_name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                  )}
+                </span>
+              </Tooltip>
+            </Link>
+          ))}
         </Avatar.Group>
       ),
     },

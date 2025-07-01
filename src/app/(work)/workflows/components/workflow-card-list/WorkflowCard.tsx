@@ -130,9 +130,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({
                 action="edit"
                 initialValues={{
                   ...workflow,
-                  manager: workflow?.members
-                    ?.map((m: any) => m?.username)
-                    .join(' '),
+                  manager: workflow?.members?.map((m: any) => m?.id).join(' '),
                   ...options,
                 }}
               >

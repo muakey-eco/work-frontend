@@ -41,11 +41,11 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
     setManager([
       ...accounts?.map((acc: any) => ({
         label: acc?.full_name,
-        value: acc?.username,
+        value: acc?.id,
       })),
       ...initDepartments?.map((dep: any) => {
         const departmentValue = JSON.stringify(
-          dep?.members?.map((m: any) => m?.username),
+          dep?.members?.map((m: any) => m?.id),
         )
 
         return {
@@ -63,12 +63,17 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
       ...new Set(
         formData?.manager
           ?.map((m: any) => {
-            if (m?.includes('[')) {
-              return JSON.parse(m)
+            if (typeof m === 'string' && m.includes('[')) {
+              try {
+                return JSON.parse(m)
+              } catch (e) {
+                return m
+              }
             }
             return m
           })
-          .flat(),
+          .flat()
+          .map(Number),
       ),
     ]
 
@@ -76,7 +81,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
       if (action === 'edit') {
         var { errors } = await editWorkflowAction(initialValues?.id, {
           ...formData,
-          manager: newManager.join(' '),
+          manager: newManager,
         })
       } else {
         var {
@@ -86,7 +91,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
         } = await addWorkflowAction({
           ...formData,
           workflow_category_id: initWorkflowCategoryId,
-          manager: newManager.join(' '),
+          manager: newManager,
         })
         const id = workflowId ? workflowId : initWorkflowCategoryId
 
@@ -124,7 +129,7 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
       }
     } catch (error: any) {
       setLoading(false)
-      throw new Error(error)
+      message.error(error?.message)
     }
   }
 
@@ -153,8 +158,15 @@ const WorkflowModalForm: React.FC<WorkflowModalFormProps> = ({
             initialValues={{
               ...restInitialValues,
               manager: restInitialValues?.manager
-                ? String(restInitialValues?.manager)?.split(' ')
-                : manager?.map((m: any) => m?.value),
+                ? String(restInitialValues?.manager)
+                    ?.split(' ')
+                    .map((m: any) => {
+                      if (typeof m === 'string' && !isNaN(Number(m))) {
+                        return Number(m)
+                      }
+                      return m
+                    })
+                : [],
             }}
             ref={formRef}
             onFinish={handleSubmit}

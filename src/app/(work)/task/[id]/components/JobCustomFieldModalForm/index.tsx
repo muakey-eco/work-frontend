@@ -92,7 +92,7 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
   const handleSubmit = async (formData: any) => {
     try {
       setLoading(true)
-      var { error, success } = await editTaskAction(taskId, {
+      await editTaskAction(taskId, {
         fields: [
           {
             id: fieldId,
@@ -101,18 +101,14 @@ const JobCustomFieldModalForm: React.FC<JobCustomFieldModalFormProps> = ({
         ],
       })
 
-      if (error) {
-        message.error(error)
-        setOpen(false)
-        return
-      }
-
       message.success(`Cập nhật trường ${rest?.name} thành công`)
       router.refresh()
       setOpen(false)
       setLoading(false)
     } catch (error: any) {
-      throw new Error(error)
+      message.error(error)
+      setOpen(false)
+      setLoading(false)
     }
   }
 

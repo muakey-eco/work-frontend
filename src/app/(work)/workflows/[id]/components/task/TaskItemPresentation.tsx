@@ -77,6 +77,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
     setNodeRef,
     isDragging,
   }) => {
+    console.log('members', members)
     const [assignConfirmOpen, setAssignConfirmOpen] = useState(false)
     const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
     const [doneOpen, setDoneOpen] = useState(false)

@@ -69,7 +69,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
     const { member: memberVal, tag, ...restFormData } = formData
 
     const member = members.find((m: any) => {
-      const fullDisplay = `${m.full_name} · ${m.username}${m.position ? ` · ${m.position}` : ''}`
+      const fullDisplay = `${m.full_name} · ${m.username} ${!!m.position ? `· ${m.position}` : ''}`
       return fullDisplay === memberVal
     })
 
@@ -113,7 +113,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         const { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           description: converter.makeHtml(restFormData.description),
-          account_id: member?.id || null,
+          account_id: member?.id,
           tag_id: tag || [],
           expired: restFormData?.expired
             ? dayjs(restFormData.expired).format('YYYY-MM-DD HH:mm:ss')

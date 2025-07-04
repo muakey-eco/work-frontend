@@ -11,3 +11,5 @@ export const uploadImageAction = async (data: any) =>
 
 export const editTaskAction = async (id: number, data?: any) => 
   editTask(id, data)
+  .then(({ error, message }) => ({ error, message }))
+  .catch((error) => ({ error }))

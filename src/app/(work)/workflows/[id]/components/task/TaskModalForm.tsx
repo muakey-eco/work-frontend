@@ -50,6 +50,8 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { account_id, members, expired, customFields, ...restInitialValues } =
     initialValues
 
+  console.log('members1', members)
+
   // Chuẩn bị initialFields cho các trường tùy chỉnh
   const initialFields = React.useMemo(() => {
     const obj: Record<string, any> = {}
@@ -100,7 +102,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
             ? String(dayjs(formData?.expired).format('YYYY-MM-DD HH:mm:ss'))
             : null,
           description: restFormData.description,
-          account_id: member?.id || null,
+          account_id: member?.id,
           workflow_id: params?.id || null,
           tag_id: tag || [],
           fields: fieldsArr,
@@ -176,7 +178,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
         var { errors } = await editTaskAction(initialValues?.id, {
           ...restFormData,
           description: restFormData.description,
-          account_id: member?.id || null,
+          account_id: member?.id,
           tag_id: tag || [],
           expired: restFormData?.expired
             ? String(dayjs(restFormData?.expired).format('YYYY-MM-DD HH:mm:ss'))
@@ -197,7 +199,7 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
                       return {
                         ...restFormData,
                         description: restFormData.description,
-                        account_id: member?.id || null,
+                        account_id: member?.id,
                         stage_id: stage?.id,
                         id: initialValues?.id,
                         sticker: tag?.map((t: number) => {

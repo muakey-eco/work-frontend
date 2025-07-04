@@ -92,13 +92,13 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
     }
 
     try {
-      const { message: msg, errors } = await editTaskAction(id, {
+      const { error } = await editTaskAction(id, {
         account_id: null,
         started_at: null,
       })
 
-      if (errors) {
-        message.error(msg)
+      if (error) {
+        message.error(error?.message || 'Gỡ người thực thi thất bại')
         return
       }
 
@@ -129,12 +129,12 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
 
   const handleAssign = async (id: number) => {
     try {
-      const { message: msg, errors } = await editTaskAction(rest?.task?.id, {
+      const { error } = await editTaskAction(rest?.task?.id, {
         account_id: id,
       })
 
-      if (errors) {
-        message.error(msg)
+      if (error) {
+        message.error(error?.message || 'Giao thất bại')
         return
       }
 

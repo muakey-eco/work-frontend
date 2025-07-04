@@ -27,12 +27,12 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
     setLoading(true)
 
     try {
-      const { message, errors } = await editTaskAction(params?.task?.id, {
+      const { error } = await editTaskAction(params?.task?.id, {
         description: formData?.description,
       })
 
-      if (errors) {
-        message.error(message)
+      if (error) {
+        message.error(error?.message || 'Cập nhật thất bại')
         setLoading(false)
         return
       }
@@ -44,7 +44,7 @@ const JobDescription: React.FC<JobDescriptionProps> = ({
       setValue(formData?.description)
     } catch (error: any) {
       setLoading(false)
-      throw new Error(error)
+      message.error(error?.message || 'Cập nhật thất bại')
     }
   }
 

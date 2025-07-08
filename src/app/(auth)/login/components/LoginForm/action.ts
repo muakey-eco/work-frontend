@@ -11,7 +11,7 @@ export const loginWidthCredentialsAction = async (data: any) => {
   const rawClientIP =
     xForwardedFor?.split(',')[0] !== '::1'
       ? xForwardedFor?.split(',')[0]
-      : '1.54.23.203'
+      : '127.0.0.1'
 
   const { errors } = await loginWidthCredentials({
     ...data,

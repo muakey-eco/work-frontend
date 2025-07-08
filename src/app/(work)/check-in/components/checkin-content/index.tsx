@@ -11,9 +11,10 @@ type CheckInContentProps = {
 }
 
 const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
+  console.log('options', options)
   const [date, setDate] = useState(new Date())
 
-  const { members, day, propose, ...restOptions } = options
+  const { members, month, propose, ...restOptions } = options
 
   const { type } = query
 
@@ -42,7 +43,7 @@ const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
           options={{
             ...restOptions,
             members: members?.filter((mem: any) => mem?.type !== 'department'),
-            day: Number(day || 0),
+            month: Number(month || 0),
           }}
           scroll={{
             x: 'max-content',

@@ -163,6 +163,12 @@ export const editTask = async (id: number, data: any) => {
     data,
   }).then((data) => data)
 }
+export const checkPassword = async (data: any) => {
+  return await requestWithAuthorized('check-password', {
+    method: 'POST',
+    data,
+  }).then((data) => data)
+}
 
 export const assignTaskWithoutWork = async (id: number, data: any) => {
   return await requestWithAuthorized(`assign-work/${id}`, {
@@ -356,6 +362,11 @@ export const getAttendances = async (query?: any) =>
     .catch(() => null)
 export const getAttendanceByDate = async (date: string) =>
   requestWithAuthorized(`attendances?date=${date}`)
+    .then((data) => data)
+    .catch(() => null)
+
+export const getDayOff = async (query?: any) =>
+  requestWithAuthorized('day-off?' + new URLSearchParams(query))
     .then((data) => data)
     .catch(() => null)
 

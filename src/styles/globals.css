@@ -244,3 +244,6 @@ html *::-webkit-scrollbar-track {
 .ant-avatar-group-wrapper {
   z-index: 9999 !important;
 }
+td.ant-table-cell.ant-table-cell-fix-left.ant-table-cell-fix-left-last {
+  padding: 0 !important;
+}

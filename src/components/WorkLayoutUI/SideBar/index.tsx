@@ -244,7 +244,7 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
         }
       : undefined,
     {
-      label: 'Quản lý chấm công',
+      label: 'Quản lý công lương',
       icon: <CalendarFilled className="text-[14px]" />,
       expand: true,
       type: 'filled-rounded',
@@ -272,6 +272,21 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
           key: 'request',
           href: '/request',
         },
+        ...(user?.role === 'Admin'
+          ? [
+              {
+                label: (
+                  <div className="flex items-center gap-[10px]">
+                    <div className="h-[14px] w-[12px]" />
+                    <span>Bảng lương</span>
+                  </div>
+                ),
+                shouldRound: false,
+                key: 'salary',
+                href: '/salary',
+              },
+            ]
+          : []),
       ],
     },
     {

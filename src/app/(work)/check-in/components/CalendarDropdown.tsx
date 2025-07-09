@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 
 type CalendarDropdownProps = {
   currentDate?: any
-  day?: any
+  month?: any
   options?: any
   isProfile?: boolean
   onDateClick?: (date: any) => void
@@ -15,7 +15,7 @@ type CalendarDropdownProps = {
 
 const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   currentDate: current,
-  day,
+  month,
   options,
   onDateClick,
   isProfile,
@@ -28,7 +28,6 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
   const currentDate = String(dayjs(current).format('YYYY-MM-DD'))
 
   const { isCurrentMonth, info } = options
-
 
   const dropdownRender = () => {
     return (
@@ -108,8 +107,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
       <div
         className={clsx(
           'flex aspect-220/160 min-h-[160px] w-full flex-col border-t px-[8px] pt-[6px] pb-[8px]',
-          day?.go_to_work !== undefined &&
-            day?.go_to_work === 0 &&
+          month?.go_to_work !== undefined &&
+            month?.go_to_work === 0 &&
             'bg-[#f5f5f5]',
           currentDate === today
             ? 'border-t-[#096DD9] bg-[#E6F7FF]'
@@ -124,9 +123,9 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
           {String(dayjs(current).format('DD/MM'))}
         </div>
 
-        {day?.go_to_work !== undefined ? (
+        {month?.go_to_work !== undefined ? (
           <div className="flex h-full flex-col justify-between">
-            {day?.go_to_work === 0 ? (
+            {month?.go_to_work === 0 ? (
               <div
                 className={clsx(
                   'flex flex-1 flex-col items-center gap-[4px] py-[4px]',

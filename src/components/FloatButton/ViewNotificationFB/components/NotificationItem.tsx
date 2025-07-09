@@ -4,7 +4,6 @@ import { Avatar } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { useState } from 'react'
 
 const NotificationItem = ({
   item,
@@ -13,7 +12,6 @@ const NotificationItem = ({
   item: Notification
   onClick: () => void
 }) => {
-  const [imgError, setImgError] = useState(false)
   return (
     <Link
       key={item.id}

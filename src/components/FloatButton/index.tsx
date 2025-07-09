@@ -1,4 +1,4 @@
-import ViewNotificationFB from './ViewNotificationFB'
+import ViewNotificationFB from './ViewNotificationFB/index'
 import ViewWorkFB from './ViewWorkFB'
 
 type FloatButtonModalProps = {}

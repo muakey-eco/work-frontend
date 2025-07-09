@@ -374,7 +374,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                           return (
                             <CalendarDropdown
                               currentDate={current}
-                              day={day}
+                              month={day}
                               options={{
                                 isCurrentMonth,
                                 info,
@@ -458,7 +458,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 return (
                   <CalendarDropdown
                     currentDate={current}
-                    day={day}
+                    month={day}
                     options={{
                       isCurrentMonth,
                       info,

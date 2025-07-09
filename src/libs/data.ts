@@ -345,6 +345,12 @@ export const updateNotification = async (id: number, data: any) =>
     data,
   }).then((data) => data)
 
+export const seenNotifications = async (data: any) =>
+  requestWithAuthorized(`seen-notification`, {
+    method: 'POST',
+    data,
+  }).then((data) => data)
+
 export const deleteNotification = async (id: number, query?: any) =>
   requestWithAuthorized(`notifications/${id}?` + new URLSearchParams(query), {
     method: 'DELETE',

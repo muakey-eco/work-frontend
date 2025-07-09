@@ -208,7 +208,7 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         return (
           <CalendarDropdown
             currentDate={current}
-            day={day}
+            month={day}
             options={{
               isCurrentMonth,
               info,

@@ -36,29 +36,29 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         </div>
       ) : (
         Array.from(todos)?.map((todo: any) => (
-          <div
+          <Link
             key={todo.id}
-            className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"
+            href={`/workflows/${todo?.workflow_id}`}
+            className="!line-clamp-1 text-[12px] text-[#555]"
           >
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <p className="!line-clamp-1 text-[14px] font-[600]">
-                  {todo?.name}
+            <div className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]">
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="!line-clamp-1 text-[14px] font-[600]">
+                    {todo?.name}
+                  </p>
+                </div>
+                <p className="!line-clamp-1 text-[12px] text-[#555]">
+                  {todo?.workflow_name}
                 </p>
-              </div>
-              <Link
-                href={`/workflows/${todo?.workflow_id}`}
-                className="!line-clamp-1 text-[12px] text-[#555]"
-              >
-                {todo?.workflow_name}
-              </Link>
-              <div className="flex items-center justify-between !text-[12px] text-[#555]">
-                <span>
-                  {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
-                </span>
+                <div className="flex items-center justify-between !text-[12px] text-[#555]">
+                  <span>
+                    {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))
       )}
     </div>
@@ -105,7 +105,7 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
   )
 
   const popoverContent = (
-    <div className="!z-1000 !h-[664x] !w-[549px] overflow-y-auto !rounded-3xl !pt-5">
+    <div className="!z-[1000] !w-[549px] overflow-y-auto !rounded-3xl !pt-5">
       <div className="flex items-center justify-between px-6">
         <span className="text-lg font-semibold">Nhắc việc</span>
         <Button

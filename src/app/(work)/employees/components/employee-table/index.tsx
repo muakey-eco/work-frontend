@@ -3,6 +3,7 @@
 import { convertToSlug, randomColor } from '@/libs/utils'
 import { Avatar, Table, TableProps } from 'antd'
 import { createStyles } from 'antd-style'
+import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -118,6 +119,42 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
         )
       },
     },
+    birthday: {
+      dataIndex: ['birthday'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
+    start_work_date: {
+      dataIndex: ['start_work_date'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
+    start_trial_date: {
+      dataIndex: ['start_trial_date'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
+    end_work_date: {
+      dataIndex: ['end_work_date'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
+    contract_start_date: {
+      dataIndex: ['contracts', 0, 'start_date'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
+    contract_end_date: {
+      dataIndex: ['contracts', 0, 'end_date'],
+      render: (text: any) => {
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
+      },
+    },
     personal_documents: {
       dataIndex: ['personal_documents', 0, 'file_url'],
       render: (text: any) => {
@@ -157,13 +194,13 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
     start_date: {
       dataIndex: ['educations', 0, 'start_date'],
       render: (text: any) => {
-        return text && <span>{text}</span>
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
       },
     },
     end_date: {
       dataIndex: ['educations', 0, 'end_date'],
       render: (text: any) => {
-        return text && <span>{text}</span>
+        return text && <span>{dayjs(text).format('DD/MM/YYYY')}</span>
       },
     },
     note: {

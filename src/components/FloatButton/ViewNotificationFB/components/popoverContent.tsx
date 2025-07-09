@@ -10,6 +10,7 @@ const PopoverContent = ({
   systemNotificationList,
   importantNotifications,
   importantNoticeList,
+  setNotifications,
 }: {
   setOpen: (open: boolean) => void
   allListData: Record<string, Notification[]>
@@ -18,9 +19,13 @@ const PopoverContent = ({
   systemNotificationList: React.ReactNode
   importantNotifications: Notification[]
   importantNoticeList: React.ReactNode
+  setNotifications: (updater: (prev: any[]) => any[]) => void
 }) => (
   <div className="!z-1000 !w-[549px] overflow-y-auto !rounded-3xl !pt-5">
-    <HeaderViewNotificationFB setOpen={() => setOpen(false)} />
+    <HeaderViewNotificationFB
+      setOpen={() => setOpen(false)}
+      setNotifications={setNotifications}
+    />
 
     <Tabs
       defaultActiveKey="1"

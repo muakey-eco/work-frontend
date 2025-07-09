@@ -141,7 +141,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 {Number(value?.ot) || 0}
               </div>
               <div className="flex gap-2">
-                <Image src="/home.svg" alt="wfh" width={16} height={16} />
+                <Image src="/Home.svg" alt="wfh" width={16} height={16} />
                 {Number(value?.wfh) || 0}
               </div>
             </div>

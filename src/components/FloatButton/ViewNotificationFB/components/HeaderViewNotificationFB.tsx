@@ -8,8 +8,10 @@ import { useCallback, useState } from 'react'
 
 const HeaderViewNotificationFB = ({
   setOpen,
+  setNotifications,
 }: {
   setOpen: (open: boolean) => void
+  setNotifications: (updater: (prev: any[]) => any[]) => void
 }) => {
   const [loading, setLoading] = useState(false)
   const { message } = App.useApp()
@@ -19,15 +21,15 @@ const HeaderViewNotificationFB = ({
       setLoading(true)
       const res = await seenNotificationsAction()
       if (res.success) {
+        setNotifications((prev) => prev.map((n) => ({ ...n, seen: 1 })))
         message.success(res.success)
       }
-      router.refresh()
       setLoading(false)
     } catch (error) {
       console.log(error)
       message.error('Đã xảy ra lỗi')
     }
-  }, [])
+  }, [message, setNotifications])
   return (
     <div className="flex items-center justify-between px-6">
       <span className="text-lg font-semibold">Thông báo</span>

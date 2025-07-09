@@ -139,6 +139,7 @@ const ViewNotificationFB: React.FC = () => {
             systemNotificationList={systemNotificationList}
             importantNoticeList={importantNoticeList}
             setOpen={setOpen}
+            setNotifications={setNotifications}
           />
         </Suspense>
       }

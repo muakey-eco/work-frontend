@@ -3,8 +3,6 @@ import { Notification } from '@/types/notification'
 import NotificationItem from './NotificationItem'
 
 const SystemNotificationList = ({
-  importantNotifications,
-  groupedImportantNotifications,
   notifications,
   groupedNotifications,
   handleClick,

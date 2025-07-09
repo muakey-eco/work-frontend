@@ -18,7 +18,7 @@ const JobPage = async ({ params }: Props) => {
     <div className="no-scroll h-[calc(100vh-87px)] !space-y-[16px] overflow-y-auto">
       <JobInfomationCard title="Thông tin công việc" data={userAccount} />
 
-      <JobSalaryCard title="Thành phần lương" data={userAccount} />
+      <JobSalaryCard title="Bảng lương" data={userAccount} />
 
       <JobProgressCard
         title="Lịch sử phát triển sự nghiệp"

@@ -185,61 +185,9 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
                 {...formatProps}
               />
             </Form.Item>
-
-            <Form.Item
-              className="mb-[16px]! flex-1"
-              label="Phụ cấp đi lại"
-              name="travel_allowance"
-            >
-              <InputNumber
-                className="w-full!"
-                placeholder="Nhập"
-                {...formatProps}
-              />
-            </Form.Item>
           </div>
 
           <div className="flex items-center gap-[16px]">
-            <Form.Item
-              className="mb-[16px]! flex-1"
-              label="Phụ cấp ăn uống"
-              name="eat_allowance"
-            >
-              <InputNumber
-                className="w-full!"
-                placeholder="Nhập"
-                {...formatProps}
-              />
-            </Form.Item>
-
-            <Form.Item
-              className="mb-[16px]! flex-1"
-              label="Thưởng, KPI"
-              name="kpi"
-            >
-              <InputNumber
-                className="w-full!"
-                placeholder="Nhập"
-                {...formatProps}
-              />
-            </Form.Item>
-          </div>
-
-          <div className="flex items-center gap-[16px]">
-            <Form.Item
-              className="mb-0! flex-1"
-              label="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
-              name="insurance"
-            >
-              <InputNumber
-                value={DISABLED_SALARY_FIELDS.insurance}
-                className="w-full!"
-                placeholder="BHXH, BHYT, BHTN do công ty đóng (21,5%)"
-                disabled
-                {...formatProps}
-              />
-            </Form.Item>
-
             <Form.Item
               className="mb-0! flex-1"
               label="BHXH, BHYT, BHTN do NLĐ đóng (10,5%)"
@@ -256,7 +204,7 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
           </div>
         </Card>
 
-        <div className="mt-[16px] flex items-center gap-[16px]">
+        {/* <div className="mt-[16px] flex items-center gap-[16px]">
           <Form.Item
             className="mb-0! flex-1"
             label="Lương Gross (Lương sau khi cộng BHXH, BHYT, BHTN)"
@@ -282,7 +230,7 @@ const JobSalaryModalForm: React.FC<JobSalaryModalFormProps> = ({
               {...formatProps}
             />
           </Form.Item>
-        </div>
+        </div> */}
       </Modal>
     </>
   )

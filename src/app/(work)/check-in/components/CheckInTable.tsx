@@ -1,13 +1,27 @@
 'use client'
 
 import { randomColor } from '@/libs/utils'
-import { SettingOutlined } from '@ant-design/icons'
-import { Avatar, Calendar, Divider, Table, TableProps, Tabs } from 'antd'
+import {
+  CheckCircleFilled,
+  CloseCircleFilled,
+  EditFilled,
+  HomeFilled,
+  SettingOutlined,
+} from '@ant-design/icons'
+import {
+  Avatar,
+  Button,
+  Calendar,
+  Divider,
+  Table,
+  TableProps,
+  Tabs,
+} from 'antd'
 import { createStyles } from 'antd-style'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
 import { times } from 'lodash'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
 import CheckInScheduleModalForm from './CheckInScheduleModalForm'
 
@@ -17,6 +31,7 @@ import { generateTimestamp } from '@/utils/generateTimestamp'
 import locale from 'antd/es/date-picker/locale/vi_VN'
 import dayjsLocale from 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import Image from 'next/image'
 import CalendarDropdown from './CalendarDropdown'
 import CheckInStatistics from './check-statistics'
 import CheckInTableExplanation from './CheckInTableExplanation'
@@ -77,6 +92,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   className: customClassName,
   ...props
 }) => {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const today = useMemo(() => new Date(), [])
   const todayFormatted = dayjs(today).format('YYYY-MM')
@@ -86,7 +102,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
   const { styles } = useStyle()
   const year = new Date().getFullYear()
-  const month = options?.day || new Date().getMonth() + 1
+  const month = options?.month || new Date().getMonth() + 1
 
   dayjs.extend(relativeTime)
   dayjs.locale(dayjsLocale)
@@ -100,10 +116,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       dataIndex: 'member',
       fixed: true,
       width: 300,
-      render: (value) => {
+      render: (value: any) => {
         return (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[8px]">
+          <div className="flex flex-col !gap-2 !px-6 !py-4 !text-[14px]">
+            <div className="flex items-center gap-2">
               <Avatar
                 src={value?.avatar}
                 style={{
@@ -115,11 +131,19 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               </Avatar>
               <span>{value?.fullName}</span>
             </div>
-
-            <div>
-              <div>TC: {Number(value?.workDay)}</div>
-              <div>OT: {Number(value?.ot)}h</div>
-              <div>WFH: {Number(value?.wfh)}d</div>
+            <div className="flex gap-4">
+              <div className="flex gap-2">
+                <Image src="/All.svg" alt="check-in" width={16} height={16} />
+                {Number(value?.workDay) || 0}
+              </div>
+              <div className="flex gap-2">
+                <Image src="/Clock.svg" alt="ot" width={16} height={16} />
+                {Number(value?.ot) || 0}
+              </div>
+              <div className="flex gap-2">
+                <Image src="/home.svg" alt="wfh" width={16} height={16} />
+                {Number(value?.wfh) || 0}
+              </div>
             </div>
           </div>
         )
@@ -132,7 +156,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
       return {
         title: (
-          <div>
+          <div className="!h-full !w-full">
             <div>{String(date.format('dd'))}</div>
             <div>{String(date.format('DD/MM'))}</div>
           </div>
@@ -140,17 +164,35 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         dataIndex: `${num + 1}/${month}`,
         width: 120,
         align: 'center',
+        onCell: (row: any) => {
+          const dayObj = row[`${num + 1}/${month}`]
+          return {
+            className:
+              typeof dayObj?.hoursPerDay === 'number' &&
+              dayObj.hoursPerDay < 7.5 &&
+              dayObj.hoursPerDay > 0
+                ? '!bg-[#FFF1F0]'
+                : '',
+          }
+        },
         render: (value: any) => {
           const checkIn = value.checkInValue
           const wfh = value.wfh
-
+          const timeOff = value.timeOff
+          const dayWorking = value.dayWorking
+          const roleMember = value.roleMember
+          const isEditDay = value.isEditDay
+          const isEdited = isEditDay.length > 0
           return (
-            <div className="flex flex-col gap-[4px]">
+            <div className="flex !h-full !w-full flex-col gap-[4px]">
               {checkIn &&
                 checkIn?.map((c: any, index: number) => (
                   <div key={`${c[0]}-${c[1]}-${index}`}>
                     {index > 0 && <Divider className="my-[4px]!" />}
-                    <div>
+                    <div className="flex items-center justify-center gap-2">
+                      {isEdited && (
+                        <EditFilled className="!text-[14px] !text-[#faad14]" />
+                      )}
                       {c[0]} - {c[1] ? c[1] : '--:--'}
                     </div>
                   </div>
@@ -162,11 +204,51 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                   .map((w: any, index: number) => (
                     <div
                       key={`${w?.[0]}-${w?.[1]}-${index}`}
-                      className="text-center font-bold text-red-500"
+                      className="flex !items-center !justify-center gap-2 !text-center"
                     >
+                      <HomeFilled className="!text-[#1677FF]" />
                       WFH
                     </div>
                   ))}
+              {Array.isArray(timeOff) &&
+                timeOff.filter((w) => w != null && w.length > 0).length > 0 &&
+                timeOff
+                  .filter((w) => w != null && w.length > 0)
+                  .map((w: any, index: number) => (
+                    <div
+                      key={`${w?.[0]}-${w?.[1]}-${index}`}
+                      className="flex !w-fit !items-center !justify-center gap-2 !text-center text-[14px]"
+                    >
+                      <CheckCircleFilled className="!text-[#52C41A]" />
+                      <p className="whitespace-nowrap">Nghỉ có phép</p>
+                    </div>
+                  ))}
+              {/* Hiển thị "Nghỉ không phép" khi working day = 1 và không có time off */}
+              {dayWorking === 1 &&
+                date < dayjs() &&
+                roleMember !== 'Admin' &&
+                checkIn === null &&
+                (!Array.isArray(timeOff) ||
+                  timeOff.filter((w) => w != null && w.length > 0).length ===
+                    0) && (
+                  <div className="flex !w-fit !items-center !justify-center gap-2 !text-center text-[14px]">
+                    <CloseCircleFilled className="!text-[#FF4D4F]" />
+                    <p className="whitespace-nowrap">Nghỉ không phép</p>
+                  </div>
+                )}
+              {dayWorking === 0 && (
+                <div className="mx-auto flex !w-fit flex-col items-center justify-center gap-2 !text-center text-[14px]">
+                  <p className="font-bold whitespace-nowrap text-[#8C8C8C]">
+                    Nghỉ
+                  </p>
+                  <Image
+                    src="/image2.gif"
+                    alt="nghỉ cuối tuần"
+                    width={18}
+                    height={18}
+                  />
+                </div>
+              )}
             </div>
           )
         },
@@ -182,7 +264,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       const checkInHistories = attendances?.attendances?.filter(
         (a: any) => a?.account_id === m?.id,
       )
-
       const otPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name_category === 'Đăng ký OT')
         .filter((p: any) => p?.account_id === m.id)
@@ -201,6 +282,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         const checkIn = checkInHistories?.filter(
           (c: any) => new Date(c?.checkin).getDate() == num + 1,
         )
+        const isEditDay = checkIn?.filter((c: any) => c?.edited_at !== null)
 
         const checkInValue =
           checkIn?.length >= 1
@@ -238,19 +320,28 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           return total + (+curr?.hours || 0)
         }, 0)
 
-        const dayWorking = checkIn?.reduce((total: number, curr: any) => {
-          return total + (+curr?.workday || 0)
-        }, 0)
+        const dayWorking =
+          options?.workSchedule?.find(
+            (s: any) =>
+              s?.day_of_week ===
+              `${year}-${month > 9 ? month : `0${month}`}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+          )?.go_to_work || 0
+
+        const roleMember = options?.members?.find(
+          (mem: any) => mem?.id === m?.id,
+        )?.role
 
         return [
           `${currentDate}/${month}`,
           {
             checkInValue,
+            isEditDay,
             timeOff,
             ot,
             wfh,
             hoursPerDay,
             dayWorking,
+            roleMember,
             plan_time: checkIn?.[0]
               ? [
                   dayjs(checkIn?.[0]?.checkin).format('HH:mm'),
@@ -313,17 +404,23 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         <div className="rounded-sm bg-[#fff]">
           <Tabs
             tabBarExtraContent={
-              mode === 'schedule' && (
-                <CheckInScheduleModalForm
-                  initialValues={{
-                    workSchedule,
-                  }}
-                >
-                  <div className="px-[16px]">
+              <div className="mx-6 mt-[11px] flex items-center justify-center gap-2">
+                <CheckInScheduleModalForm initialValues={{ workSchedule }}>
+                  <div className="flex h-full items-center justify-center px-4">
                     <SettingOutlined className="cursor-pointer text-[18px]" />
                   </div>
                 </CheckInScheduleModalForm>
-              )
+
+                <Button
+                  className="flex h-full w-full items-center"
+                  type="primary"
+                  onClick={() => {
+                    router.push('/salary')
+                  }}
+                >
+                  Khởi tạo bảng lương tháng 6
+                </Button>
+              </div>
             }
             items={[
               {
@@ -363,7 +460,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                             dayjs(current).format('YYYY-MM-DD'),
                           )
 
-                          const day = workSchedule?.find(
+                          const month = workSchedule?.find(
                             (s: any) => s?.day_of_week === date,
                           )
 
@@ -374,7 +471,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                           return (
                             <CalendarDropdown
                               currentDate={current}
-                              month={day}
+                              month={month}
                               options={{
                                 isCurrentMonth,
                                 info,
@@ -447,7 +544,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
 
                 const date = String(dayjs(current).format('YYYY-MM-DD'))
 
-                const day = workSchedule?.find(
+                const month = workSchedule?.find(
                   (s: any) => s?.day_of_week === date,
                 )
 
@@ -458,7 +555,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 return (
                   <CalendarDropdown
                     currentDate={current}
-                    month={day}
+                    month={month}
                     options={{
                       isCurrentMonth,
                       info,

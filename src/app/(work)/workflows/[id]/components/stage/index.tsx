@@ -71,9 +71,25 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   const [currentTimeDifference, setCurrentTimeDifference] = useState<number>(0)
   const [overIndex, setOverIndex] = useState<number | undefined>()
   //Thời gian thực hiện mới
-  const [customStartedAt, setCustomStartedAt] = useState<dayjs.Dayjs | null>(
-    null,
-  )
+  const [customStartedAt, setCustomStartedAt] = useState<{
+    amount: string
+    unit: string
+  } | null>(null)
+
+  const timeConfirmationValue = useMemo(() => {
+    if (!customStartedAt?.amount || !customStartedAt?.unit) return null
+
+    const amountNum = parseFloat(customStartedAt.amount)
+    if (isNaN(amountNum)) return null
+
+    const diffMinutes =
+      customStartedAt.unit === 'giờ' ? amountNum * 60 : amountNum
+
+    const now = new Date()
+    const startedAt = new Date(now.getTime() - diffMinutes * 60 * 1000)
+
+    return dayjs(startedAt).format('YYYY-MM-DD HH:mm:ss')
+  }, [customStartedAt])
 
   const [isTimeModalLoading, setIsTimeModalLoading] = useState(false)
   const [isDoneModalLoading, setIsDoneModalLoading] = useState(false)
@@ -461,16 +477,6 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
   )
 
   const handleOk = async () => {
-    if (!customStartedAt) {
-      message.error('Vui lòng chọn thời gian')
-      return
-    }
-
-    if (customStartedAt.isAfter(dayjs())) {
-      message.error('Thời gian không được lớn hơn thời gian hiện tại')
-      return
-    }
-
     if (!activeId || !dragEvent?.over?.id) {
       message.error('Không tìm thấy thông tin task hoặc stage đích')
       return
@@ -480,7 +486,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
     const overStageId = +String(dragEvent.over.id).split('_')[1]
 
     const { errors } = await editTaskAction(Number(activeId), {
-      started_at: customStartedAt.format('YYYY-MM-DD HH:mm:ss'),
+      started_at: timeConfirmationValue || null,
     })
 
     if (errors) {
@@ -568,7 +574,7 @@ const StageList: React.FC<StageListProps> = ({ members, stages, options }) => {
         {/* Modal xác nhận thời gian thực hiện */}
         <TimeConfirmationModal
           open={isModalOpen}
-          value={customStartedAt}
+          value={customStartedAt || { amount: '', unit: 'phút' }}
           onOk={handleOk}
           loading={isTimeModalLoading}
           onCancel={handleCancel}

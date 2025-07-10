@@ -287,7 +287,7 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
         try {
           const { message: msg, errors } = await editTaskAction(task?.id, {
             account_id: id,
-            started_at: new Date(),
+            started_at: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
           })
 
           setStages((prevStages: any[]) => {
@@ -307,7 +307,9 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
                         //       new Date().getHours() + stage.expired_after_hours,
                         //     )
                         //   : null,
-                        started_at: new Date(),
+                        started_at: dayjs(new Date()).format(
+                          'YYYY-MM-DD HH:mm:ss',
+                        ),
                       }
                     }
 
@@ -705,35 +707,19 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
 
         {!isCompleted && !isFailed && (
           <>
-            {user && userId === task?.account_id ? (
-              !task?.started_at && (
-                <Button
-                  className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
-                  size="small"
-                  type="primary"
-                  onClick={() => {
-                    modal.confirm({
-                      title: 'Bạn muốn nhận công việc này?',
-                      onOk: () => handleAssign(userId || 0),
-                    })
-                  }}
-                >
-                  Bắt đầu
-                </Button>
-              )
-            ) : (
+            {!task?.started_at && (
               <Button
                 className="!absolute right-[16px] bottom-[12px] p-[10px]! text-[12px]! text-[#fff]"
                 size="small"
                 type="primary"
                 onClick={() => {
                   modal.confirm({
-                    title: 'Bạn muốn nhận công việc này?',
-                    onOk: () => handleAssignWithoutWork(userId || 0),
+                    title: 'Bạn muốn bắt đầu làm công việc này?',
+                    onOk: () => handleAssign(userId || 0),
                   })
                 }}
               >
-                Nhận
+                Bắt đầu
               </Button>
             )}
           </>

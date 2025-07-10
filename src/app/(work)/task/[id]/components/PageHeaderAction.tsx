@@ -247,56 +247,42 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
   return (
     <>
       <div className="flex items-center gap-[8px]">
-        {!options?.task?.account_id
-          ? !options?.task?.completed_at && (
+        {!options?.task?.account_id &&
+          (options?.task?.started_at ? (
+            <>
+              <Tag
+                className="mr-0! h-[32px]! rounded-[8px] px-[12px]! leading-[28px]!"
+                color="processing"
+                icon={<SyncOutlined />}
+              >
+                Đang làm
+              </Tag>
               <Button
-                type="primary"
+                color="danger"
+                variant="outlined"
                 onClick={() => {
                   modal.confirm({
-                    title: 'Bạn muốn nhận công việc này?',
-                    onOk: () => handleAssignWithoutWork(user?.id || 0),
+                    title: 'Bạn muốn hủy trạng thái bắt đầu?',
+                    onOk: () => handleRemoveExecutor(options?.task?.id),
                   })
                 }}
               >
-                Nhận
+                Hủy trạng thái bắt đầu
               </Button>
-            )
-          : user?.id === options?.task?.account_id &&
-            (options?.task?.started_at ? (
-              <>
-                <Tag
-                  className="mr-0! h-[32px]! rounded-[8px] px-[12px]! leading-[28px]!"
-                  color="processing"
-                  icon={<SyncOutlined />}
-                >
-                  Đang làm
-                </Tag>
-                <Button
-                  color="danger"
-                  variant="outlined"
-                  onClick={() => {
-                    modal.confirm({
-                      title: 'Bạn muốn hủy trạng thái bắt đầu?',
-                      onOk: () => handleRemoveExecutor(options?.task?.id),
-                    })
-                  }}
-                >
-                  Hủy trạng thái bắt đầu
-                </Button>
-              </>
-            ) : (
-              <Button
-                type="primary"
-                onClick={() => {
-                  modal.confirm({
-                    title: 'Bạn muốn nhận công việc này?',
-                    onOk: () => handleAssign(user?.id || 0),
-                  })
-                }}
-              >
-                Bắt đầu
-              </Button>
-            ))}
+            </>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                modal.confirm({
+                  title: 'Bạn muốn bắt đầu làm công việc này?',
+                  onOk: () => handleAssign(user?.id || 0),
+                })
+              }}
+            >
+              Bắt đầu
+            </Button>
+          ))}
         {!options?.task?.completed_at && (
           <MarkTaskModalForm
             options={{

@@ -3,7 +3,7 @@
 import { App, Form, FormInstance, Input, Modal, ModalProps, Radio } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { editTaskAction } from '../action'
 import TimeConfirmationModal from '../TimeConfirmationModal'
 import { moveStageAction } from './action'
@@ -32,9 +32,26 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
   const [loading, setLoading] = useState(false)
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false)
   const [currentTimeDifference, setCurrentTimeDifference] = useState(0)
-  const [customStartedAt, setCustomStartedAt] = useState<dayjs.Dayjs | null>(
-    null,
-  )
+  const [customStartedAt, setCustomStartedAt] = useState<{
+    amount: string
+    unit: string
+  } | null>(null)
+
+  const timeConfirmationValue = useMemo(() => {
+    if (!customStartedAt?.amount || !customStartedAt?.unit) return null
+
+    const amountNum = parseFloat(customStartedAt.amount)
+    if (isNaN(amountNum)) return null
+
+    const diffMinutes =
+      customStartedAt.unit === 'giờ' ? amountNum * 60 : amountNum
+
+    const now = new Date()
+    const startedAt = new Date(now.getTime() - diffMinutes * 60 * 1000)
+
+    return dayjs(startedAt).format('YYYY-MM-DD HH:mm:ss')
+  }, [customStartedAt])
+
   const formRef = useRef<FormInstance>(null)
   const router = useRouter()
 
@@ -81,13 +98,8 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
         return
       }
 
-      if (customStartedAt.isAfter(dayjs())) {
-        message.error('Thời gian không được lớn hơn hiện tại')
-        return
-      }
-
       const { errors } = await editTaskAction(task?.id, {
-        started_at: customStartedAt.format('YYYY-MM-DD HH:mm:ss'),
+        started_at: timeConfirmationValue || null,
       })
 
       if (errors) {
@@ -136,7 +148,7 @@ const MarkTaskModalForm: React.FC<ModalProps & MarkTaskModalFormProps> = ({
           onOk={handleTimeConfirm}
           onCancel={handleTimeCancel}
           currentTimeDifference={currentTimeDifference}
-          value={customStartedAt}
+          value={customStartedAt || { amount: '', unit: 'phút' }}
           onTimeChange={(value) => {
             setCustomStartedAt(value)
           }}

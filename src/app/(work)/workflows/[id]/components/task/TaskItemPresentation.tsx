@@ -17,8 +17,15 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { cloneDeep } from 'lodash'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
-import React, { memo, useCallback, useContext, useMemo, useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { toast } from 'react-hot-toast'
 import {
   assignTaskWithoutWorkAction,
@@ -86,12 +93,32 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
     const [markTaskFailedOpen, setMarkTaskFailedOpen] = useState(false)
     const [currentStage, setCurrentStage] = useState<any>()
     const router = useRouter()
+    const searchParams = useSearchParams()
 
     const { failedStageId } = useContext(StageContext)
     const { setStages } = useContext(WorkflowStageContext)
     const params = useParams()
     const { message, modal } = App.useApp()
     const { styles } = useStyle()
+
+    // Lấy task_id từ URL để highlight task
+    const highlightedTaskId = searchParams.get('task_id')
+    const isHighlighted =
+      highlightedTaskId && Number(highlightedTaskId) === task?.id
+    // Kiểm soát trạng thái highlight của task khi nhấn bất cứ đâu
+
+    const [isUseHighlighted, setIsUseHighlighted] = useState(isHighlighted)
+    useEffect(() => {
+      const handleClickAnywhere = () => {
+        setIsUseHighlighted(false)
+      }
+
+      document.addEventListener('click', handleClickAnywhere)
+
+      return () => {
+        document.removeEventListener('click', handleClickAnywhere)
+      }
+    }, [])
 
     const now = new Date()
     const daysFromNow = Math.abs(dayjs(task?.date_posted).diff(now, 'day'))
@@ -583,7 +610,9 @@ const TaskItemPresentation: React.FC<TaskItemProps> = memo(
                 : 'bg-[#2bbf3d] text-[#fff]!'
               : isFailed
                 ? 'bg-[#c34343] text-[#fff]!'
-                : 'bg-[#fff] hover:bg-[#f8f8f8]',
+                : isHighlighted && isUseHighlighted
+                  ? 'ring-opacity-50 animate-slide-left-right my-1 scale-98 transform bg-[#E6F7FF] ring-2 ring-[#1677FF] transition-transform hover:bg-[#E6F7FF]/90'
+                  : 'bg-[#fff] hover:bg-[#f8f8f8]',
             className,
           )}
           {...listeners}

@@ -103,6 +103,16 @@ const config: Config = {
         return spacingValues
       },
     },
+    animation: {
+      'slide-left-right': 'slide-left-right 1s ease-in-out infinite',
+    },
+    keyframes: {
+      'slide-left-right': {
+        '0%': { transform: 'translateX(-1px)' },
+        '50%': { transform: 'translateX(1px)' },
+        '100%': { transform: 'translateX(-1px)' },
+      },
+    },
   },
   plugins: [require('@tailwindcss/typography')],
 }

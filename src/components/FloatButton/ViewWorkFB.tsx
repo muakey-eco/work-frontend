@@ -1,6 +1,7 @@
 'use client'
 import { CloseOutlined, FileDoneOutlined } from '@ant-design/icons'
 import { Button, FloatButton, Popover, Tabs } from 'antd'
+import clsx from 'clsx'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -38,17 +39,29 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         Array.from(todos)?.map((todo: any) => (
           <Link
             key={todo.id}
-            href={`/workflows/${todo?.workflow_id}`}
-            className="!line-clamp-1 text-[12px] text-[#555]"
+            href={`/workflows/${todo?.workflow_id}?task_id=${todo?.id}`}
+            className="!line-clamp-1 border-b border-gray-200 text-[12px] text-[#555]"
+            onClick={() => {
+              setOpen(false)
+            }}
           >
-            <div className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]">
+            <div
+              className={clsx(
+                'group flex w-full items-start gap-[12px] !px-6 !py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]',
+                todo?.status === 'overdue' &&
+                  'bg-[#FFF1F0] hover:bg-[#FFF1F0]/80',
+              )}
+            >
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <p className="!line-clamp-1 text-[14px] font-[600]">
                     {todo?.name}
                   </p>
+                  {todo?.status === 'overdue' && (
+                    <div className="size-[10px] rounded-full bg-[#FF4D4F]" />
+                  )}
                 </div>
-                <p className="!line-clamp-1 text-[12px] text-[#555]">
+                <p className="!line-clamp-1 text-[12px] text-blue-500">
                   {todo?.workflow_name}
                 </p>
                 <div className="flex items-center justify-between !text-[12px] text-[#555]">
@@ -75,30 +88,38 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         Array.from(todos)
           .filter((todo: any) => todo?.status === 'overdue')
           .map((todo: any) => (
-            <div
+            <Link
               key={todo.id}
-              className="group flex w-full items-start gap-[12px] !px-6 py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]"
+              href={`/workflows/${todo?.workflow_id}?task_id=${todo?.id}`}
+              className="!line-clamp-1 border-b border-[#000000]/6 text-[12px] text-[#555]"
             >
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="!line-clamp-1 text-[14px] font-[600]">
-                    {todo?.name}
+              <div
+                className={clsx(
+                  'group flex w-full items-start gap-[12px] !px-6 !py-2 !text-[14px] !text-[#000] hover:bg-[#F5FCFF]',
+                  todo?.status === 'overdue' &&
+                    'bg-[#FFF1F0] hover:bg-[#FFF1F0]/80',
+                )}
+              >
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="!line-clamp-1 text-[14px] font-[600]">
+                      {todo?.name}
+                    </p>
+                    {todo?.status === 'overdue' && (
+                      <div className="size-[10px] rounded-full bg-[#FF4D4F]" />
+                    )}
+                  </div>
+                  <p className="!line-clamp-1 text-[12px] text-blue-500">
+                    {todo?.workflow_name}
                   </p>
-                  <div className="size-[10px] rounded-full bg-[#ff4d4f]" />
-                </div>
-                <Link
-                  href={`/workflows/${todo?.workflow_id}`}
-                  className="!line-clamp-1 text-[12px] text-[#555]"
-                >
-                  {todo?.workflow_name}
-                </Link>
-                <div className="flex items-center justify-between !text-[12px] text-[#555]">
-                  <span>
-                    {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
-                  </span>
+                  <div className="flex items-center justify-between !text-[12px] text-[#555]">
+                    <span>
+                      {dayjs(todo?.created_at).format('HH:mm DD/MM/YYYY')}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))
       )}
     </div>

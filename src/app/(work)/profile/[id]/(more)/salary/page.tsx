@@ -4,7 +4,6 @@ import SalaryHeader from './components/SalaryHeader'
 const SalaryStatistics = async () => {
   const cookieStore = await cookies()
   const canViewPayroll = cookieStore.get('can_view_payroll')
-  console.log('canViewPayroll', canViewPayroll)
   if (!canViewPayroll) {
     return (
       <div className="flex h-[calc(100vh-89px)] flex-col items-center justify-center gap-[12px] bg-[#F6F6F6] p-[16px]">

@@ -38,7 +38,6 @@ const generateValue = (type: string, value: any) => {
 }
 
 const JobCustomFields: React.FC<JobCustomFieldsProps> = ({ query }) => {
-  console.log('query', query)
   return (
     <div className="mt-[24px]">
       <div className="text-[12px] font-[500] text-[#42b814]">

@@ -59,6 +59,8 @@ export const requestWithFile = async (
   options?: RequestOptions,
 ) => {
   const { accessToken } = await getSession()
+  const xForwardedFor = (await headers()).get('x-forwarded-for')
+  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '127.0.0.1'
 
   if (!accessToken) {
     throw new Error('Unauthorized.')
@@ -70,6 +72,7 @@ export const requestWithFile = async (
     headers: {
       authorization: `Bearer ${accessToken}`,
       ...options?.headers,
+      'x-forwarded-for': String(ipRaw),
     },
   })
 }

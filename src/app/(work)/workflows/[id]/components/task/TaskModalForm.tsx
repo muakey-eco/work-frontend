@@ -50,8 +50,6 @@ const TaskModalForm: React.FC<TaskModalFormProps> = ({
   const { account_id, members, expired, customFields, ...restInitialValues } =
     initialValues
 
-  console.log('members1', members)
-
   // Chuẩn bị initialFields cho các trường tùy chỉnh
   const initialFields = React.useMemo(() => {
     const obj: Record<string, any> = {}

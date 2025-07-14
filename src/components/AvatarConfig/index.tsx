@@ -28,6 +28,7 @@ const AvatarConfig: React.FC<AvatarConfigProps> = ({
 
   const [loading, setLoading] = useState(false)
   const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileGif, setFileGif] = useState<UploadFile[]>([])
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -35,26 +36,33 @@ const AvatarConfig: React.FC<AvatarConfigProps> = ({
 
   const handleChangeAvatar = async () => {
     setLoading(true)
-    const file = fileList[0]?.originFileObj as File
-    if (!file) return
+    const file = fileGif[0]?.originFileObj || fileList[0]?.originFileObj
+    if (!file) {
+      message.error('Vui lòng chọn một ảnh')
+      setLoading(false)
+      return
+    }
 
     const formData = new FormData()
     formData.append('files', file)
 
     const res = await uploadFiles(formData)
-
     const avatar = res?.url
+
     if (avatar) {
       const { message: msg, errors } = await updateProfileAction(user?.id, {
-        avatar: avatar,
+        avatar,
       })
       if (errors) {
         message.error(msg)
+        setLoading(false)
         return
       }
       router.refresh()
       message.success('Cập nhật avatar thành công')
       setIsModalOpen(false)
+      setFileList([])
+      setFileGif([])
     } else {
       message.error('Cập nhật avatar thất bại')
     }
@@ -62,7 +70,14 @@ const AvatarConfig: React.FC<AvatarConfigProps> = ({
   }
 
   const onChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-    setFileList(newFileList)
+    const fileType = newFileList[0]?.type
+    if (fileType === 'image/gif') {
+      setFileGif(newFileList)
+      setFileList([])
+    } else {
+      setFileList(newFileList)
+      setFileGif([])
+    }
   }
 
   const onPreview = async (file: UploadFile) => {
@@ -114,17 +129,31 @@ const AvatarConfig: React.FC<AvatarConfigProps> = ({
           </Button>,
         ]}
       >
-        <ImgCrop rotationSlider>
+        <div className="flex gap-2">
+          <ImgCrop rotationSlider>
+            <Upload
+              listType="picture-card"
+              fileList={fileList}
+              onChange={onChange}
+              onPreview={onPreview}
+              maxCount={1}
+              accept="image/png, image/jpeg, image/jpg, image/webp"
+            >
+              {fileList.length === 0 && '+ Upload'}
+            </Upload>
+          </ImgCrop>
+
           <Upload
             listType="picture-card"
-            fileList={fileList}
+            fileList={fileGif}
             onChange={onChange}
             onPreview={onPreview}
             maxCount={1}
+            accept="image/gif"
           >
-            {fileList.length === 0 && '+ Upload'}
+            {fileGif.length === 0 && '+ GIF'}
           </Upload>
-        </ImgCrop>
+        </div>
 
         <div className="mt-4 flex flex-col gap-2">
           <p className="text-gray-500">Ảnh Đại Diện Gần Đây</p>

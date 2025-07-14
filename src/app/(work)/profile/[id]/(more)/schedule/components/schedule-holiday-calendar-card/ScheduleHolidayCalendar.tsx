@@ -152,10 +152,12 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
         const timeWork =
           attendances?.attendances?.find(
             (s: any) =>
-              new Date(s?.checkin).getDate() == num + 1 &&
+              s?.account_id === m?.id &&
+              new Date(s?.checkin).getDate() == currentDate &&
               new Date(s?.checkin).getMonth() + 1 === month &&
               new Date(s?.checkin).getFullYear() === year,
           )?.workday || 0
+
         const roundedTimeWork = Number(timeWork) === 1 ? 1 : timeWork
 
         return [

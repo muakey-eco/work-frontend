@@ -257,6 +257,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   ]
 
   const { user, workSchedule, attendances } = options
+  console.log('attendances', attendances)
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))
@@ -329,10 +330,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         const timeWork =
           attendances?.attendances?.find(
             (s: any) =>
+              s?.account_id === m?.id &&
               new Date(s?.checkin).getDate() === currentDate &&
               new Date(s?.checkin).getMonth() + 1 === month &&
               new Date(s?.checkin).getFullYear() === year,
           )?.workday || 0
+
         const roundedTimeWork = Number(timeWork) === 1 ? 1 : timeWork
 
         const roleMember = options?.members?.find(

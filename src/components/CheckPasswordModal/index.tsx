@@ -18,7 +18,6 @@ const CheckPasswordModal: React.FC<{
   }
 
   const handleSubmit = async (values: any) => {
-    console.log('values', values)
     const data = {
       password: values.password,
     }

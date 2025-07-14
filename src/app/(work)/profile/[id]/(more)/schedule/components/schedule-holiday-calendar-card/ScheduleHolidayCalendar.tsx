@@ -149,6 +149,15 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
           return total + (+curr?.workday || 0)
         }, 0)
 
+        const timeWork =
+          attendances?.attendances?.find(
+            (s: any) =>
+              new Date(s?.checkin).getDate() == num + 1 &&
+              new Date(s?.checkin).getMonth() + 1 === month &&
+              new Date(s?.checkin).getFullYear() === year,
+          )?.workday || 0
+        const roundedTimeWork = Number(timeWork) === 1 ? 1 : timeWork
+
         return [
           `${currentDate}/${month}`,
           {
@@ -158,6 +167,7 @@ const ScheduleHolidayCalendar: React.FC<ScheduleHolidayCalendarProps> = ({
             wfh,
             hoursPerDay,
             dayWorking,
+            timeWork: roundedTimeWork,
             plan_time: checkIn?.[0]
               ? [
                   dayjs(checkIn?.[0]?.checkin).format('HH:mm'),

@@ -11,7 +11,6 @@ type CheckInContentProps = {
 }
 
 const CheckInContent: React.FC<CheckInContentProps> = ({ query, options }) => {
-  console.log('options', options)
   const [date, setDate] = useState(new Date())
 
   const { members, month, propose, ...restOptions } = options

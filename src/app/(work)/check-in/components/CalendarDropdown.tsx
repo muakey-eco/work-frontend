@@ -208,7 +208,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                               'flex w-full items-center justify-center rounded-full px-[4px] py-[3px] text-[#fff]',
                               {
                                 'bg-[#237804]': !!c?.[1],
-                                'bg-[#F5222D]': !c?.[1] || info?.dayWorking < 1,
+                                'bg-[#F5222D]': !c?.[1] || info?.timeWork < 1,
                               },
                             )}
                             key={index}
@@ -254,7 +254,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                       <ClockCircleOutlined /> <span>{info?.hoursPerDay}h</span>
                     </div>
                     <div>
-                      {info?.dayWorking}
+                      {info?.timeWork}
                       /1 NC
                     </div>
                   </div>

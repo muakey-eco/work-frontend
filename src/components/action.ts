@@ -46,6 +46,11 @@ import {
   updateTagById,
 } from '@/libs/tag'
 import { getTodos } from '@/libs/todos'
+import {
+  createChannel,
+  createVideo,
+  getChannelSuggestions,
+} from '@/libs/youtube'
 
 export const logoutAction = async () => {
   return await logout()
@@ -180,4 +185,18 @@ export const getNotificationsAction = async () => {
 }
 export const getAccountsWithoutQuitWorkAction = async () => {
   return await getAccountsWithoutQuitWork()
+}
+export const createChannelAction = async (data: any) => {
+  const response = await createChannel(data)
+  return response
+}
+
+export const createVideoAction = async (data: any) => {
+  const response = await createVideo(data)
+  return response
+}
+
+export const getChannelSuggestionsAction = async (query: string) => {
+  const response = await getChannelSuggestions(query)
+  return response
 }

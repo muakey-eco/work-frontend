@@ -1,0 +1,39 @@
+services:
+  dev:
+    container_name: next-base-dev
+    build:
+      context: .
+      target: dev
+      args:
+        NODE_ENV: development
+    env_file:
+      - .env.local
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: development
+    restart: always
+  prod:
+    container_name: next-base-prod
+    build:
+      context: .
+      target: runner
+      args:
+        NODE_ENV: production
+        BASE_API_URL: https://work.1997.pro.vn/api/
+        NEXT_PUBLIC_BASE_URL: https://work.1997.pro.vn
+        NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: GTM-MHSZKB9B
+    env_file:
+      - .env.production
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      BASE_API_URL: https://work.1997.pro.vn/api/
+      NEXT_PUBLIC_BASE_URL: https://work.1997.pro.vn
+      NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: GTM-MHSZKB9B
+    command: node server.js
+    restart: always

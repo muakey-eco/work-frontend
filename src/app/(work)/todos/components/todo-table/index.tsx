@@ -76,7 +76,7 @@ const columns: TableProps['columns'] = [
     fixed: 'left',
     render: (name, record) => {
       return (
-        <>
+        <div className="ps-4">
           <Link
             href={`/task/${record?.id}`}
             className="mb-[4px] block font-[600] !text-[#000000E0]"
@@ -87,7 +87,7 @@ const columns: TableProps['columns'] = [
           <div className="flex items-center">
             <div>{generateStatus(record?.status)}</div>
             {record?.creator_name && (
-              <div className="text-[#00000073]">
+              <div className="text-[#00000073]"> 
                 Người tạo{' '}
                 <span className="text-[#000000E0]">{record?.creator_name}</span>{' '}
                 lúc{' '}
@@ -95,7 +95,7 @@ const columns: TableProps['columns'] = [
               </div>
             )}
           </div>
-        </>
+        </div>
       )
     },
   },

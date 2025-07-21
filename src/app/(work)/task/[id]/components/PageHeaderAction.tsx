@@ -7,11 +7,25 @@ import { assignTaskWithoutWorkAction } from '@/components/action'
 import { MenuOutlined, SyncOutlined } from '@ant-design/icons'
 import { App, Button, Dropdown, Input, MenuProps, Modal, Tag } from 'antd'
 import clsx from 'clsx'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { editTaskAction } from '../../actions'
 import { deleteTaskAction, moveStageAction } from '../action'
 
+const YoutubeModal = dynamic(
+  () => import('@/components/Youtube/YoutubeModal'),
+  {
+    ssr: false,
+  },
+)
+
+const ChannelModal = dynamic(
+  () => import('@/components/Youtube/ChannelModal'),
+  {
+    ssr: false,
+  },
+)
 type PageHeaderActionProps = {
   options?: any
 }
@@ -283,6 +297,24 @@ const PageHeaderAction: React.FC<PageHeaderActionProps> = ({ options }) => {
               Bắt đầu
             </Button>
           ))}
+        {options?.workflowsForProcess[0]?.name === 'Team Marketing' && (
+          <div className="flex gap-[10px]">
+            <YoutubeModal taskId={options?.task?.id}>
+              <div className="mx-auto flex cursor-pointer items-center">
+                <p className="rounded-md bg-red-400 px-2 py-1 text-[14px] font-[600] text-red-600 hover:bg-red-400/80">
+                  Youtube
+                </p>
+              </div>
+            </YoutubeModal>
+            <ChannelModal>
+              <div className="mx-auto flex cursor-pointer items-center gap-[10px]">
+                <p className="rounded-md bg-yellow-400 px-2 py-1 text-[14px] font-[600] text-yellow-600 hover:bg-yellow-400/80">
+                  Kênh
+                </p>
+              </div>
+            </ChannelModal>
+          </div>
+        )}
         {!options?.task?.completed_at && (
           <MarkTaskModalForm
             options={{

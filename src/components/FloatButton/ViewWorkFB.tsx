@@ -174,11 +174,13 @@ const ViewWorkFB: React.FC<ViewWorkFBProps> = (props) => {
         content={popoverContent}
         open={open}
         onOpenChange={handleOpenChange}
-        overlayInnerStyle={{
-          padding: 0,
-          borderRadius: 24,
-          width: 549,
-          marginLeft: -7,
+        styles={{
+          body: {
+            padding: 0,
+            borderRadius: 24,
+            width: 549,
+            marginLeft: -7,
+          },
         }}
       >
         <FloatButton

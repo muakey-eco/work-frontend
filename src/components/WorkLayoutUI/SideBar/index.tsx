@@ -223,16 +223,6 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               label: (
                 <div className="flex items-center gap-[10px]">
                   <div className="h-[14px] w-[12px]" />
-                  <span>Phòng ban</span>
-                </div>
-              ),
-              shouldRound: false,
-              key: 'departments',
-            },
-            {
-              label: (
-                <div className="flex items-center gap-[10px]">
-                  <div className="h-[14px] w-[12px]" />
                   <span>Thông báo quan trọng</span>
                 </div>
               ),

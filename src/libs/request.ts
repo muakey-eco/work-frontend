@@ -1,5 +1,6 @@
 'use server'
 
+import { normalizeClientIp } from '@/utils/normalizeClientIp'
 import { headers } from 'next/headers'
 import { getSession } from './session'
 
@@ -60,7 +61,7 @@ export const requestWithFile = async (
 ) => {
   const { accessToken } = await getSession()
   const xForwardedFor = (await headers()).get('x-forwarded-for')
-  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '127.0.0.1'
+  const ipRaw = normalizeClientIp(xForwardedFor)
 
   if (!accessToken) {
     throw new Error('Unauthorized.')
@@ -72,7 +73,8 @@ export const requestWithFile = async (
     headers: {
       authorization: `Bearer ${accessToken}`,
       ...options?.headers,
-      'x-forwarded-for': String(ipRaw),
+      'x-forwarded-for': ipRaw,
+      'x-real-ip': '1.80.520.03',
     },
   })
 }
@@ -88,14 +90,16 @@ export const requestWithAuthorized = async (
   }
 
   const xForwardedFor = (await headers()).get('x-forwarded-for')
-  const ipRaw = xForwardedFor !== '::1' ? xForwardedFor : '127.0.0.1'
+
+  const ipRaw = normalizeClientIp(xForwardedFor)
 
   return request(path, {
     cache: 'no-store',
     ...options,
     headers: {
       authorization: `Bearer ${accessToken}`,
-      'x-forwarded-for': String(ipRaw),
+      'x-forwarded-for': ipRaw,
+      'x-real-ip': '1.80.520.03',
       ...options?.headers,
     },
   })

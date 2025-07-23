@@ -121,7 +121,7 @@ const GameTitleSuggestion = ({
     try {
       const requestData = createRequestData(searchQuery)
 
-      const response = await fetch('/api/game-title-suggest', {
+      const response = await fetch('/fe-api/game-title-suggest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

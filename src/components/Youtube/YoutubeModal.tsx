@@ -77,7 +77,8 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
         {children}
       </div>
       <Modal
-        closable={false}
+        closable={true}
+        maskClosable={false}
         open={isModalOpen}
         okText="Thêm"
         cancelText="Hủy"
@@ -135,6 +136,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
               value: item,
             }))}
             placeholder="Chọn danh sách phát"
+            allowClear
           />
         </Form.Item>
         <Form.Item

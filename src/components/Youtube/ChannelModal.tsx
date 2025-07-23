@@ -39,7 +39,6 @@ const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
 
   const handleCancel = () => {
     setIsModalOpen(false)
-    form.resetFields()
   }
 
   const onSubmit = () => {
@@ -52,7 +51,8 @@ const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
         {children}
       </div>
       <Modal
-        closable={false}
+        closable={true}
+        maskClosable={false}
         open={isModalOpen}
         onOk={onSubmit}
         onCancel={handleCancel}

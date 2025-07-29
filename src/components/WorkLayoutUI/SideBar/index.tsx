@@ -126,6 +126,21 @@ const SideBar: React.FC<SideBarProps> = async ({ user, ...props }) => {
               key: `members-${w?.id}`,
               href: `/department/${w?.department_id}/employee`,
             },
+            ...(w?.department_id === 2
+              ? [
+                  {
+                    label: (
+                      <div className="flex items-center gap-[10px]">
+                        <div className="h-[14px] w-[12px]" />
+                        <span>Quản lý đăng video</span>
+                      </div>
+                    ),
+                    shouldRound: false,
+                    key: `manage-video-${w?.id}`,
+                    href: `/department/${w?.department_id}/manage-video`,
+                  },
+                ]
+              : []),
             ...(w.workflows?.length
               ? [
                   {

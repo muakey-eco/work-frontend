@@ -257,7 +257,6 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
   ]
 
   const { user, workSchedule, attendances } = options
-  console.log('attendances', attendances)
 
   const checkInDataSource = options?.members
     ?.filter((m: any) => !GLOBAL_BAN.includes(m?.full_name))

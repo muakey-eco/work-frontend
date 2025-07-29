@@ -35,7 +35,11 @@ export const activeNav = (
     const hrefParts = hrefPathName?.split('/') || []
 
     // For overview route, check up to /department/{id}/overview
-    if (pathName.includes('/overview') || pathName.includes('/employee')) {
+    if (
+      pathName.includes('/overview') ||
+      pathName.includes('/employee') ||
+      pathName.includes('/manage-video')
+    ) {
       const pathBase = pathParts.slice(0, 4).join('/')
       const hrefBase = hrefParts.slice(0, 4).join('/')
       return pathBase === hrefBase

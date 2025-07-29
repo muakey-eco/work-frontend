@@ -137,6 +137,8 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
             }))}
             placeholder="Chọn danh sách phát"
             allowClear
+            showSearch
+            mode="multiple"
           />
         </Form.Item>
         <Form.Item

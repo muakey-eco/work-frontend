@@ -3,8 +3,21 @@
 import { PageHeader } from '@/components'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
+import dynamic from 'next/dynamic'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
+const YoutubeModal = dynamic(
+  () => import('@/components/Youtube/YoutubeModal'),
+  {
+    ssr: false,
+  },
+)
+const ChannelModal = dynamic(
+  () => import('@/components/Youtube/ChannelModal'),
+  {
+    ssr: false,
+  },
+)
 
 const ManageVideoHeader = () => {
   const router = useRouter()
@@ -22,9 +35,18 @@ const ManageVideoHeader = () => {
       <PageHeader
         title="Quản lý đăng video"
         extra={
-          <Button type="primary" icon={<PlusOutlined />}>
-            Thêm video
-          </Button>
+          <div className="flex gap-2">
+            <ChannelModal>
+              <Button type="primary" icon={<PlusOutlined />}>
+                Thêm Kênh
+              </Button>
+            </ChannelModal>
+            <YoutubeModal taskId={0}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                Thêm Video
+              </Button>
+            </YoutubeModal>
+          </div>
         }
         tab={{
           items: [

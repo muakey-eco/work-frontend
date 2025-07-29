@@ -42,11 +42,18 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
 
   const columns: TableProps<DataType>['columns'] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      sorter: (a, b) => a.id - b.id,
+      defaultSortOrder: 'ascend',
+      render: (text: string) => <span>{text || '--'}</span>,
+    },
+    {
       title: 'Tên kênh',
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
-      defaultSortOrder: 'ascend',
       render: (text: string) => <span>{text || '--'}</span>,
     },
     {

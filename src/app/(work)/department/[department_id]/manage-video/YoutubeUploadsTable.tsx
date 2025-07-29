@@ -120,17 +120,6 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       render: (text: string) => customStatus(text),
     },
     {
-      title: 'Task ID',
-      dataIndex: 'task_id',
-      key: 'task_id',
-      sorter: (a, b) => a.task_id.localeCompare(b.task_id),
-      render: (text: string) => (
-        <Link href={`/task/${text}`} className="text-blue-500 hover:underline">
-          {text || '--'}
-        </Link>
-      ),
-    },
-    {
       title: 'Danh sách video',
       dataIndex: 'playlist',
       key: 'playlist',

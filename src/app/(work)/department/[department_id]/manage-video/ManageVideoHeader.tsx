@@ -41,7 +41,7 @@ const ManageVideoHeader = () => {
                 Thêm Kênh
               </Button>
             </ChannelModal>
-            <YoutubeModal taskId={0}>
+            <YoutubeModal >
               <Button type="primary" icon={<PlusOutlined />}>
                 Thêm Video
               </Button>

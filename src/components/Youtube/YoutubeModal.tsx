@@ -7,9 +7,8 @@ import { createVideoAction, getChannelSuggestionsAction } from '../action'
 import GameTitleSuggestion from './GameTitleSuggestion'
 import NameTitleSuggestion from './NameTitleSuggestion'
 
-const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
+const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
   children,
-  taskId,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
@@ -22,7 +21,9 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
     setPlaylists([])
   }, [])
   const handleChange = useCallback(
-    async (value: any) => {
+    async (value: any, id: string) => {
+      console.log('value', value)
+      console.log('id', id)
       // Gọi API lấy dữ liệu liên quan đến kênh
       const response = await getChannelSuggestionsAction(value)
       const dataPlaylists = response
@@ -34,6 +35,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
       // Cập nhật vào form
       form.setFieldsValue({
         title: titles[0] || '',
+        youtube_channel_id: id,
         playlist: dataPlaylists[0] || '',
         hashtags: hashtags.join(',') || '',
       })
@@ -51,8 +53,6 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
 
     const formattedValues = {
       ...formData,
-      task_id: taskId,
-      youtube_channel_id: 1,
       upload_date: formData.upload_date.format('YYYY-MM-DD HH:mm:ss'),
     }
     try {
@@ -118,12 +118,11 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
         >
           <Input placeholder="Nhập tiêu đề" />
         </Form.Item>
-        <Form.Item
-          label="Mô tả"
-          name="description"
-          rules={[{ required: true, message: 'Vui lòng nhập mô tả' }]}
-        >
+        <Form.Item label="Mô tả" name="description">
           <Input placeholder="Nhập mô tả" />
+        </Form.Item>
+        <Form.Item name="youtube_channel_id" hidden>
+          <Input />
         </Form.Item>
         <Form.Item
           label="Danh sách phát"
@@ -151,17 +150,11 @@ const YoutubeModal: React.FC<{ children: React.ReactNode; taskId: number }> = ({
         <Form.Item
           label="Video"
           name="video_url"
-          rules={[{ required: true, message: 'Vui lòng nhập link video' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập link drive' }]}
         >
-          <Input placeholder="Nhập link video" />
+          <Input placeholder="Nhập link drive" />
         </Form.Item>
-        <Form.Item
-          label="Tiêu đề trò chơi"
-          name="title_game"
-          rules={[
-            { required: true, message: 'Vui lòng nhập tiêu đề trò chơi' },
-          ]}
-        >
+        <Form.Item label="Tiêu đề trò chơi" name="title_game">
           <GameTitleSuggestion />
         </Form.Item>
         <Form.Item

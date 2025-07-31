@@ -2,6 +2,7 @@
 
 import { useAsyncEffect } from '@/libs/hook'
 import { App, DatePicker, Form, Input, Modal, Select } from 'antd'
+import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { createVideoAction, getChannelSuggestionsAction } from '../action'
 import GameTitleSuggestion from './GameTitleSuggestion'
@@ -15,6 +16,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(false)
   const { message } = App.useApp()
   const [playlists, setPlaylists] = useState<any[]>([])
+  const router = useRouter()
 
   useAsyncEffect(async () => {
     // Lần đầu load có thể lấy danh sách mặc định nếu muốn, hoặc để trống
@@ -53,11 +55,15 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
 
     const formattedValues = {
       ...formData,
+      playlist: Array.isArray(formData.playlist)
+        ? formData.playlist
+        : [formData.playlist],
       upload_date: formData.upload_date.format('YYYY-MM-DD HH:mm:ss'),
     }
     try {
       await createVideoAction(formattedValues)
       message.success('Thêm video thành công')
+      router.refresh()
       setIsModalOpen(false)
       form.resetFields()
     } catch (error) {

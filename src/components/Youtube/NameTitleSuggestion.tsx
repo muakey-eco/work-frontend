@@ -8,6 +8,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 interface SuggestionOption {
   label: string
   value: string
+  id: string
 }
 
 const NameTitleSuggestion = ({
@@ -15,7 +16,7 @@ const NameTitleSuggestion = ({
   onChange,
 }: {
   value?: string
-  onChange?: (value: string) => void
+  onChange?: (value: string, id: string) => void
 }) => {
   const [suggestions, setSuggestions] = useState<SuggestionOption[]>([])
   const [loading, setLoading] = useState(false)
@@ -25,7 +26,7 @@ const NameTitleSuggestion = ({
 
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
     const trimmed = searchQuery.trim()
-    if (!trimmed || trimmed === lastQueryRef.current) return
+    // if (!trimmed || trimmed === lastQueryRef.current) return
 
     lastQueryRef.current = trimmed
     setLoading(true)
@@ -36,6 +37,7 @@ const NameTitleSuggestion = ({
       const formatted = (data || []).map((item: any) => ({
         label: item.name,
         value: item.name,
+        id: item.id,
       }))
       setSuggestions(formatted)
     } catch (err) {
@@ -49,7 +51,7 @@ const NameTitleSuggestion = ({
 
   // Debounce fetchSuggestions trong 400ms
   const debouncedFetchSuggestions = useMemo(
-    () => debounce(fetchSuggestions, 400),
+    () => debounce(fetchSuggestions, 100),
     [fetchSuggestions],
   )
 
@@ -58,7 +60,8 @@ const NameTitleSuggestion = ({
   }
 
   const handleSelectChange = (val: string) => {
-    onChange?.(val)
+    const selected = suggestions.find((item) => item.value === val)
+    onChange?.(val, selected?.id || '')
   }
 
   return (

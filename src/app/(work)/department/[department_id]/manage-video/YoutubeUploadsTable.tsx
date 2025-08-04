@@ -182,10 +182,11 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       )}
     >
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={data}
         pagination={false}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: 'max-content', y: 750 }}
       />
     </div>
   )

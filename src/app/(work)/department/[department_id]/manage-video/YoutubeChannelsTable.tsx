@@ -66,6 +66,7 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
     {
       title: 'Tag mặc định',
       dataIndex: 'default_tags',
+      width: 300,
       key: 'default_tags',
       sorter: (a, b) => a.default_tags.localeCompare(b.default_tags),
       render: (text: string) => <span>{text || '--'}</span>,
@@ -74,8 +75,13 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       title: 'Danh sách phát',
       dataIndex: 'playlist',
       key: 'playlist',
+      width: 300,
       sorter: (a, b) => a.playlist.localeCompare(b.playlist),
-      render: (text: string) => <span>{text || '--'}</span>,
+      render: (text: string) => (
+        <span className="line-clamp-1 hover:line-clamp-none">
+          {text || '--'}
+        </span>
+      ),
     },
     {
       title: 'Ngày tạo kênh',
@@ -119,10 +125,11 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       )}
     >
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={data}
         pagination={false}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: 'max-content', y: 750 }}
       />
     </div>
   )

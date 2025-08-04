@@ -24,7 +24,6 @@ const CheckPasswordModal: React.FC<{
     setLoading(true)
     try {
       const res = await checkPasswordAction(data)
-      console.log('res', res)
       if (res.message === 'Mật khẩu chính xác') {
         setIsModalOpen(false)
         router.push(link)

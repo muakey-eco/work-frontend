@@ -24,8 +24,6 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
   }, [])
   const handleChange = useCallback(
     async (value: any, id: string) => {
-      console.log('value', value)
-      console.log('id', id)
       // Gọi API lấy dữ liệu liên quan đến kênh
       const response = await getChannelSuggestionsAction(value)
       const dataPlaylists = response

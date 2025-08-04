@@ -23,6 +23,10 @@ interface DataType {
   created_at: string
   task_id: string
   playlist: string
+  youtube_channel: {
+    id: number
+    name: string
+  }
 }
 
 const customStatus = (status: string) => {
@@ -55,15 +59,26 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
 
   const columns: TableProps<DataType>['columns'] = [
     {
+      title: 'Tên kênh',
+      dataIndex: 'youtube_channel.name',
+      key: 'youtube_channel.name',
+      sorter: (a, b) =>
+        a.youtube_channel.name.localeCompare(b.youtube_channel.name),
+      width: 200,
+      fixed: 'left',
+      render: (_, record) => (
+        <span className="ms-3 line-clamp-2 font-semibold">
+          {record.youtube_channel?.name || '--'}
+        </span>
+      ),
+    },
+    {
       title: 'Tiêu đề video',
       dataIndex: 'title',
       key: 'title',
       sorter: (a, b) => a.title.localeCompare(b.title),
-      width: 300,
-      fixed: 'left',
-      defaultSortOrder: 'ascend',
       render: (text: string) => (
-        <span className="ms-3 line-clamp-2 font-semibold">{text || '--'}</span>
+        <span className="line-clamp-2">{text || '--'}</span>
       ),
     },
     {

@@ -36,12 +36,12 @@ const ManageVideoHeader = () => {
         title="Quản lý đăng video"
         extra={
           <div className="flex gap-2">
-            <ChannelModal>
+            <ChannelModal action="create">
               <Button type="primary" icon={<PlusOutlined />}>
                 Thêm Kênh
               </Button>
             </ChannelModal>
-            <YoutubeModal >
+            <YoutubeModal action="create">
               <Button type="primary" icon={<PlusOutlined />}>
                 Thêm Video
               </Button>

@@ -6,10 +6,18 @@ import type { TableProps } from 'antd'
 import { App, Button, Table, Tag } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { deleteYoutubeUploadAction } from './action'
+
+const YoutubeModal = dynamic(
+  () => import('@/components/Youtube/YoutubeModal'),
+  {
+    ssr: false,
+  },
+)
 
 interface DataType {
   id: number
@@ -82,18 +90,20 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       ),
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
-      sorter: (a, b) => a.description.localeCompare(b.description),
-      render: (text: string) => <span>{text || '--'}</span>,
+      title: 'Ngày đăng',
+      dataIndex: 'upload_date',
+      key: 'upload_date',
+      sorter: (a, b) => a.upload_date.localeCompare(b.upload_date),
+      render: (text: string) => (
+        <span>{dayjs(text).format('DD/MM/YYYY HH:mm:ss') || '--'}</span>
+      ),
     },
     {
-      title: 'Hashtags',
-      dataIndex: 'hashtags',
-      key: 'hashtags',
-      sorter: (a, b) => a.hashtags.localeCompare(b.hashtags),
-      render: (text: string) => <span>{text || '--'}</span>,
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      sorter: (a, b) => a.status.localeCompare(b.status),
+      render: (text: string) => customStatus(text),
     },
     {
       title: 'Link drive',
@@ -112,27 +122,25 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       ),
     },
     {
+      title: 'Mô tả',
+      dataIndex: 'description',
+      key: 'description',
+      sorter: (a, b) => a.description.localeCompare(b.description),
+      render: (text: string) => <span>{text || '--'}</span>,
+    },
+    {
+      title: 'Hashtags',
+      dataIndex: 'hashtags',
+      key: 'hashtags',
+      sorter: (a, b) => a.hashtags.localeCompare(b.hashtags),
+      render: (text: string) => <span>{text || '--'}</span>,
+    },
+    {
       title: 'Tiêu đề trò chơi',
       dataIndex: 'title_game',
       key: 'title_game',
       sorter: (a, b) => a.title_game.localeCompare(b.title_game),
       render: (text: string) => <span>{text || '--'}</span>,
-    },
-    {
-      title: 'Ngày đăng',
-      dataIndex: 'upload_date',
-      key: 'upload_date',
-      sorter: (a, b) => a.upload_date.localeCompare(b.upload_date),
-      render: (text: string) => (
-        <span>{dayjs(text).format('DD/MM/YYYY HH:mm:ss') || '--'}</span>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      sorter: (a, b) => a.status.localeCompare(b.status),
-      render: (text: string) => customStatus(text),
     },
     {
       title: 'Danh sách video',
@@ -156,12 +164,14 @@ const YoutubeUploadsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       width: 100,
       render: (_, record) => (
         <div className="flex gap-2">
-          <Button
-            variant="outlined"
-            icon={<EditOutlined />}
-            size="small"
-            color="primary"
-          />
+          <YoutubeModal action="update" initialValues={record} id={record.id}>
+            <Button
+              variant="outlined"
+              icon={<EditOutlined />}
+              size="small"
+              color="primary"
+            />
+          </YoutubeModal>
           <Button
             variant="outlined"
             icon={<DeleteOutlined />}

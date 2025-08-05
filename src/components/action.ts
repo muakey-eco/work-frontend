@@ -50,6 +50,8 @@ import {
   createChannel,
   createVideo,
   getChannelSuggestions,
+  updateChannel,
+  updateVideo,
 } from '@/libs/youtube'
 
 export const logoutAction = async () => {
@@ -190,6 +192,10 @@ export const createChannelAction = async (data: any) => {
   const response = await createChannel(data)
   return response
 }
+export const updateChannelAction = async (id: number, data: any) => {
+  const response = await updateChannel(id, data)
+  return response
+}
 
 export const createVideoAction = async (data: any) => {
   const response = await createVideo(data)
@@ -198,5 +204,10 @@ export const createVideoAction = async (data: any) => {
 
 export const getChannelSuggestionsAction = async (query: string) => {
   const response = await getChannelSuggestions(query)
+  return response
+}
+
+export const updateVideoAction = async (id: number, data: any) => {
+  const response = await updateVideo(id, data)
   return response
 }

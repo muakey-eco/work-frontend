@@ -6,14 +6,22 @@ import type { TableProps } from 'antd'
 import { App, Button, Table } from 'antd'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { deleteYoutubeChannelAction } from './action'
+const ChannelModal = dynamic(
+  () => import('@/components/Youtube/ChannelModal'),
+  {
+    ssr: false,
+  },
+)
 
 interface DataType {
   id: number
   name: string
   default_title: string
+  default_description: string
   default_tags: string
   playlist: string
   created_at: string
@@ -64,6 +72,14 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       render: (text: string) => <span>{text || '--'}</span>,
     },
     {
+      title: 'Mô tả mặc định',
+      dataIndex: 'default_description',
+      key: 'default_description',
+      sorter: (a, b) =>
+        a.default_description.localeCompare(b.default_description),
+      render: (text: string) => <span>{text || '--'}</span>,
+    },
+    {
       title: 'Tag mặc định',
       dataIndex: 'default_tags',
       width: 300,
@@ -99,12 +115,14 @@ const YoutubeChannelsTable: React.FC<{ data: DataType[] }> = ({ data }) => {
       align: 'center',
       render: (_, record) => (
         <div className="flex justify-center gap-2">
-          <Button
-            variant="outlined"
-            icon={<EditOutlined />}
-            size="small"
-            color="primary"
-          />
+          <ChannelModal action="update" id={record.id} initialValues={record}>
+            <Button
+              variant="outlined"
+              icon={<EditOutlined />}
+              size="small"
+              color="primary"
+            />
+          </ChannelModal>
           <Button
             variant="outlined"
             icon={<DeleteOutlined />}

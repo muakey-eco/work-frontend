@@ -2,15 +2,25 @@
 
 import { useAsyncEffect } from '@/libs/hook'
 import { App, DatePicker, Form, Input, Modal, Select } from 'antd'
+import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
-import { createVideoAction, getChannelSuggestionsAction } from '../action'
+import {
+  createVideoAction,
+  getChannelSuggestionsAction,
+  updateVideoAction,
+} from '../action'
 import GameTitleSuggestion from './GameTitleSuggestion'
 import NameTitleSuggestion from './NameTitleSuggestion'
 
-const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const { TextArea } = Input
+
+const YoutubeModal: React.FC<{
+  children: React.ReactNode
+  action: 'create' | 'update'
+  id?: number
+  initialValues?: any
+}> = ({ children, action = 'create', id, initialValues }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
@@ -22,6 +32,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
     // Lần đầu load có thể lấy danh sách mặc định nếu muốn, hoặc để trống
     setPlaylists([])
   }, [])
+
   const handleChange = useCallback(
     async (value: any, id: string) => {
       // Gọi API lấy dữ liệu liên quan đến kênh
@@ -32,12 +43,14 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
         .flat()
       const hashtags = response.map((item: any) => item.default_tags).flat()
       const titles = response.map((item: any) => item.default_title)
+      const descriptions = response.map((item: any) => item.default_description)
       // Cập nhật vào form
       form.setFieldsValue({
         title: titles[0] || '',
         youtube_channel_id: id,
         playlist: dataPlaylists[0] || '',
         hashtags: hashtags.join(',') || '',
+        description: descriptions[0] || '',
       })
       setPlaylists(dataPlaylists)
     },
@@ -46,6 +59,15 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
 
   const showModal = () => {
     setIsModalOpen(true)
+    if (initialValues) {
+      form.setFieldsValue({
+        ...initialValues,
+        upload_date: initialValues.upload_date
+          ? dayjs(initialValues.upload_date)
+          : null,
+        name: initialValues.youtube_channel.name,
+      })
+    }
   }
 
   const handleOk = async (formData: any) => {
@@ -59,13 +81,21 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
       upload_date: formData.upload_date.format('YYYY-MM-DD HH:mm:ss'),
     }
     try {
-      await createVideoAction(formattedValues)
-      message.success('Thêm video thành công')
+      await (action === 'create'
+        ? createVideoAction(formattedValues)
+        : updateVideoAction(id!, formattedValues))
+      message.success(
+        action === 'create'
+          ? 'Thêm video thành công'
+          : 'Cập nhật video thành công',
+      )
       router.refresh()
       setIsModalOpen(false)
       form.resetFields()
     } catch (error) {
-      message.error('Thêm video thất bại')
+      message.error(
+        action === 'create' ? 'Thêm video thất bại' : 'Cập nhật video thất bại',
+      )
     } finally {
       setLoading(false)
     }
@@ -84,7 +114,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
         closable={true}
         maskClosable={false}
         open={isModalOpen}
-        okText="Thêm"
+        okText={action === 'create' ? 'Thêm' : 'Cập nhật'}
         cancelText="Hủy"
         onCancel={handleCancel}
         okButtonProps={{
@@ -93,7 +123,9 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
         }}
         title={
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold">Thêm video</span>
+            <span className="text-lg font-semibold">
+              {action === 'create' ? 'Thêm video' : 'Cập nhật video'}
+            </span>
           </div>
         }
         modalRender={(dom) => (
@@ -123,7 +155,7 @@ const YoutubeModal: React.FC<{ children: React.ReactNode }> = ({
           <Input placeholder="Nhập tiêu đề" />
         </Form.Item>
         <Form.Item label="Mô tả" name="description">
-          <Input placeholder="Nhập mô tả" />
+          <TextArea placeholder="Nhập mô tả" rows={4} />
         </Form.Item>
         <Form.Item name="youtube_channel_id" hidden>
           <Input />

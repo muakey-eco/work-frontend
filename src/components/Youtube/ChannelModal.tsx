@@ -3,11 +3,14 @@
 import { App, Form, Input, Modal } from 'antd'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { createChannelAction } from '../action'
-
-const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+import { createChannelAction, updateChannelAction } from '../action'
+const { TextArea } = Input
+const ChannelModal: React.FC<{
+  children: React.ReactNode
+  action: 'create' | 'update'
+  id?: number
+  initialValues?: any
+}> = ({ children, action = 'create', id, initialValues }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
@@ -16,22 +19,38 @@ const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
 
   const showModal = () => {
     setIsModalOpen(true)
+    if (initialValues) {
+      form.setFieldsValue(initialValues)
+    }
   }
 
   const handleOk = async (formData: any) => {
     setLoading(true)
-    const playlistArray = formData.playlist.split(',')
+    const playlistArray = Array.isArray(formData.playlist)
+      ? formData.playlist
+      : formData.playlist.split(',')
     try {
-      await createChannelAction({
-        ...formData,
-        playlist: playlistArray,
-      })
-      message.success('Thêm kênh thành công')
+      await (action === 'create'
+        ? createChannelAction({
+            ...formData,
+            playlist: playlistArray,
+          })
+        : updateChannelAction(id!, {
+            ...formData,
+            playlist: playlistArray,
+          }))
+      message.success(
+        action === 'create'
+          ? 'Thêm kênh thành công'
+          : 'Cập nhật kênh thành công',
+      )
       setIsModalOpen(false)
       form.resetFields()
       router.refresh()
     } catch (error) {
-      message.error('Thêm kênh thất bại')
+      message.error(
+        action === 'create' ? 'Thêm kênh thất bại' : 'Cập nhật kênh thất bại',
+      )
     } finally {
       setLoading(false)
     }
@@ -56,12 +75,14 @@ const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
         open={isModalOpen}
         onOk={onSubmit}
         onCancel={handleCancel}
-        okText="Thêm"
+        okText={action === 'create' ? 'Thêm' : 'Cập nhật'}
         cancelText="Hủy"
         okButtonProps={{ loading, disabled: loading }}
         title={
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold">Thêm kênh</span>
+            <span className="text-lg font-semibold">
+              {action === 'create' ? 'Thêm kênh' : 'Cập nhật kênh'}
+            </span>
           </div>
         }
       >
@@ -86,6 +107,13 @@ const ChannelModal: React.FC<{ children: React.ReactNode }> = ({
             rules={[{ required: true, message: 'Vui lòng nhập tiêu đề kênh' }]}
           >
             <Input placeholder="Nhập tiêu đề kênh" />
+          </Form.Item>
+          <Form.Item
+            label="Mô tả kênh"
+            name="default_description"
+            rules={[{ required: true, message: 'Vui lòng nhập mô tả kênh' }]}
+          >
+            <TextArea placeholder="Nhập mô tả kênh" rows={4} />
           </Form.Item>
           <Form.Item
             label="Danh sách phát"

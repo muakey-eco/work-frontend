@@ -4,10 +4,10 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 import { Button, DatePicker, DatePickerProps } from 'antd'
 import { useRouter } from 'next/navigation'
 
-const SalaryHeader = () => {
+const SalaryHeader = ({ id }: { id: string }) => {
   const router = useRouter()
   const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString)
+    router.push(`/profile/${id}/salary?date=${dateString}`)
   }
   return (
     <div className="flex items-center justify-between gap-[12px]">

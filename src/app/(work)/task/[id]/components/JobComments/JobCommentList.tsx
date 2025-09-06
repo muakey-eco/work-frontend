@@ -72,7 +72,7 @@ const JobCommentList: React.FC<JobCommentListProps> = (props) => {
                   />
                 </div>
                 <div className="text-[13px] text-[#999]">
-                  {dayjs(item?.created_at).format('HH:mm MMM DD, YYYY')}
+                  {dayjs(item?.created_at).format('HH:mm DD/MM/YYYY')}
                 </div>
 
                 <div

@@ -40,9 +40,9 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   } = options
 
   // Lọc workflow categories theo phòng ban
-  const workflowCategoriesWithWorkflows = Array.from(workflowCategories)?.filter(
-    (w: any) => w?.department_id === Number(department_id),
-  )
+  const workflowCategoriesWithWorkflows = Array.from(
+    workflowCategories,
+  )?.filter((w: any) => w?.department_id === Number(department_id))
 
   // Lọc workflows theo phòng ban
   const workflowsDepartment = workflows?.filter((w: any) =>
@@ -160,7 +160,7 @@ const StatisticsSchedule: React.FC<StatisticsScheduleProps> = ({ options }) => {
   }, [options?.currentDate])
 
   return (
-    <div className="cursor-grab overflow-x-auto" ref={ref}>
+    <div className="overflow-x-auto" ref={ref}>
       <Row wrap={false} className="sticky top-0 z-50 w-max">
         <Col className="w-[296px] border-y border-r bg-[#fff]" />
         {week.map((date) => {

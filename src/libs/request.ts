@@ -4,7 +4,7 @@ import { normalizeClientIp } from '@/utils/normalizeClientIp'
 import { headers } from 'next/headers'
 import { getSession } from './session'
 
-export type RequestOptions = NodeJS.RequestInit & {
+export type RequestOptions = RequestInit & {
   params?: Record<string, any>
   data?: string | Record<string, any>
 }
@@ -28,7 +28,7 @@ export const request = async (path: string, options?: RequestOptions) => {
   //   .then(({ ip }) => ip)
   //   .catch(() => '')
 
-  const init: NodeJS.RequestInit = {
+  const init: RequestInit = {
     headers: {
       accept: 'application/json',
       // 'x-client-ip': clientIp,
@@ -40,7 +40,7 @@ export const request = async (path: string, options?: RequestOptions) => {
   if (data && !init.body) {
     if (typeof data === 'object') {
       init.body = JSON.stringify(data)
-      ;(init.headers as any)['content-type'] = 'application/json'
+        ; (init.headers as any)['content-type'] = 'application/json'
     } else {
       init.body = data
     }

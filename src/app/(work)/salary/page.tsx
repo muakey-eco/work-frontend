@@ -20,17 +20,22 @@ const SalaryPage: React.FC<any> = () => {
 
       try {
         const isClosed = await getSalaryCloseAction(month)
+        console.log(`[${month}] isClosed data:`, isClosed)
         let data = []
 
-        if (isClosed.length !== 0) {
+        if (isClosed && isClosed.length !== 0) {
           // Đã chốt lương
+          console.log(`[${month}] Tháng đã chốt lương, sử dụng data từ isClosed`)
           setClosedMonths((prev) => ({ ...prev, [month]: true }))
           data = isClosed
         } else {
           // Chưa chốt, check bảng nháp
+          console.log(`[${month}] Tháng chưa chốt, lấy data nháp`)
           setClosedMonths((prev) => ({ ...prev, [month]: false }))
           data = await getSalaryAction(month)
         }
+
+        console.log(`[${month}] Final data:`, data)
 
         setSalariesData((prev) => ({
           ...prev,
@@ -58,6 +63,8 @@ const SalaryPage: React.FC<any> = () => {
         typeof updater === 'function' ? updater(prev[month] || []) : updater,
     }))
   }, [])
+  console.log('salariesData', salariesData)
+  console.log('closedMonths', closedMonths)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">

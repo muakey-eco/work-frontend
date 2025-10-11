@@ -60,9 +60,13 @@ const SalaryCollapse: React.FC<SalaryCollapseProps> = ({
       .year(currentYear)
       .month(month - 1)
       .format('YYYY-MM')
-    const isActive = activeKeys.includes(String(month))
+    // const isActive = activeKeys.includes(String(month))
+
     const isLoading = loadingMonths.has(monthStr)
+
     const monthSalaries = salariesData[monthStr] || []
+
+    console.log('monthSalaries', monthSalaries)
 
     // Lọc nhân viên bỏ role Admin
     const employeeSalaries = monthSalaries.filter(

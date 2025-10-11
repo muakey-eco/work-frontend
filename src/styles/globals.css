@@ -204,29 +204,37 @@ html *::-webkit-scrollbar-track {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 1px; /* Độ rộng thanh cuộn */
+  width: 1px;
+  /* Độ rộng thanh cuộn */
 }
 
 .scrollbar-hide {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
+  /* Chrome, Safari */
 }
+
 .custom-pagination-left .ant-table-pagination {
   justify-content: flex-start !important;
 }
+
 .ant-tabs-nav::before {
   display: none !important;
 }
+
 .mention-popup {
   z-index: 100;
   background: white;
@@ -235,15 +243,19 @@ html *::-webkit-scrollbar-track {
   padding: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
 .mention-item {
   padding: 6px 10px;
 }
+
 .ant-tooltip {
   z-index: 9999 !important;
 }
+
 .ant-avatar-group-wrapper {
   z-index: 9999 !important;
 }
+
 td.ant-table-cell.ant-table-cell-fix-left.ant-table-cell-fix-left-last {
   padding: 0 !important;
 }

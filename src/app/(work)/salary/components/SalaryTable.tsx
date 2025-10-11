@@ -6,7 +6,7 @@ import type { TableProps } from 'antd'
 import { App, Avatar, Button, Input, Table } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { reviewSalaryAction } from '../action'
 
 interface DataType {
@@ -52,6 +52,26 @@ const useStyle = createStyles(({ css }) => ({
           &::-webkit-scrollbar {
             display: none;
           }
+          */
+          
+          /* Tùy chọn 2: Hiển thị scrollbar mỏng và đẹp (đang active) */
+          scrollbar-width: thin;
+          scrollbar-color: #d1d5db #f3f4f6;
+          &::-webkit-scrollbar {
+            width: 3px;
+            height: 3px;
+          }
+          &::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 3px;
+          }
+          &::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+            &:hover {
+              background: #9ca3af;
+            }
+          }
         }
       }
     }
@@ -69,6 +89,23 @@ const useStyle = createStyles(({ css }) => ({
     }
     scrollbar-width: none;
     -ms-overflow-style: none;
+    */
+    
+    /* Tùy chọn 2: Hiển thị scrollbar mỏng (đang active) */
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+      &:hover {
+        background: #94a3b8;
+      }
+    }
   `,
 }))
 
@@ -80,9 +117,14 @@ const SalaryTable: React.FC<any> = ({
   isClosedSalary,
   onMonthClosed,
 }) => {
+  console.log('salaries', salaries)
+
   const { message, modal } = App.useApp()
+
   const { styles } = useStyle()
+
   const [ref] = useDragScroll()
+
   const currentYear = dayjs().format('YYYY')
 
   const formatCurrency = (amount: number | string) => {
@@ -92,11 +134,13 @@ const SalaryTable: React.FC<any> = ({
       currency: 'VND',
     }).format(num)
   }
+
   const formatNumber3 = (value: number) =>
     new Intl.NumberFormat('vi-VN', {
       minimumFractionDigits: 3,
       maximumFractionDigits: 3,
     }).format(value)
+
   const formatInteger = (value: number) =>
     new Intl.NumberFormat('vi-VN', {
       maximumFractionDigits: 0,
@@ -110,13 +154,37 @@ const SalaryTable: React.FC<any> = ({
     return 0
   }
 
+  // Hàm kiểm tra và validate dữ liệu
+  const validateSalaryData = (item: DataType) => {
+    const issues = []
+
+    if (!item.salary_detail?.basic_salary || item.salary_detail.basic_salary <= 0) {
+      issues.push('Lương cơ bản không hợp lệ')
+    }
+
+    if (!item.workday_in_month || item.workday_in_month <= 0) {
+      issues.push('Ngày công trong tháng không hợp lệ')
+    }
+
+    if (typeof item.workday === 'string') {
+      issues.push('Ngày công thực tế là string, cần chuyển thành number')
+    }
+
+    if (item.workday < 0) {
+      issues.push('Ngày công thực tế không thể âm')
+    }
+
+    return issues
+  }
+
+
   // Fallback local state when parent doesn't pass a setter
-  const [localSalaries, setLocalSalaries] = React.useState<any[]>(
+  const [localSalaries, setLocalSalaries] = useState<any[]>(
     Array.isArray(salaries) ? salaries : [],
   )
 
   // Keep local state in sync with prop when no external setter
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof setSalaries !== 'function' && Array.isArray(salaries)) {
       setLocalSalaries(salaries)
     }
@@ -126,6 +194,23 @@ const SalaryTable: React.FC<any> = ({
     typeof setSalaries === 'function' && Array.isArray(salaries)
       ? salaries
       : localSalaries
+
+  // Validate dữ liệu khi component mount hoặc data thay đổi
+  useEffect(() => {
+    if (data && data.length > 0) {
+      console.log('=== VALIDATING SALARY DATA ===')
+      data.forEach((item: DataType, index: number) => {
+        const issues = validateSalaryData(item)
+        if (issues.length > 0) {
+          console.warn(`Employee ${item.full_name} (index ${index}) has issues:`, issues)
+          console.log('Item data:', item)
+        }
+      })
+      console.log('=== END VALIDATION ===')
+    }
+  }, [data])
+
+
 
   const safeSetSalaries = (updater: any) => {
     if (typeof setSalaries === 'function') {
@@ -147,7 +232,7 @@ const SalaryTable: React.FC<any> = ({
   ) => {
     safeSetSalaries((prev: any) =>
       prev.map((item: any) =>
-        item.id === id ? { ...item, [field]: toNumber(value) } : item,
+        item.id === id ? { ...item, [field]: value === '' ? '' : toNumber(value) } : item,
       ),
     )
   }
@@ -157,12 +242,12 @@ const SalaryTable: React.FC<any> = ({
       prev.map((item: any) =>
         item.id === id
           ? {
-              ...item,
-              salary_detail: {
-                ...item.salary_detail,
-                kpi: toNumber(value),
-              },
-            }
+            ...item,
+            salary_detail: {
+              ...item.salary_detail,
+              kpi: value === '' ? '' : toNumber(value),
+            },
+          }
           : item,
       ),
     )
@@ -172,10 +257,14 @@ const SalaryTable: React.FC<any> = ({
     const basic = toNumber(item.salary_detail?.basic_salary)
     const workdayInMonth = toNumber(item.workday_in_month)
     const workday = toNumber(item.workday)
-    // Lương thực tế = (Ngày công thực tế * Lương cơ bản) / Ngày công
-    return workdayInMonth > 0
-      ? Math.round(((workday * basic) / workdayInMonth) * 1000) / 1000
-      : 0
+
+    // Lương thực tế = (Ngày công thực tế * Lương cơ bản) / Ngày công trong tháng
+    if (workdayInMonth <= 0 || basic <= 0) {
+      return 0
+    }
+
+    const actualSalary = (workday * basic) / workdayInMonth
+    return Math.round(actualSalary * 1000) / 1000
   }
 
   const calculateTotalSalary = () => {
@@ -186,9 +275,9 @@ const SalaryTable: React.FC<any> = ({
           item.salary_detail?.basic_salary,
           item.workday_in_month,
           item.workday,
-          item.salary_detail?.kpi,
-          item.otherAllowance,
-          item.otherDeduction,
+          (item as any).salary?.kpi || item.salary_detail?.kpi, // Sửa: lấy từ salary.kpi trước
+          (item as any).salary?.otherAllowance || item.otherAllowance,
+          (item as any).salary?.otherDeduction || item.otherDeduction,
           item.socialInsurance,
         )
       )
@@ -202,7 +291,7 @@ const SalaryTable: React.FC<any> = ({
     kpi: string | number = 0,
     otherAllowance: string | number = 0,
     otherDeduction: string | number = 0,
-    socialInsurance: string | number = 567000,
+    socialInsurance: string | number = 0,
   ) => {
     const s = toNumber(salary)
     const wim = toNumber(workday_in_month)
@@ -212,8 +301,29 @@ const SalaryTable: React.FC<any> = ({
     const od = toNumber(otherDeduction)
     const si = toNumber(socialInsurance)
 
-    const prorated = wim > 0 ? (s / wim) * wd : 0
-    return prorated + k + oa - od - si
+    // Debug log để kiểm tra dữ liệu
+    console.log('calculateNetForRow:', {
+      salary: s,
+      workday_in_month: wim,
+      workday: wd,
+      kpi: k,
+      otherAllowance: oa,
+      otherDeduction: od,
+      socialInsurance: si
+    })
+
+    // Tính lương theo tỷ lệ ngày công
+    const prorated = wim > 0 && s > 0 ? (s / wim) * wd : 0
+
+    // Tổng lương = Lương theo tỷ lệ + KPI + Phụ cấp - Khấu trừ - Bảo hiểm
+    const totalSalary = prorated + k + oa - od - si
+
+    console.log('calculateNetForRow result:', {
+      prorated,
+      totalSalary
+    })
+
+    return Math.round(totalSalary * 1000) / 1000
   }
 
   const handleReviewSalary = async () => {
@@ -265,8 +375,10 @@ const SalaryTable: React.FC<any> = ({
     {
       title: 'Họ và tên',
       dataIndex: 'full_name',
+      fixed: 'left' as const,
+      width: '250px',
       render: (text: string, record: any) => (
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center ms-4 gap-[8px]">
           <Avatar
             src={record?.avatar}
             style={{ backgroundColor: randomColor(String(text)) }}
@@ -291,8 +403,8 @@ const SalaryTable: React.FC<any> = ({
     },
     {
       title: 'Phòng ban',
-      dataIndex: 'departments',
-      key: 'departments',
+      dataIndex: 'department',
+      key: 'department',
       sorter: (a, b) => a.departments.localeCompare(b.departments),
     },
     {
@@ -306,9 +418,9 @@ const SalaryTable: React.FC<any> = ({
               record.salary_detail?.basic_salary,
               record.workday_in_month,
               record.workday,
-              record.salary_detail?.kpi,
-              record.otherAllowance,
-              record.otherDeduction,
+              (record as any).salary?.kpi || record.salary_detail?.kpi, // Sửa: lấy từ salary.kpi trước
+              (record as any).salary?.otherAllowance || record.otherAllowance,
+              (record as any).salary?.otherDeduction || record.otherDeduction,
               record.socialInsurance,
             ),
           )}
@@ -319,18 +431,18 @@ const SalaryTable: React.FC<any> = ({
           a.salary_detail?.basic_salary,
           a.workday_in_month,
           a.workday,
-          a.salary_detail?.kpi,
-          a.otherAllowance,
-          a.otherDeduction,
+          (a as any).salary?.kpi || a.salary_detail?.kpi,
+          (a as any).salary?.otherAllowance || a.otherAllowance,
+          (a as any).salary?.otherDeduction || a.otherDeduction,
           a.socialInsurance,
         ) -
         calculateNetForRow(
           b.salary_detail?.basic_salary,
           b.workday_in_month,
           b.workday,
-          b.salary_detail?.kpi,
-          b.otherAllowance,
-          b.otherDeduction,
+          (b as any).salary?.kpi || b.salary_detail?.kpi,
+          (b as any).salary?.otherAllowance || b.otherAllowance,
+          (b as any).salary?.otherDeduction || b.otherDeduction,
           b.socialInsurance,
         ),
     },
@@ -385,88 +497,137 @@ const SalaryTable: React.FC<any> = ({
       title: 'Thưởng, KPI',
       dataIndex: 'kpi',
       key: 'kpi',
-      render: (_, record) => (
-        <Input
-          value={record.salary_detail?.kpi}
-          onChange={(e) => handleKpiChange(record.id, e.target.value)}
-          placeholder="Nhập thưởng"
-          data-no-drag
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ),
+      render: (_, record) => {
+        const kpiValue = record.salary_detail?.kpi || (record as any).salary?.kpi
+
+        if (isClosedSalary) {
+          // Đã chốt lương: hiển thị giá tiền
+          return (
+            <span className="font-medium">
+              {formatCurrency(kpiValue || 0)}
+            </span>
+          )
+        }
+
+        // Chưa chốt: hiển thị input
+        return (
+          <Input
+            value={kpiValue || ''}
+            onChange={(e) => handleKpiChange(record.id, e.target.value)}
+            placeholder="Nhập thưởng"
+            data-no-drag
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        )
+      },
       sorter: (a, b) => (a.salary_detail.kpi || 0) - (b.salary_detail.kpi || 0),
     },
     {
       title: 'Phụ cấp khác',
       dataIndex: 'otherAllowance',
       key: 'otherAllowance',
-      render: (text, record) => (
-        <Input
-          value={record.otherAllowance || ''}
-          onChange={(e) =>
-            handleInputChange(record.id, 'otherAllowance', e.target.value)
-          }
-          placeholder="Nhập phụ cấp"
-          data-no-drag
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ),
+      render: (text, record) => {
+        const allowanceValue = record.otherAllowance || (record as any).salary?.otherAllowance
+
+        if (isClosedSalary) {
+          // Đã chốt lương: hiển thị giá tiền
+          return (
+            <span className="font-medium">
+              {formatCurrency(allowanceValue || 0)}
+            </span>
+          )
+        }
+
+        // Chưa chốt: hiển thị input
+        return (
+          <Input
+            value={allowanceValue || ''}
+            onChange={(e) =>
+              handleInputChange(record.id, 'otherAllowance', e.target.value)
+            }
+            placeholder="Nhập phụ cấp"
+            data-no-drag
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        )
+      },
       sorter: (a, b) => (a.otherAllowance || 0) - (b.otherAllowance || 0),
     },
     {
       title: 'Lương đóng BHXH, BHYT',
       dataIndex: 'socialInsurance',
       key: 'socialInsurance',
-      render: (text, record) => (
-        <Input
-          value={record.socialInsurance || 567000}
-          onChange={(e) =>
-            handleInputChange(record.id, 'socialInsurance', e.target.value)
-          }
-          placeholder="Nhập lương bảo hiểm xã hội"
-          data-no-drag
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ),
-      sorter: (a, b) => a.socialInsurance.localeCompare(b.socialInsurance),
+      render: (text, record) => {
+        const insuranceValue = record.socialInsurance || (record as any).salary?.socialInsurance
+
+        if (isClosedSalary) {
+          // Đã chốt lương: hiển thị giá tiền
+          return (
+            <span className="font-medium">
+              {formatCurrency(insuranceValue || 0)}
+            </span>
+          )
+        }
+
+        // Chưa chốt: hiển thị input
+        return (
+          <Input
+            value={insuranceValue || ''}
+            onChange={(e) =>
+              handleInputChange(record.id, 'socialInsurance', e.target.value)
+            }
+            placeholder="Nhập lương bảo hiểm xã hội"
+            data-no-drag
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        )
+      },
+      sorter: (a, b) => (a.socialInsurance || '').localeCompare(b.socialInsurance || ''),
     },
     {
       title: 'Khấu trừ khác',
       dataIndex: 'otherDeduction',
       key: 'otherDeduction',
-      render: (text, record) => (
-        <Input
-          value={record.otherDeduction || ''}
-          onChange={(e) =>
-            handleInputChange(record.id, 'otherDeduction', e.target.value)
-          }
-          placeholder="Nhập khấu trừ"
-          data-no-drag
-          onMouseDown={(e) => e.stopPropagation()}
-        />
-      ),
+      render: (text, record) => {
+        const deductionValue = record.otherDeduction || (record as any).salary?.otherDeduction
+
+        if (isClosedSalary) {
+          // Đã chốt lương: hiển thị giá tiền
+          return (
+            <span className="font-medium">
+              {formatCurrency(deductionValue || 0)}
+            </span>
+          )
+        }
+
+        // Chưa chốt: hiển thị input
+        return (
+          <Input
+            value={deductionValue || ''}
+            onChange={(e) =>
+              handleInputChange(record.id, 'otherDeduction', e.target.value)
+            }
+            placeholder="Nhập khấu trừ"
+            data-no-drag
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        )
+      },
       sorter: (a, b) => (a.otherDeduction || 0) - (b.otherDeduction || 0),
     },
   ]
 
   return (
     <>
-      <div
-        className={`overflow-x-auto ${styles.dragContainer}`}
-        ref={ref}
-        style={{ width: '100%' }}
-      >
-        <div style={{ minWidth: 'max-content' }}>
-          <Table<DataType>
-            columns={columns}
-            dataSource={data}
-            className={`rounded-[16px] border border-[#0505050f] bg-white ${styles.customTable}`}
-            pagination={false}
-            scroll={{ x: 'max-content' }}
-            rowKey="key"
-          />
-        </div>
-      </div>
+      <Table<DataType>
+        columns={columns}
+        dataSource={data}
+        className={`${styles.customTable} rounded-[16px] border border-[#0505050f] bg-white`}
+        pagination={false}
+        scroll={{ x: 'max-content' }}
+        rowKey="key"
+      />
+
       <div className="mt-[12px] flex items-center justify-between gap-[12px]">
         <p className="text-[16px] leading-[24px] font-[700]">
           Tổng lương thực lĩnh: {formatCurrency(calculateTotalSalary())}

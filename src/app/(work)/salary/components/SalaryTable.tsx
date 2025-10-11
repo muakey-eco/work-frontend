@@ -49,10 +49,8 @@ const useStyle = createStyles(({ css }) => ({
         .ant-table-content {
           scrollbar-width: none;
           -ms-overflow-style: none;
-          &::-webkit-scrollbar {
-            display: none;
-          }
-          */
+          
+          
           
           /* Tùy chọn 2: Hiển thị scrollbar mỏng và đẹp (đang active) */
           scrollbar-width: thin;
@@ -84,10 +82,7 @@ const useStyle = createStyles(({ css }) => ({
     &:active {
       cursor: grabbing;
     }
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    scrollbar-width: none;
+   
     -ms-overflow-style: none;
     */
     
@@ -117,7 +112,7 @@ const SalaryTable: React.FC<any> = ({
   isClosedSalary,
   onMonthClosed,
 }) => {
-  console.log('salaries', salaries)
+  console.log('salarieskekeke', salaries)
 
   const { message, modal } = App.useApp()
 
@@ -154,28 +149,6 @@ const SalaryTable: React.FC<any> = ({
     return 0
   }
 
-  // Hàm kiểm tra và validate dữ liệu
-  const validateSalaryData = (item: DataType) => {
-    const issues = []
-
-    if (!item.salary_detail?.basic_salary || item.salary_detail.basic_salary <= 0) {
-      issues.push('Lương cơ bản không hợp lệ')
-    }
-
-    if (!item.workday_in_month || item.workday_in_month <= 0) {
-      issues.push('Ngày công trong tháng không hợp lệ')
-    }
-
-    if (typeof item.workday === 'string') {
-      issues.push('Ngày công thực tế là string, cần chuyển thành number')
-    }
-
-    if (item.workday < 0) {
-      issues.push('Ngày công thực tế không thể âm')
-    }
-
-    return issues
-  }
 
 
   // Fallback local state when parent doesn't pass a setter
@@ -194,22 +167,6 @@ const SalaryTable: React.FC<any> = ({
     typeof setSalaries === 'function' && Array.isArray(salaries)
       ? salaries
       : localSalaries
-
-  // Validate dữ liệu khi component mount hoặc data thay đổi
-  useEffect(() => {
-    if (data && data.length > 0) {
-      console.log('=== VALIDATING SALARY DATA ===')
-      data.forEach((item: DataType, index: number) => {
-        const issues = validateSalaryData(item)
-        if (issues.length > 0) {
-          console.warn(`Employee ${item.full_name} (index ${index}) has issues:`, issues)
-          console.log('Item data:', item)
-        }
-      })
-      console.log('=== END VALIDATION ===')
-    }
-  }, [data])
-
 
 
   const safeSetSalaries = (updater: any) => {
@@ -301,27 +258,11 @@ const SalaryTable: React.FC<any> = ({
     const od = toNumber(otherDeduction)
     const si = toNumber(socialInsurance)
 
-    // Debug log để kiểm tra dữ liệu
-    console.log('calculateNetForRow:', {
-      salary: s,
-      workday_in_month: wim,
-      workday: wd,
-      kpi: k,
-      otherAllowance: oa,
-      otherDeduction: od,
-      socialInsurance: si
-    })
-
     // Tính lương theo tỷ lệ ngày công
     const prorated = wim > 0 && s > 0 ? (s / wim) * wd : 0
 
     // Tổng lương = Lương theo tỷ lệ + KPI + Phụ cấp - Khấu trừ - Bảo hiểm
     const totalSalary = prorated + k + oa - od - si
-
-    console.log('calculateNetForRow result:', {
-      prorated,
-      totalSalary
-    })
 
     return Math.round(totalSalary * 1000) / 1000
   }
@@ -403,8 +344,8 @@ const SalaryTable: React.FC<any> = ({
     },
     {
       title: 'Phòng ban',
-      dataIndex: 'department',
-      key: 'department',
+      dataIndex: 'departments',
+      key: 'departments',
       sorter: (a, b) => a.departments.localeCompare(b.departments),
     },
     {

@@ -63,8 +63,6 @@ const SalaryPage: React.FC<any> = () => {
         typeof updater === 'function' ? updater(prev[month] || []) : updater,
     }))
   }, [])
-  console.log('salariesData', salariesData)
-  console.log('closedMonths', closedMonths)
 
   return (
     <div className="h-[100vh] bg-[#f6f6f6]">

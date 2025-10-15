@@ -3,6 +3,7 @@
 import { randomColor } from '@/libs/utils'
 import {
   CheckCircleFilled,
+  ClockCircleOutlined,
   CloseCircleFilled,
   EditFilled,
   HomeFilled,
@@ -20,10 +21,15 @@ import {
 import { createStyles } from 'antd-style'
 import clsx from 'clsx'
 import dayjs from 'dayjs'
-import { times } from 'lodash'
+import { has, times } from 'lodash'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useMemo, useState } from 'react'
-import CheckInScheduleModalForm from './CheckInScheduleModalForm'
+
+import dynamic from 'next/dynamic'
+
+const CheckInScheduleModalForm = dynamic(() => import('./CheckInScheduleModalForm'), {
+  ssr: false,
+})
 
 import { GLOBAL_BAN } from '@/libs/constant'
 import { generateTimestamp } from '@/utils/generateTimestamp'
@@ -144,6 +150,12 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 <Image src="/Home.svg" alt="wfh" width={16} height={16} />
                 {Number(value?.wfh) || 0}
               </div>
+              {value?.isSalesMember && Number(value?.allHoursSaleWork) > 0 && (
+                <div className="flex gap-2">
+                  <ClockCircleOutlined size={16} />
+                  {Number(value?.allHoursSaleWork)}
+                </div>
+              )}
             </div>
           </div>
         )
@@ -151,7 +163,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
     },
     ...times(dateNumber, (num): any => {
       const date = dayjs(
-        `${year}-${month > 9 ? month : `0${month}-${num + 1 > 9 ? num + 1 : `0${num + 1}`}`}`,
+        `${year}-${month > 9 ? month : `0${month}`}-${num + 1 > 9 ? num + 1 : `0${num + 1}`}`,
       )
 
       return {
@@ -169,20 +181,24 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           return {
             className:
               typeof dayObj?.hoursPerDay === 'number' &&
-              dayObj.hoursPerDay < 7.5 &&
-              dayObj.hoursPerDay > 0
+                dayObj.hoursPerDay < 7.5 &&
+                dayObj.hoursPerDay > 0
                 ? '!bg-[#FFF1F0]'
                 : '',
           }
         },
         render: (value: any) => {
           const checkIn = value.checkInValue
+          const hourSaleTeamWorkPerday = value.hourSaleTeamWorkPerday
           const wfh = value.wfh
           const timeOff = value.timeOff
           const dayWorking = value.dayWorking
           const roleMember = value.roleMember
           const isEditDay = value.isEditDay
           const isEdited = isEditDay.length > 0
+          const department = value.department
+          const hasSalary = value.hasSalary
+
           return (
             <div className="flex !h-full !w-full flex-col gap-[4px]">
               {checkIn &&
@@ -230,23 +246,24 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                 checkIn === null &&
                 (!Array.isArray(timeOff) ||
                   timeOff.filter((w) => w != null && w.length > 0).length ===
-                    0) && (
+                  0) && (
                   <div className="flex !w-fit !items-center !justify-center gap-2 !text-center text-[14px]">
                     <CloseCircleFilled className="!text-[#FF4D4F]" />
                     <p className="whitespace-nowrap">Nghỉ không phép</p>
                   </div>
                 )}
-              {dayWorking === 0 && (
+              {dayWorking === 0 && department !== 'Sales' && (
                 <div className="mx-auto flex !w-fit flex-col items-center justify-center gap-2 !text-center text-[14px]">
-                  <p className="font-bold whitespace-nowrap text-[#8C8C8C]">
-                    Nghỉ
+                  <p className={clsx("font-bold whitespace-nowrap text-[#e31919]!", hasSalary && "text-[#1b6ece]!")}>
+                    {hasSalary ? "Nghỉ có lương" : "Nghỉ "}
                   </p>
-                  <Image
-                    src="/image2.gif"
-                    alt="nghỉ cuối tuần"
-                    width={18}
-                    height={18}
-                  />
+                </div>
+              )}
+              {department === 'Sales' && (
+                <div className="flex !items-center !justify-center gap-2 !text-center text-[14px]">
+                  <p className="font-bold whitespace-nowrap text-[#1d9c1b]!">
+                    {hourSaleTeamWorkPerday}
+                  </p>
                 </div>
               )}
             </div>
@@ -264,6 +281,10 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
       const checkInHistories = attendances?.attendances?.filter(
         (a: any) => a?.account_id === m?.id,
       )
+      // Per-member placeholders (actual per-day values are computed inside the daily fields loop)
+      const hourSaleTeamWorkPerday = 0
+      const department = ''
+
       const otPropose = attendances?.ot_and_holiday
         .filter((p: any) => p?.name_category === 'Đăng ký OT')
         .filter((p: any) => p?.account_id === m.id)
@@ -287,9 +308,9 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
         const checkInValue =
           checkIn?.length >= 1
             ? checkIn?.map((c: any) => [
-                dayjs(c?.checkin).format('HH:mm'),
-                c?.checkout ? dayjs(c?.checkout).format('HH:mm') : null,
-              ])
+              dayjs(c?.checkin).format('HH:mm'),
+              c?.checkout ? dayjs(c?.checkout).format('HH:mm') : null,
+            ])
             : null
 
         const timeOff = timeOffPropose?.map((t: any) =>
@@ -326,20 +347,39 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
               s?.day_of_week ===
               `${year}-${month > 9 ? month : `0${month}`}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
           )?.go_to_work || 0
-        const timeWork =
-          attendances?.attendances?.find(
+
+        const hasSalary =
+          options?.workSchedule?.find(
             (s: any) =>
-              s?.account_id === m?.id &&
-              new Date(s?.checkin).getDate() === currentDate &&
-              new Date(s?.checkin).getMonth() + 1 === month &&
-              new Date(s?.checkin).getFullYear() === year,
-          )?.workday || 0
+              s?.day_of_week ===
+              `${year}-${month > 9 ? month : `0${month}`}-${currentDate > 9 ? currentDate : `0${currentDate}`}`,
+          )?.is_have_salary || 0
+
+
+        const attendanceRecordForDay = attendances?.attendances?.find(
+          (s: any) =>
+            s?.account_id === m?.id &&
+            new Date(s?.checkin).getDate() === currentDate &&
+            new Date(s?.checkin).getMonth() + 1 === month &&
+            new Date(s?.checkin).getFullYear() === year,
+        )
+
+        const timeWork = attendanceRecordForDay?.workday || 0
 
         const roundedTimeWork = Number(timeWork) === 1 ? 1 : timeWork
 
         const roleMember = options?.members?.find(
           (mem: any) => mem?.id === m?.id,
         )?.role
+
+        const allHoursSaleWork = (attendances?.attendances || [])
+          .filter((s: any) =>
+            s?.department === 'Sales' &&
+            new Date(s?.checkin).getDate() === currentDate &&
+            new Date(s?.checkin).getMonth() + 1 === month &&
+            new Date(s?.checkin).getFullYear() === year,
+          )
+          .reduce((total: number, curr: any) => total + (+curr?.hours || 0), 0)
 
         return [
           `${currentDate}/${month}`,
@@ -351,13 +391,17 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
             wfh,
             hoursPerDay,
             dayWorking,
+            hasSalary,
             roleMember,
+            hourSaleTeamWorkPerday: attendanceRecordForDay?.hours || 0,
+            department: attendanceRecordForDay?.department || '',
+            allHoursSaleWork,
             timeWork: roundedTimeWork,
             plan_time: checkIn?.[0]
               ? [
-                  dayjs(checkIn?.[0]?.checkin).format('HH:mm'),
-                  dayjs(checkIn?.[0]?.check_out_regulation).format('HH:mm'),
-                ]
+                dayjs(checkIn?.[0]?.checkin).format('HH:mm'),
+                dayjs(checkIn?.[0]?.check_out_regulation).format('HH:mm'),
+              ]
               : [],
           },
         ]
@@ -370,6 +414,21 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
           workDay: m?.workday,
           ot: m?.hours_over_time,
           wfh: wfhPropose?.length || 0,
+          allHoursSaleWork: (attendances?.attendances || [])
+            .filter((s: any) =>
+              s?.account_id === m?.id &&
+              new Date(s?.checkin).getMonth() + 1 === month &&
+              new Date(s?.checkin).getFullYear() === year &&
+              s?.department === 'Sales',
+            )
+            .reduce((total: number, curr: any) => total + (+curr?.hours || 0), 0),
+          isSalesMember: (attendances?.attendances || []).some(
+            (s: any) =>
+              s?.account_id === m?.id &&
+              new Date(s?.checkin).getMonth() + 1 === month &&
+              new Date(s?.checkin).getFullYear() === year &&
+              s?.department === 'Sales',
+          ),
         },
         ...Object.fromEntries(fields),
       }
@@ -429,7 +488,7 @@ const CheckInTable: React.FC<CheckInTableProps> = ({
                     router.push('/salary')
                   }}
                 >
-                  Khởi tạo bảng lương tháng 6
+                  Khởi tạo bảng lương tháng {month}
                 </Button>
               </div>
             }

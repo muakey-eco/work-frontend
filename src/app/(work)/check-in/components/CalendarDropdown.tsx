@@ -47,8 +47,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
             onDateClick?.(
               info?.checkInValue
                 ? dayjs(
-                    `${String(dayjs(current).format('YYYY-MM-DD'))} ${info?.checkInValue?.pop()?.[0]}`,
-                  )
+                  `${String(dayjs(current).format('YYYY-MM-DD'))} ${info?.checkInValue?.pop()?.[0]}`,
+                )
                 : current,
             )
             router.push('?form=sua-gio-vao-ra')
@@ -108,8 +108,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
         className={clsx(
           'flex aspect-220/160 min-h-[160px] w-full flex-col border-t px-[8px] pt-[6px] pb-[8px]',
           month?.go_to_work !== undefined &&
-            month?.go_to_work === 0 &&
-            'bg-[#f5f5f5]',
+          month?.go_to_work === 0 &&
+          'bg-[#f5f5f5]',
           currentDate === today
             ? 'border-t-[#096DD9] bg-[#E6F7FF]'
             : 'border-t-[#0505050f]',
@@ -142,7 +142,7 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
                     },
                   )}
                 >
-                  OFF
+                  {month?.is_have_salary === false ? "OFF" : "OFF with 💵"}
                 </span>
                 {info?.ot &&
                   info?.ot?.map(
@@ -186,8 +186,8 @@ const CalendarDropdown: React.FC<CalendarDropdownProps> = ({
 
                   {/* thời gian vào ra */}
                   {Array.isArray(info?.wfh) &&
-                  info.wfh.length > 0 &&
-                  info.wfh.some((w: any) => w !== null) ? (
+                    info.wfh.length > 0 &&
+                    info.wfh.some((w: any) => w !== null) ? (
                     info.wfh.map((w: any, index: number) =>
                       w ? (
                         <div

@@ -66,7 +66,6 @@ const SalaryCollapse: React.FC<SalaryCollapseProps> = ({
 
     const monthSalaries = salariesData[monthStr] || []
 
-    console.log('monthSalaries', monthSalaries)
 
     // Lọc nhân viên bỏ role Admin
     const employeeSalaries = monthSalaries.filter(

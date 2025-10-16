@@ -112,7 +112,6 @@ const SalaryTable: React.FC<any> = ({
   isClosedSalary,
   onMonthClosed,
 }) => {
-  console.log('salarieskekeke', salaries)
 
   const { message, modal } = App.useApp()
 

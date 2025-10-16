@@ -19,11 +19,11 @@ const OverviewHeader = () => {
         items: [
           ...(department_id === '2'
             ? [
-                {
-                  key: 'report',
-                  label: 'Báo cáo',
-                },
-              ]
+              {
+                key: 'report',
+                label: 'Báo cáo',
+              },
+            ]
             : []),
           {
             key: 'statistics',

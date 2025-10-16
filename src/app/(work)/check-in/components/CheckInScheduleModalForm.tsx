@@ -19,8 +19,8 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [dateStrings, setDateStrings] = useState<string[]>([])
-  const [ids, setIds] = useState<any[]>([])
+  const [idsNotSalary, setIdsNotSalary] = useState<any[]>([])
+  const [idsHaveSalary, setIdsHaveSalary] = useState<any[]>([])
   const { message } = App.useApp()
   const router = useRouter()
 
@@ -34,37 +34,56 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
   const handleSubmit = async (formData?: any) => {
     setLoading(true)
 
-    const { multiple_ids, range_ids, ...restFormData } = formData
+    const {
+      multiple_ids_not_salary,
+      multiple_ids_have_salary,
+      range_ids,
+      ...restFormData
+    } = formData
+    console.log('formData', formData)
 
     const nextSchedule = await addWorkScheduleAction()
 
-    const dayOffIds = multiple_ids?.map((date: Date) => {
-      const dateStr = String(dayjs(date).format('YYYY-MM-DD'))
+    const schedules = [...workSchedule, ...nextSchedule]
+    const mapSelectedDatesToIds = (dates?: Date[]) =>
+      dates?.map((date: Date) => {
+        const dateStr = String(dayjs(date).format('YYYY-MM-DD'))
+        const schedule = schedules?.find((s: any) => s?.day_of_week === dateStr)
+        return schedule?.id || null
+      })
 
-      const schedule = [...workSchedule, ...nextSchedule]?.find(
-        (s: any) => s?.day_of_week === dateStr,
-      )
+    const dayOffIds = mapSelectedDatesToIds(multiple_ids_not_salary)
+    const dayOffHaveSalaryIds = mapSelectedDatesToIds(multiple_ids_have_salary)
 
-      return schedule?.id || null
-    })
+    const allSelectedDateStrs = new Set(
+      [
+        ...(multiple_ids_not_salary || []),
+        ...(multiple_ids_have_salary || []),
+      ].map((d: Date) => String(dayjs(d).format('YYYY-MM-DD'))),
+    )
 
+    // ngày còn lại trong tháng sau khi loại bỏ ngày nghỉ có lương và không lương 
     const dayWorkIds = workScheduleFiltered
-      ?.filter((w: any) => !dateStrings?.includes(w?.day_of_week))
+      ?.filter((w: any) => !allSelectedDateStrs.has(String(w?.day_of_week)))
       .map((w: any) => w?.id)
 
     try {
-      const { message: msg, errors } = await updateWorkScheduleAction({
-        ...restFormData,
-        ...(!!range_ids
-          ? {
-              start_date: String(dayjs(range_ids[0]).format('DD-MM-YYYY')),
-              end_date: String(dayjs(range_ids[1]).format('DD-MM-YYYY')),
-            }
-          : {
-              is_holiday: dayOffIds,
-              is_not_holiday: dayWorkIds,
-            }),
-      })
+      const { description } = restFormData || {}
+
+      const payload = !!range_ids
+        ? {
+          description,
+          start_date: String(dayjs(range_ids[0]).format('DD-MM-YYYY')),
+          end_date: String(dayjs(range_ids[1]).format('DD-MM-YYYY')),
+        }
+        : {
+          description,
+          is_holiday: (dayOffIds || []).filter((v: any) => v != null),
+          is_holiday_have_salary: (dayOffHaveSalaryIds || []).filter((v: any) => v != null),
+          is_not_holiday: (dayWorkIds || []).filter((v: any) => v != null),
+        }
+
+      const { message: msg, errors } = await updateWorkScheduleAction(payload)
 
       if (errors) {
         message.error(msg)
@@ -93,12 +112,23 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
       return
     }
 
-    setIds(
-      mode === 'multiple'
-        ? workScheduleFiltered?.map((s: any) => dayjs(s?.day_of_week))
-        : undefined,
-    )
-  }, [mode, open, workScheduleFiltered])
+    if (mode === 'multiple') {
+      setIdsNotSalary(
+        workSchedule
+          ?.filter((s: any) => s?.go_to_work === 0 && (s?.is_have_salary) === false)
+          ?.map((s: any) => dayjs(s?.day_of_week)),
+      )
+
+      setIdsHaveSalary(
+        workSchedule
+          ?.filter((s: any) => s?.go_to_work === 0 && (s?.is_have_salary) === true)
+          ?.map((s: any) => dayjs(s?.day_of_week)),
+      )
+    } else {
+      setIdsNotSalary([])
+      setIdsHaveSalary([])
+    }
+  }, [mode, open, workSchedule])
 
   return (
     <>
@@ -115,7 +145,8 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
           <Form
             layout="vertical"
             initialValues={{
-              multiple_ids: ids,
+              multiple_ids_not_salary: idsNotSalary,
+              multiple_ids_have_salary: idsHaveSalary,
             }}
             onFinish={handleSubmit}
           >
@@ -136,26 +167,32 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
         </div>
 
         {mode === 'multiple' ? (
-          <Form.Item
-            name="multiple_ids"
-            label="Chọn ngày nghỉ"
-            rules={[
-              {
-                required: true,
-                message: 'Chưa chọn ngày',
-              },
-            ]}
-          >
-            <DatePicker
-              multiple
-              locale={locale}
-              onChange={(_, dateStr) =>
-                setDateStrings(
-                  typeof dateStr === 'string' ? [dateStr] : [...dateStr],
-                )
-              }
-            />
-          </Form.Item>
+          <>
+            <Form.Item
+              name="multiple_ids_not_salary"
+              label="Chọn ngày nghỉ"
+              rules={[
+                {
+                  required: true,
+                  message: 'Chưa chọn ngày',
+                },
+              ]}
+            >
+              <DatePicker
+                multiple
+                locale={locale}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="multiple_ids_have_salary"
+              label="Chọn ngày nghỉ có lương"
+            >
+              <DatePicker
+                multiple
+                locale={locale}
+              />
+            </Form.Item></>
         ) : (
           <Form.Item
             name="range_ids"
@@ -170,11 +207,6 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
             <DatePicker.RangePicker
               className="w-full"
               locale={locale}
-              onChange={(_, dateStr) =>
-                setDateStrings(
-                  typeof dateStr === 'string' ? [dateStr] : [...dateStr],
-                )
-              }
             />
           </Form.Item>
         )}
@@ -185,7 +217,7 @@ const CheckInScheduleModalForm: React.FC<CheckInScheduleModalFormProps> = ({
             placeholder="Ghi chú ngày nghỉ"
           />
         </Form.Item>
-      </Modal>
+      </Modal >
     </>
   )
 }
